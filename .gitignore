@@ -1,0 +1,15 @@
+.env
+artifacts/
+__pycache__/
+*.pyc
+.pytest_cache/
+logs/
+data_store/
+.env.*
+!.env.example
+.venv/
+venv/
+.vscode/
+.idea/
+.claude/
+*.log.tmp

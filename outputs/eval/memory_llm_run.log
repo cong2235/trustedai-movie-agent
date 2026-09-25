@@ -1,0 +1,69 @@
+PASS st_second_one_after_compaction_r1 ['ok', 'ok', 'ok', 'ok']
+PASS st_second_one_after_compaction_r2 ['ok', 'ok', 'ok', 'ok']
+PASS st_second_one_after_compaction_r3 ['ok', 'ok', 'ok', 'ok']
+PASS st_constraints_carry_and_change_r1 ['ok', 'ok', 'ok']
+PASS st_constraints_carry_and_change_r2 ['ok', 'ok', 'ok']
+PASS st_constraints_carry_and_change_r3 ['ok', 'ok', 'ok']
+PASS st_long_conversation_budget_r1 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS st_long_conversation_budget_r2 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS st_long_conversation_budget_r3 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS lt_forget_preference_r1 ['ok', 'ok', 'ok', 'ok']
+PASS lt_forget_preference_r2 ['ok', 'ok', 'ok', 'ok']
+PASS lt_forget_preference_r3 ['ok', 'ok', 'ok', 'ok']
+PASS lt_one_off_not_stored_r1 ['ok', 'ok']
+PASS lt_one_off_not_stored_r2 ['ok', 'ok']
+PASS lt_one_off_not_stored_r3 ['ok', 'ok']
+PASS lt_override_in_session_r1 ['ok', 'ok']
+PASS lt_override_in_session_r2 ['ok', 'ok']
+PASS lt_override_in_session_r3 ['ok', 'ok']
+PASS lt_dismissed_and_isolation_r1 ['ok', 'ok', 'ok']
+PASS lt_dismissed_and_isolation_r2 ['ok', 'ok', 'ok']
+PASS lt_dismissed_and_isolation_r3 ['ok', 'ok', 'ok']
+PASS lt_recall_liked_r1 ['ok', 'ok']
+PASS lt_recall_liked_r2 ['ok', 'ok']
+PASS lt_recall_liked_r3 ['ok', 'ok']
+PASS lt_ambiguous_seen_r1 ['ok']
+PASS lt_ambiguous_seen_r2 ['ok']
+PASS lt_ambiguous_seen_r3 ['ok']
+PASS lt_seen_but_discussable_r1 ['ok', 'ok']
+PASS lt_seen_but_discussable_r2 ['ok', 'ok']
+PASS lt_seen_but_discussable_r3 ['ok', 'ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 3,
+  "n_scenario_runs": 30,
+  "n_turns": 93,
+  "turn_pass_rate": 1.0,
+  "scenario_pass_rate": 1.0,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": null,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 381,
+  "rating_claims_checked": 201,
+  "tool_errors": 3,
+  "online_guardrail_revisions": 0,
+  "per_scenario_pass": {
+    "st_second_one_after_compaction": "3/3",
+    "st_constraints_carry_and_change": "3/3",
+    "st_long_conversation_budget": "3/3",
+    "lt_forget_preference": "3/3",
+    "lt_one_off_not_stored": "3/3",
+    "lt_override_in_session": "3/3",
+    "lt_dismissed_and_isolation": "3/3",
+    "lt_recall_liked": "3/3",
+    "lt_ambiguous_seen": "3/3",
+    "lt_seen_but_discussable": "3/3"
+  },
+  "latency_p50_s": 4.7,
+  "latency_p95_s": 22.8,
+  "ttft_p50_s": 2.1
+}

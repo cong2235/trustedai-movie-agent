@@ -1,0 +1,18 @@
+services:
+  movie-agent:
+    build: .
+    image: movie-agent:latest
+    container_name: movie-agent
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env                     # OPENAI_API_KEY / ANTHROPIC_API_KEY and optional MOVIE_AGENT_* settings
+    volumes:
+      - ./artifacts:/app/artifacts:ro   # prebuilt plot embeddings (python scripts/build_index.py)
+      - ./logs:/app/logs                # telemetry DB + JSONL log survive restarts; the Monitor tab reads them
+      - ./data_store:/app/data_store    # long-term user memory (memory.db) survives restarts and rebuilds
+      - hf-cache:/app/.cache            # local model downloads (only used by the no-key fallbacks)
+    restart: unless-stopped
+
+volumes:
+  hf-cache:

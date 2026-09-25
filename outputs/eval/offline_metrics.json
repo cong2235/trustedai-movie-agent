@@ -1,0 +1,340 @@
+{
+  "protocol": {
+    "split": "per-user temporal 80/20; validation = next-to-last 12.5% of train",
+    "relevance": "test rating >= 4.0",
+    "k": 10,
+    "n_test_users_with_relevant_items": 583,
+    "n_test_ratings": 14571,
+    "long_tail_def": "< 5 train ratings"
+  },
+  "tuned_weights": {
+    "item_knn": 1.0,
+    "user_knn": 0.6,
+    "content": 0.15,
+    "quality": 0.0,
+    "popularity": 0.0,
+    "pure_svd": 0.5
+  },
+  "segment_weights": {
+    "sparse": {
+      "item_knn": 1.0,
+      "user_knn": 1.0,
+      "content": 0.3,
+      "quality": 0.0,
+      "popularity": 0.5,
+      "pure_svd": 0.5
+    },
+    "rich": {
+      "item_knn": 1.0,
+      "user_knn": 0.3,
+      "content": 0.3,
+      "quality": 0.0,
+      "popularity": 0.2,
+      "pure_svd": 0.25
+    }
+  },
+  "use_segment_weights": false,
+  "validation_ndcg": {
+    "global_blend": 0.11487229523377382,
+    "segment_blends": 0.11621838720230701
+  },
+  "ranking_overall": [
+    {
+      "model": "Popularity",
+      "P@10": 0.0556,
+      "R@10": 0.0631,
+      "NDCG@10": 0.0804,
+      "HR@10": 0.3259,
+      "MRR": 0.1648,
+      "rec_mean_log_pop": 5.3403,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0,
+      "coverage": 0.0181,
+      "intra_list_diversity": 0.6292
+    },
+    {
+      "model": "TopRated (Bayesian avg)",
+      "P@10": 0.047,
+      "R@10": 0.053,
+      "NDCG@10": 0.0637,
+      "HR@10": 0.2779,
+      "MRR": 0.1302,
+      "rec_mean_log_pop": 4.7983,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0,
+      "coverage": 0.0097,
+      "intra_list_diversity": 0.6121
+    },
+    {
+      "model": "PureSVD (k=50)",
+      "P@10": 0.0724,
+      "R@10": 0.1094,
+      "NDCG@10": 0.1093,
+      "HR@10": 0.4528,
+      "MRR": 0.1977,
+      "rec_mean_log_pop": 4.6182,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0,
+      "coverage": 0.1163,
+      "intra_list_diversity": 0.6166
+    },
+    {
+      "model": "ItemKNN",
+      "P@10": 0.0782,
+      "R@10": 0.0919,
+      "NDCG@10": 0.1076,
+      "HR@10": 0.4099,
+      "MRR": 0.1951,
+      "rec_mean_log_pop": 4.7658,
+      "rec_tail_share": 0.0067,
+      "tail_recall": 0.0,
+      "coverage": 0.0816,
+      "intra_list_diversity": 0.5897
+    },
+    {
+      "model": "UserKNN",
+      "P@10": 0.0765,
+      "R@10": 0.0901,
+      "NDCG@10": 0.106,
+      "HR@10": 0.4151,
+      "MRR": 0.1938,
+      "rec_mean_log_pop": 5.1191,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0,
+      "coverage": 0.0386,
+      "intra_list_diversity": 0.6039
+    },
+    {
+      "model": "Content (plot embeddings)",
+      "P@10": 0.0098,
+      "R@10": 0.0095,
+      "NDCG@10": 0.0132,
+      "HR@10": 0.0943,
+      "MRR": 0.0327,
+      "rec_mean_log_pop": 1.9451,
+      "rec_tail_share": 0.4937,
+      "tail_recall": 0.0012,
+      "coverage": 0.0886,
+      "intra_list_diversity": 0.3742
+    },
+    {
+      "model": "Hybrid (hand-set weights)",
+      "P@10": 0.082,
+      "R@10": 0.0969,
+      "NDCG@10": 0.1136,
+      "HR@10": 0.4425,
+      "MRR": 0.2058,
+      "rec_mean_log_pop": 5.0151,
+      "rec_tail_share": 0.0003,
+      "tail_recall": 0.0,
+      "coverage": 0.051,
+      "intra_list_diversity": 0.5893
+    },
+    {
+      "model": "Hybrid w/o latent factors (tuned, pure_svd=0)",
+      "P@10": 0.0825,
+      "R@10": 0.0987,
+      "NDCG@10": 0.1139,
+      "HR@10": 0.4425,
+      "MRR": 0.206,
+      "rec_mean_log_pop": 4.9301,
+      "rec_tail_share": 0.0027,
+      "tail_recall": 0.0,
+      "coverage": 0.066,
+      "intra_list_diversity": 0.588
+    },
+    {
+      "model": "Hybrid (tuned on validation)",
+      "P@10": 0.0925,
+      "R@10": 0.1171,
+      "NDCG@10": 0.1292,
+      "HR@10": 0.482,
+      "MRR": 0.2248,
+      "rec_mean_log_pop": 4.9487,
+      "rec_tail_share": 0.0002,
+      "tail_recall": 0.0,
+      "coverage": 0.0594,
+      "intra_list_diversity": 0.6018
+    },
+    {
+      "model": "Hybrid segment-tuned (sparse/rich)",
+      "P@10": 0.0901,
+      "R@10": 0.1122,
+      "NDCG@10": 0.1274,
+      "HR@10": 0.4717,
+      "MRR": 0.2254,
+      "rec_mean_log_pop": 4.9874,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0,
+      "coverage": 0.0528,
+      "intra_list_diversity": 0.5966
+    },
+    {
+      "model": "Hybrid tuned + MMR diversity",
+      "P@10": 0.0916,
+      "R@10": 0.1166,
+      "NDCG@10": 0.1288,
+      "HR@10": 0.4837,
+      "MRR": 0.2269,
+      "rec_mean_log_pop": 4.9467,
+      "rec_tail_share": 0.0002,
+      "tail_recall": 0.0,
+      "coverage": 0.0604,
+      "intra_list_diversity": 0.6111
+    }
+  ],
+  "ndcg_by_history_bucket": [
+    {
+      "bucket": "a) <20 train ratings",
+      "n_users": 107,
+      "Popularity": 0.0672,
+      "TopRated (Bayesian avg)": 0.05,
+      "PureSVD (k=50)": 0.1221,
+      "ItemKNN": 0.0995,
+      "UserKNN": 0.0859,
+      "Content (plot embeddings)": 0.0203,
+      "Hybrid (hand-set weights)": 0.1041,
+      "Hybrid w/o latent factors (tuned, pure_svd=0)": 0.1051,
+      "Hybrid (tuned on validation)": 0.1149,
+      "Hybrid segment-tuned (sparse/rich)": 0.1154,
+      "Hybrid tuned + MMR diversity": 0.1142
+    },
+    {
+      "bucket": "b) 20-49",
+      "n_users": 190,
+      "Popularity": 0.0657,
+      "TopRated (Bayesian avg)": 0.0469,
+      "PureSVD (k=50)": 0.1067,
+      "ItemKNN": 0.0766,
+      "UserKNN": 0.0867,
+      "Content (plot embeddings)": 0.0043,
+      "Hybrid (hand-set weights)": 0.086,
+      "Hybrid w/o latent factors (tuned, pure_svd=0)": 0.0835,
+      "Hybrid (tuned on validation)": 0.1071,
+      "Hybrid segment-tuned (sparse/rich)": 0.1065,
+      "Hybrid tuned + MMR diversity": 0.1092
+    },
+    {
+      "bucket": "c) 50-149",
+      "n_users": 188,
+      "Popularity": 0.0679,
+      "TopRated (Bayesian avg)": 0.0518,
+      "PureSVD (k=50)": 0.0835,
+      "ItemKNN": 0.0951,
+      "UserKNN": 0.086,
+      "Content (plot embeddings)": 0.0118,
+      "Hybrid (hand-set weights)": 0.0964,
+      "Hybrid w/o latent factors (tuned, pure_svd=0)": 0.0979,
+      "Hybrid (tuned on validation)": 0.1097,
+      "Hybrid segment-tuned (sparse/rich)": 0.1055,
+      "Hybrid tuned + MMR diversity": 0.1079
+    },
+    {
+      "bucket": "d) 150+",
+      "n_users": 98,
+      "Popularity": 0.1475,
+      "TopRated (Bayesian avg)": 0.134,
+      "PureSVD (k=50)": 0.1498,
+      "ItemKNN": 0.2009,
+      "UserKNN": 0.2039,
+      "Content (plot embeddings)": 0.0256,
+      "Hybrid (hand-set weights)": 0.2108,
+      "Hybrid w/o latent factors (tuned, pure_svd=0)": 0.2134,
+      "Hybrid (tuned on validation)": 0.2251,
+      "Hybrid segment-tuned (sparse/rich)": 0.2233,
+      "Hybrid tuned + MMR diversity": 0.2229
+    }
+  ],
+  "hybrid_vs_baselines_ndcg_diff_bootstrap": {
+    "ItemKNN": {
+      "mean_diff": 0.021550890138623047,
+      "ci95": [
+        0.014140189534243012,
+        0.029595158477640913
+      ]
+    },
+    "PureSVD (k=50)": {
+      "mean_diff": 0.019939594368686763,
+      "ci95": [
+        0.009301208438476677,
+        0.030962065582267
+      ]
+    },
+    "Popularity": {
+      "mean_diff": 0.04876333953880471,
+      "ci95": [
+        0.036326263054616864,
+        0.060970672642160696
+      ]
+    }
+  },
+  "rating_prediction_overall": [
+    {
+      "method": "global_mean",
+      "RMSE": 1.0541,
+      "MAE": 0.8275,
+      "like_accuracy": 0.5408
+    },
+    {
+      "method": "user_mean",
+      "RMSE": 0.962,
+      "MAE": 0.7468,
+      "like_accuracy": 0.6483
+    },
+    {
+      "method": "item_bayes_mean",
+      "RMSE": 0.9813,
+      "MAE": 0.7591,
+      "like_accuracy": 0.6271
+    },
+    {
+      "method": "bias_baseline",
+      "RMSE": 0.8897,
+      "MAE": 0.687,
+      "like_accuracy": 0.6856
+    },
+    {
+      "method": "knn_v1_mean_centered",
+      "RMSE": 0.9105,
+      "MAE": 0.695,
+      "like_accuracy": 0.6952
+    },
+    {
+      "method": "knn_v2_residual (shipped)",
+      "RMSE": 0.8712,
+      "MAE": 0.6674,
+      "like_accuracy": 0.7037
+    }
+  ],
+  "rating_prediction_by_evidence": [
+    {
+      "evidence": "0 neighbours (fallback)",
+      "n": 798.0,
+      "RMSE_bias_baseline": 1.0705,
+      "RMSE_knn_v1": 1.0705,
+      "RMSE_knn_v2": 1.0705
+    },
+    {
+      "evidence": "1-2",
+      "n": 1249.0,
+      "RMSE_bias_baseline": 0.9529,
+      "RMSE_knn_v1": 1.0866,
+      "RMSE_knn_v2": 0.9151
+    },
+    {
+      "evidence": "3-9",
+      "n": 2854.0,
+      "RMSE_bias_baseline": 0.9209,
+      "RMSE_knn_v1": 0.9516,
+      "RMSE_knn_v2": 0.8986
+    },
+    {
+      "evidence": "10+",
+      "n": 9670.0,
+      "RMSE_bias_baseline": 0.8548,
+      "RMSE_knn_v1": 0.8572,
+      "RMSE_knn_v2": 0.8382
+    }
+  ],
+  "runtime_s": 349.7
+}

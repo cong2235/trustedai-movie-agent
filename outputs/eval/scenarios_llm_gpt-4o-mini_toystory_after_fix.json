@@ -1,0 +1,201 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "n_scenarios": 5,
+    "n_turns": 5,
+    "tool_recall": 1.0,
+    "tool_args_ok": 1.0,
+    "turns_with_constraint_violation": 0,
+    "hallucinated_titles": 0,
+    "tool_errors": 0,
+    "ungrounded_titles": 0,
+    "decimal_claims": 13,
+    "ungrounded_numbers": 0,
+    "text_checks_passed": 1.0,
+    "median_latency_s": 6.5
+  },
+  "scenarios": [
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": true,
+          "n_decimal_claims": 2,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 8,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Princess Bride (1987)",
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Ferris Bueller's Day Off (1986)",
+            "Big (1988)",
+            "Monty Python and the Holy Grail (1975)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 23.6,
+          "usage": {
+            "input_tokens": 9431,
+            "output_tokens": 436
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 2,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": true,
+          "n_decimal_claims": 5,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 7,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Princess Bride (1987)",
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Ferris Bueller's Day Off (1986)",
+            "Big (1988)",
+            "Monty Python and the Holy Grail (1975)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.6,
+          "usage": {
+            "input_tokens": 9431,
+            "output_tokens": 430
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 3,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Princess Bride (1987)",
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Ferris Bueller's Day Off (1986)",
+            "Big (1988)",
+            "Monty Python and the Holy Grail (1975)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.3,
+          "usage": {
+            "input_tokens": 9431,
+            "output_tokens": 391
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 4,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 8,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Princess Bride (1987)",
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Ferris Bueller's Day Off (1986)",
+            "Big (1988)",
+            "Monty Python and the Holy Grail (1975)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.2,
+          "usage": {
+            "input_tokens": 9431,
+            "output_tokens": 408
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 5,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": true,
+          "n_decimal_claims": 0,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 8,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Princess Bride (1987)",
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Ferris Bueller's Day Off (1986)",
+            "Big (1988)",
+            "Monty Python and the Holy Grail (1975)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.5,
+          "usage": {
+            "input_tokens": 9431,
+            "output_tokens": 417
+          }
+        }
+      ]
+    }
+  ]
+}

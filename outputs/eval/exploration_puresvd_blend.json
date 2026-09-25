@@ -1,0 +1,50 @@
+{
+  "validation_ndcg_by_svd_weight": {
+    "0.0": 0.10237998997047613,
+    "0.25": 0.11271480932087781,
+    "0.5": 0.11166847331515699,
+    "1.0": 0.10894055453725536,
+    "2.0": 0.10386048201933568
+  },
+  "test": [
+    {
+      "model": "Hybrid + PureSVD w=0.25",
+      "NDCG@10": 0.1245,
+      "R@10": 0.1104,
+      "HR@10": 0.4666
+    },
+    {
+      "model": "Hybrid tuned",
+      "NDCG@10": 0.1147,
+      "R@10": 0.0992,
+      "HR@10": 0.4443
+    }
+  ],
+  "test_by_bucket": [
+    {
+      "bucket": "a) <20 train ratings",
+      "Hybrid + PureSVD w=0.25": 0.1136,
+      "Hybrid tuned": 0.1059
+    },
+    {
+      "bucket": "b) 20-49",
+      "Hybrid + PureSVD w=0.25": 0.0993,
+      "Hybrid tuned": 0.0835
+    },
+    {
+      "bucket": "c) 50-149",
+      "Hybrid + PureSVD w=0.25": 0.1052,
+      "Hybrid tuned": 0.0988
+    },
+    {
+      "bucket": "d) 150+",
+      "Hybrid + PureSVD w=0.25": 0.2224,
+      "Hybrid tuned": 0.2151
+    }
+  ],
+  "tail": {
+    "relevant_test_pairs": 6691,
+    "long_tail": 844,
+    "zero_train_ratings": 226
+  }
+}

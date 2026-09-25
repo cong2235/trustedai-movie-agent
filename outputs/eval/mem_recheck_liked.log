@@ -1,0 +1,35 @@
+PASS lt_recall_liked_r1 ['ok', 'ok']
+PASS lt_recall_liked_r2 ['ok', 'ok']
+PASS lt_recall_liked_r3 ['ok', 'ok']
+PASS lt_recall_liked_r4 ['ok', 'ok']
+FAIL lt_recall_liked_r5 ['ok', {'misattributed_numbers': ['4.08 stated about Minority Report (2002) (the tools reported it for Trainspotting (1996))', '4.24 stated about Pulp Fiction (1994) (the tools reported it for The Usual Suspects (1995))', '4.28 stated about Frequency (2000) (the tools reported it for The Usual Suspects (1995))', '3.85 stated about Pulp Fiction (1994) (the tools reported it for Trainspotting (1996))']}]
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 5,
+  "n_scenario_runs": 5,
+  "n_turns": 10,
+  "turn_pass_rate": 0.9,
+  "scenario_pass_rate": 0.8,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": null,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 4,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 33,
+  "rating_claims_checked": 24,
+  "tool_errors": 0,
+  "online_guardrail_revisions": 1,
+  "per_scenario_pass": {
+    "lt_recall_liked": "4/5"
+  },
+  "latency_p50_s": 4.9,
+  "latency_p95_s": 13.2,
+  "ttft_p50_s": 1.96
+}

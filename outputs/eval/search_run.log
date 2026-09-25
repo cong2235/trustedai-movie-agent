@@ -1,0 +1,21 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  71%|███████▏  | 142/199 [00:00<00:00, 1408.79it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 1532.76it/s]
+Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]Loading weights: 100%|██████████| 105/105 [00:00<00:00, 1326.14it/s]
+# Content search evaluation (tags as silver labels)
+
+18 topic + 12 tone/structure queries. Tags hidden from the lexical index and re-rankers. Precision is a lower bound (tags are sparse).
+
+|                                                       |   NDCG@10 tone |   NDCG@10 topic |   P@10 tone |   P@10 topic |
+|:------------------------------------------------------|---------------:|----------------:|------------:|-------------:|
+| ('bge-small', 'dense only')                           |          0     |           0.167 |       0     |        0.161 |
+| ('bge-small', 'stage 1 (dense+lexical+quality)')      |          0.019 |           0.232 |       0.025 |        0.217 |
+| ('bge-small', 'stage 1 + cross rerank')               |          0.017 |           0.282 |       0.017 |        0.244 |
+| ('bge-small', 'stage 1 + llm rerank')                 |          0.034 |           0.372 |       0.033 |        0.322 |
+| ('openai-3-small', 'dense only')                      |          0.009 |           0.215 |       0.008 |        0.211 |
+| ('openai-3-small', 'stage 1 (dense+lexical+quality)') |          0.026 |           0.282 |       0.025 |        0.25  |
+| ('openai-3-small', 'stage 1 + cross rerank')          |          0.022 |           0.289 |       0.017 |        0.261 |
+| ('openai-3-small', 'stage 1 + llm rerank')            |          0.116 |           0.423 |       0.108 |        0.356 |
+
+Median re-rank latency (ms): stage 1 + cross rerank: 1442, stage 1 + llm rerank: 2284
+
+388s

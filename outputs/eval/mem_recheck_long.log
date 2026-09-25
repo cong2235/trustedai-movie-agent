@@ -1,0 +1,33 @@
+PASS st_long_conversation_budget_r1 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS st_long_conversation_budget_r2 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS st_long_conversation_budget_r3 ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 3,
+  "n_scenario_runs": 3,
+  "n_turns": 24,
+  "turn_pass_rate": 1.0,
+  "scenario_pass_rate": 1.0,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": null,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 137,
+  "rating_claims_checked": 60,
+  "tool_errors": 0,
+  "online_guardrail_revisions": 0,
+  "per_scenario_pass": {
+    "st_long_conversation_budget": "3/3"
+  },
+  "latency_p50_s": 5.8,
+  "latency_p95_s": 11.3,
+  "ttft_p50_s": 2.65
+}

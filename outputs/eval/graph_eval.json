@@ -1,0 +1,174 @@
+{
+  "best_params": {
+    "0.0": [
+      0.08843372796273201,
+      0.8,
+      0.3
+    ],
+    "0.5": [
+      0.08925440994834881,
+      0.8,
+      0.3
+    ],
+    "2.0": [
+      0.0881875762728517,
+      0.8,
+      0.3
+    ]
+  },
+  "blend_weights": {
+    "rp3": 0.0,
+    "rp3_kg": 0.25
+  },
+  "test": [
+    {
+      "model": "ItemKNN",
+      "NDCG@10": 0.1076,
+      "HR@10": 0.4099,
+      "R@10": 0.0919,
+      "rec_mean_log_pop": 4.7658,
+      "rec_tail_share": 0.0067,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "PureSVD (k=50)",
+      "NDCG@10": 0.1093,
+      "HR@10": 0.4528,
+      "R@10": 0.1094,
+      "rec_mean_log_pop": 4.6182,
+      "rec_tail_share": 0.0,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "RP3beta (rating graph)",
+      "NDCG@10": 0.0996,
+      "HR@10": 0.3979,
+      "R@10": 0.0892,
+      "rec_mean_log_pop": 5.139,
+      "rec_tail_share": 0.0015,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "RP3beta + KG nodes (genres/tags, w=0.5)",
+      "NDCG@10": 0.1005,
+      "HR@10": 0.4014,
+      "R@10": 0.0904,
+      "rec_mean_log_pop": 5.1429,
+      "rec_tail_share": 0.0009,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "Hybrid (shipped)",
+      "NDCG@10": 0.1292,
+      "HR@10": 0.482,
+      "R@10": 0.1171,
+      "rec_mean_log_pop": 4.9487,
+      "rec_tail_share": 0.0002,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "Hybrid + RP3beta (w=0.0)",
+      "NDCG@10": 0.1292,
+      "HR@10": 0.482,
+      "R@10": 0.1171,
+      "rec_mean_log_pop": 4.9487,
+      "rec_tail_share": 0.0002,
+      "tail_recall": 0.0
+    },
+    {
+      "model": "Hybrid + RP3beta-KG (w=0.25)",
+      "NDCG@10": 0.1299,
+      "HR@10": 0.4854,
+      "R@10": 0.1186,
+      "rec_mean_log_pop": 4.9966,
+      "rec_tail_share": 0.0002,
+      "tail_recall": 0.0
+    }
+  ],
+  "ci_vs_hybrid": {
+    "ItemKNN": {
+      "mean_diff_vs_hybrid": -0.0216,
+      "ci95": [
+        -0.0296,
+        -0.0141
+      ]
+    },
+    "PureSVD (k=50)": {
+      "mean_diff_vs_hybrid": -0.0199,
+      "ci95": [
+        -0.031,
+        -0.0093
+      ]
+    },
+    "RP3beta (rating graph)": {
+      "mean_diff_vs_hybrid": -0.0296,
+      "ci95": [
+        -0.0408,
+        -0.0182
+      ]
+    },
+    "RP3beta + KG nodes (genres/tags, w=0.5)": {
+      "mean_diff_vs_hybrid": -0.0287,
+      "ci95": [
+        -0.0405,
+        -0.0172
+      ]
+    },
+    "Hybrid + RP3beta (w=0.0)": {
+      "mean_diff_vs_hybrid": 0.0,
+      "ci95": [
+        0.0,
+        0.0
+      ]
+    },
+    "Hybrid + RP3beta-KG (w=0.25)": {
+      "mean_diff_vs_hybrid": 0.0007,
+      "ci95": [
+        -0.0023,
+        0.0037
+      ]
+    }
+  },
+  "by_bucket": [
+    {
+      "bucket": "a) <20 train ratings",
+      "ItemKNN": 0.0995,
+      "PureSVD (k=50)": 0.1221,
+      "RP3beta (rating graph)": 0.093,
+      "RP3beta + KG nodes (genres/tags, w=0.5)": 0.0942,
+      "Hybrid (shipped)": 0.1149,
+      "Hybrid + RP3beta (w=0.0)": 0.1149,
+      "Hybrid + RP3beta-KG (w=0.25)": 0.1138
+    },
+    {
+      "bucket": "b) 20-49",
+      "ItemKNN": 0.0766,
+      "PureSVD (k=50)": 0.1067,
+      "RP3beta (rating graph)": 0.0847,
+      "RP3beta + KG nodes (genres/tags, w=0.5)": 0.086,
+      "Hybrid (shipped)": 0.1071,
+      "Hybrid + RP3beta (w=0.0)": 0.1071,
+      "Hybrid + RP3beta-KG (w=0.25)": 0.1125
+    },
+    {
+      "bucket": "c) 50-149",
+      "ItemKNN": 0.0951,
+      "PureSVD (k=50)": 0.0835,
+      "RP3beta (rating graph)": 0.0758,
+      "RP3beta + KG nodes (genres/tags, w=0.5)": 0.0761,
+      "Hybrid (shipped)": 0.1097,
+      "Hybrid + RP3beta (w=0.0)": 0.1097,
+      "Hybrid + RP3beta-KG (w=0.25)": 0.1059
+    },
+    {
+      "bucket": "d) 150+",
+      "ItemKNN": 0.2009,
+      "PureSVD (k=50)": 0.1498,
+      "RP3beta (rating graph)": 0.1813,
+      "RP3beta + KG nodes (genres/tags, w=0.5)": 0.1826,
+      "Hybrid (shipped)": 0.2251,
+      "Hybrid + RP3beta (w=0.0)": 0.2251,
+      "Hybrid + RP3beta-KG (w=0.25)": 0.2273
+    }
+  ]
+}

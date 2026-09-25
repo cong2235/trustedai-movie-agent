@@ -1,0 +1,27 @@
+OK  u1_tonight_then_why ['clean', 'clean', 'clean']
+OK  u1_pulp_fiction_neighbours ['clean']
+OK  u1_blind_spots ['clean']
+OK  u1_old_scifi ['clean']
+OK  u15_dark_twist ['clean', 'clean']
+OK  u15_inception_neighbours ['clean']
+OK  u15_toy_story_no_animation ['clean']
+OK  u15_absent_title [{'tool_errors': ['similar_users_opinion']}]
+OK  u15_ambiguous_seen ['clean']
+OK  u30_sparse_tonight ['clean', 'clean']
+OK  u30_blind_spots ['clean']
+OK  u30_light_funny ['clean']
+{
+  "mode": "scripted",
+  "n_scenarios": 12,
+  "n_turns": 16,
+  "tool_recall": 1.0,
+  "tool_args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "hallucinated_titles": 0,
+  "tool_errors": 1,
+  "ungrounded_titles": 0,
+  "decimal_claims": 0,
+  "ungrounded_numbers": 0,
+  "text_checks_passed": 1.0,
+  "online_guardrail_revisions": 0
+}

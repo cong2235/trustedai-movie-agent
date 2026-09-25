@@ -1,0 +1,201 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "n_scenarios": 5,
+    "n_turns": 5,
+    "tool_recall": 1.0,
+    "tool_args_ok": 0.0,
+    "turns_with_constraint_violation": 0,
+    "hallucinated_titles": 0,
+    "tool_errors": 0,
+    "ungrounded_titles": 0,
+    "decimal_claims": 15,
+    "ungrounded_numbers": 0,
+    "text_checks_passed": 1.0,
+    "median_latency_s": 7.3
+  },
+  "scenarios": [
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": false,
+          "n_decimal_claims": 5,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Jurassic Park (1993)",
+            "Twelve Monkeys (1995)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 26.0,
+          "usage": {
+            "input_tokens": 9072,
+            "output_tokens": 457
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 2,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": false,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Jurassic Park (1993)",
+            "Twelve Monkeys (1995)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.6,
+          "usage": {
+            "input_tokens": 9072,
+            "output_tokens": 469
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 3,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": false,
+          "n_decimal_claims": 5,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Indiana Jones and the Last Crusade (1989)",
+            "The Princess Bride (1987)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 7.3,
+          "usage": {
+            "input_tokens": 9165,
+            "output_tokens": 454
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 4,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": false,
+          "n_decimal_claims": 2,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Indiana Jones and the Last Crusade (1989)",
+            "The Princess Bride (1987)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 9.0,
+          "usage": {
+            "input_tokens": 9165,
+            "output_tokens": 393
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "run": 5,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "args_ok": false,
+          "n_decimal_claims": 0,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Indiana Jones and the Last Crusade (1989)",
+            "The Princess Bride (1987)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "latency_s": 6.7,
+          "usage": {
+            "input_tokens": 9165,
+            "output_tokens": 404
+          }
+        }
+      ]
+    }
+  ]
+}

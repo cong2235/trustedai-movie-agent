@@ -1,0 +1,474 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "repeat": 5,
+    "n_scenario_runs": 5,
+    "n_turns": 10,
+    "turn_pass_rate": 0.9,
+    "scenario_pass_rate": 0.8,
+    "tool_recall": 1.0,
+    "args_ok": 1.0,
+    "turns_with_constraint_violation": 0,
+    "golden_hit_rate": null,
+    "text_checks_passed": 1.0,
+    "hallucinated_titles": 0,
+    "ungrounded_titles": 0,
+    "ungrounded_numbers": 0,
+    "misattributed_numbers": 4,
+    "wrong_user_ratings": 0,
+    "decimal_claims_checked": 33,
+    "rating_claims_checked": 24,
+    "tool_errors": 0,
+    "online_guardrail_revisions": 1,
+    "per_scenario_pass": {
+      "lt_recall_liked": "4/5"
+    },
+    "latency_p50_s": 4.9,
+    "latency_p95_s": 13.2,
+    "ttft_p50_s": 1.96
+  },
+  "scenarios": [
+    {
+      "id": "lt_recall_liked",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.4,
+          "ttft_s": 1.61,
+          "usage": {
+            "input_tokens": 5347,
+            "output_tokens": 51
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 2719,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.7,
+          "ttft_s": 1.87,
+          "usage": {
+            "input_tokens": 7249,
+            "output_tokens": 391
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4607,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_recall_liked",
+      "run": 2,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.3,
+          "ttft_s": 1.63,
+          "usage": {
+            "input_tokens": 5347,
+            "output_tokens": 52
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 2719,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.1,
+          "ttft_s": 2.05,
+          "usage": {
+            "input_tokens": 7249,
+            "output_tokens": 395
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4607,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_recall_liked",
+      "run": 3,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.8,
+          "ttft_s": 2.09,
+          "usage": {
+            "input_tokens": 5347,
+            "output_tokens": 54
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 2719,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 12,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.3,
+          "ttft_s": 1.96,
+          "usage": {
+            "input_tokens": 7249,
+            "output_tokens": 406
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4607,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_recall_liked",
+      "run": 4,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.3,
+          "ttft_s": 1.68,
+          "usage": {
+            "input_tokens": 5347,
+            "output_tokens": 52
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 2719,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.9,
+          "ttft_s": 1.93,
+          "usage": {
+            "input_tokens": 7249,
+            "output_tokens": 381
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4607,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_recall_liked",
+      "run": 5,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 13.2,
+          "ttft_s": 12.62,
+          "usage": {
+            "input_tokens": 5347,
+            "output_tokens": 52
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 2719,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": false,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [
+            "4.08 stated about Minority Report (2002) (the tools reported it for Trainspotting (1996))",
+            "4.24 stated about Pulp Fiction (1994) (the tools reported it for The Usual Suspects (1995))",
+            "4.28 stated about Frequency (2000) (the tools reported it for The Usual Suspects (1995))",
+            "3.85 stated about Pulp Fiction (1994) (the tools reported it for Trainspotting (1996))"
+          ],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 8.2,
+          "ttft_s": 1.97,
+          "usage": {
+            "input_tokens": 12358,
+            "output_tokens": 765
+          },
+          "guardrail_revised": true,
+          "context_messages": 6,
+          "max_call_input_tokens": 5109,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

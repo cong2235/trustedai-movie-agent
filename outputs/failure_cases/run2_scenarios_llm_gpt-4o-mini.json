@@ -1,0 +1,610 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "n_scenarios": 12,
+    "n_turns": 16,
+    "tool_recall": 1.0,
+    "turns_with_constraint_violation": 0,
+    "hallucinated_titles": 0,
+    "tool_errors": 1,
+    "ungrounded_titles": 0,
+    "decimal_claims": 65,
+    "ungrounded_numbers": 2,
+    "text_checks_passed": 0.9375,
+    "judge_grounded": 5.0,
+    "judge_personalised": 4.5,
+    "judge_explains": 4.6875,
+    "judge_honest": 4.8125,
+    "judge_helpful": 4.875,
+    "median_latency_s": 6.2
+  },
+  "scenarios": [
+    {
+      "id": "u1_tonight_then_why",
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "What should I watch tonight?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Shawshank Redemption (1994)",
+            "The Godfather (1972)",
+            "The Godfather: Part II (1974)",
+            "Ferris Bueller's Day Off (1986)",
+            "Stand by Me (1986)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses the user's rating history and preferences to provide tailored recommendations, supported by specific ratings and similarities."
+          },
+          "latency_s": 23.5,
+          "usage": {
+            "input_tokens": 8866,
+            "output_tokens": 421
+          }
+        },
+        {
+          "q": "Why do you think I'd like the first one?",
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 1,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 1,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses the user's past ratings and preferences to provide a well-supported recommendation."
+          },
+          "latency_s": 8.0,
+          "usage": {
+            "input_tokens": 10632,
+            "output_tokens": 303
+          }
+        },
+        {
+          "q": "Give me three more, but nothing older than 1990.",
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 3,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Wallace & Gromit: The Wrong Trousers (1993)",
+            "Good Will Hunting (1997)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively provided three movie recommendations that are all from the 1990s, tailored to the user's preferences and backed by specific ratings and similarities to previously rated films."
+          },
+          "latency_s": 4.5,
+          "usage": {
+            "input_tokens": 13242,
+            "output_tokens": 322
+          }
+        }
+      ]
+    },
+    {
+      "id": "u1_pulp_fiction_neighbours",
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "What do people with similar taste to mine think about Pulp Fiction?",
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 4,
+          "ungrounded_numbers": [
+            "2.5"
+          ],
+          "tool_errors": [],
+          "n_mentioned": 1,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses specific data from similar users to provide a comprehensive view of opinions on *Pulp Fiction*, making it both personalized and grounded in evidence."
+          },
+          "latency_s": 4.2,
+          "usage": {
+            "input_tokens": 3890,
+            "output_tokens": 182
+          }
+        }
+      ]
+    },
+    {
+      "id": "u1_blind_spots",
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "What's my blind spot? What genres am I missing?",
+          "tools_called": [
+            "genre_blind_spots"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 8,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 4,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively identifies the user's blind spots in Drama and Romance genres with specific data and recommendations, demonstrating a thorough understanding of the user's preferences."
+          },
+          "latency_s": 7.5,
+          "usage": {
+            "input_tokens": 3869,
+            "output_tokens": 338
+          }
+        }
+      ]
+    },
+    {
+      "id": "u1_old_scifi",
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "Recommend me a great sci-fi movie made before 1970.",
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 6,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 8,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "2001: A Space Odyssey (1968)",
+            "Metropolis (1927)",
+            "Night of the Living Dead (1968)",
+            "20,000 Leagues Under the Sea (1954)",
+            "The Day the Earth Stood Still (1951)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively provided tailored recommendations based on the user's ratings and preferences, with clear explanations and strong supporting evidence from the tool outputs."
+          },
+          "latency_s": 5.6,
+          "usage": {
+            "input_tokens": 5745,
+            "output_tokens": 441
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_dark_twist",
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I want a dark psychological thriller with a twist.",
+          "tools_called": [
+            "search_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 5,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "Shutter Island (2010)",
+            "The Machinist (2004)",
+            "Gaslight (1944)",
+            "Nowhere (1997)",
+            "Near Dark (1987)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 3,
+            "explains": 4,
+            "honest": 4,
+            "helpful": 5,
+            "rationale": "The biggest weakness is the lack of personalization, as the assistant did not reference the user's specific viewing history or preferences."
+          },
+          "latency_s": 67.8,
+          "usage": {
+            "input_tokens": 4307,
+            "output_tokens": 379
+          }
+        },
+        {
+          "q": "Why would I like the top one?",
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 6,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 6,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses the user's past ratings and preferences to provide a tailored recommendation for 'Shutter Island', clearly explaining the reasoning behind the suggestion."
+          },
+          "latency_s": 6.2,
+          "usage": {
+            "input_tokens": 6438,
+            "output_tokens": 346
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_inception_neighbours",
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "What do people with similar taste to mine think of Inception?",
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 1,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 4,
+            "explains": 4,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The biggest weakness is the lack of specific user insights beyond the average ratings, which could enhance personalization."
+          },
+          "latency_s": 3.1,
+          "usage": {
+            "input_tokens": 3887,
+            "output_tokens": 143
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_toy_story_no_animation",
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I liked Toy Story but I'm tired of animated movies - what else?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 1,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 5,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Usual Suspects (1995)",
+            "Indiana Jones and the Last Crusade (1989)",
+            "The Princess Bride (1987)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 4,
+            "helpful": 5,
+            "rationale": "The biggest weakness is the assistant's failure to acknowledge that 'The Princess Bride' is an animated film, which contradicts the user's request to avoid animated movies."
+          },
+          "latency_s": 8.4,
+          "usage": {
+            "input_tokens": 9165,
+            "output_tokens": 413
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_absent_title",
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "What do similar users think of The Matrix?",
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 0,
+          "ungrounded_numbers": [],
+          "tool_errors": [
+            "similar_users_opinion"
+          ],
+          "n_mentioned": 0,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": false,
+          "judge": {
+            "grounded": 5,
+            "personalised": 1,
+            "explains": 2,
+            "honest": 4,
+            "helpful": 3,
+            "rationale": "The biggest weakness is the lack of personalization, as the assistant does not suggest any of the closest titles or engage with the user's interests."
+          },
+          "latency_s": 2.6,
+          "usage": {
+            "input_tokens": 3643,
+            "output_tokens": 70
+          }
+        }
+      ]
+    },
+    {
+      "id": "u15_ambiguous_seen",
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "Have I rated any Star Wars movies? What did I give them?",
+          "tools_called": [
+            "get_rating_history"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 0,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 3,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant accurately reflects the user's ratings and provides a clear summary of their preferences."
+          },
+          "latency_s": 2.5,
+          "usage": {
+            "input_tokens": 3604,
+            "output_tokens": 102
+          }
+        }
+      ]
+    },
+    {
+      "id": "u30_sparse_tonight",
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "What should I watch tonight?",
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 3,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 10,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "Back to the Future (1985)",
+            "Fight Club (1999)",
+            "Saving Private Ryan (1998)",
+            "The Princess Bride (1987)",
+            "Casino Royale (2006)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses the user's rating history and preferences to provide tailored recommendations, supported by specific ratings and similarities."
+          },
+          "latency_s": 8.8,
+          "usage": {
+            "input_tokens": 9042,
+            "output_tokens": 443
+          }
+        },
+        {
+          "q": "Why do you think I'd like that first one?",
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 4,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 7,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively uses the user's ratings and preferences to provide a well-supported recommendation for *Back to the Future*."
+          },
+          "latency_s": 5.6,
+          "usage": {
+            "input_tokens": 11050,
+            "output_tokens": 314
+          }
+        }
+      ]
+    },
+    {
+      "id": "u30_blind_spots",
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "What's my blind spot? What genres am I missing?",
+          "tools_called": [
+            "genre_blind_spots"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 18,
+          "ungrounded_numbers": [
+            "2.4"
+          ],
+          "tool_errors": [],
+          "n_mentioned": 11,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 4,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The biggest weakness is the slight lack of personalization, as it could have included more about the user's specific tastes or preferences beyond just the absence of ratings."
+          },
+          "latency_s": 12.6,
+          "usage": {
+            "input_tokens": 4390,
+            "output_tokens": 542
+          }
+        }
+      ]
+    },
+    {
+      "id": "u30_light_funny",
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "Something light and funny tonight, nothing violent or dark please.",
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "n_decimal_claims": 0,
+          "ungrounded_numbers": [],
+          "tool_errors": [],
+          "n_mentioned": 9,
+          "hallucinated": [],
+          "ungrounded": [],
+          "recommended": [
+            "Back to the Future (1985)",
+            "Toy Story (1995)",
+            "Aladdin (1992)",
+            "Monty Python and the Holy Grail (1975)",
+            "Groundhog Day (1993)"
+          ],
+          "constraint_violations": [],
+          "text_check_ok": true,
+          "judge": {
+            "grounded": 5,
+            "personalised": 5,
+            "explains": 5,
+            "honest": 5,
+            "helpful": 5,
+            "rationale": "The assistant effectively provided personalized recommendations based on the user's previous ratings and preferences, while clearly explaining the reasoning behind each suggestion."
+          },
+          "latency_s": 5.4,
+          "usage": {
+            "input_tokens": 5909,
+            "output_tokens": 387
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 4})</summary>
 
-`recommend_movies` (64 ms) ->
+`recommend_movies` (75 ms) ->
 ```json
 {
  "user_id": 15,
@@ -80,7 +80,15 @@
     "pure_svd": 12.1,
     "item_knn": 6.9
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "dark",
+     "tense"
+    ],
+    "twist_0_3": 2,
+    "violence_0_3": 2
+   }
   },
   {
    "movie_id": 110,
@@ -130,14 +138,7 @@
     "n_rated_4_or_higher": 19
    },
    "predicted_rating_for_you": 4.2,
-   "genre_fit": {
-    "Action": {
-     "your_avg": 3.44,
-     "n": 35
-    },
-    "Drama": {
-     "your_avg": 3.86,
-     "n
+   "gen
 ```
 </details>
 
@@ -146,18 +147,18 @@
 Here are four movie recommendations for you tonight:
 
 1. **The Silence of the Lambs (1991)**  
-   This gripping thriller has an average rating of 4.16 and is highly rated by users similar to you. You rated "The Shawshank Redemption" and "Schindler's List" both 5 stars, and many users who liked those films also enjoyed this one.
+   This gripping thriller has an average rating of 4.16 and is highly rated by users similar to you. You rated "The Shawshank Redemption" and "Schindler's List" both 5 stars, and many users who liked those movies also enjoyed this one.
 
 2. **Braveheart (1995)**  
-   With an average rating of 4.03, this epic historical drama resonates well with your taste, especially since you rated both "Forrest Gump" and "Terminator 2: Judgment Day" 5 stars. It’s a powerful story that aligns with your appreciation for inspiring narratives.
+   With an average rating of 4.03, this epic historical drama resonates with your taste, especially since you rated "Forrest Gump" and "Terminator 2: Judgment Day" both 5 stars. It's known for its emotional depth and inspiring story.
 
 3. **The Godfather: Part II (1974)**  
-   This classic crime drama boasts an average rating of 4.26. You rated the original "The Godfather" 4 stars, and many users who enjoyed it also rated this sequel highly. Its intricate plot and character development are likely to appeal to you.
+   This classic crime drama has an average rating of 4.26 and is a favorite among users with similar tastes. Your appreciation for "The Godfather" (1972) and "Star Wars: Episode V" suggests you'll likely enjoy this sequel as well.
 
 4. **The Usual Suspects (1995)**  
-   This mystery thriller has an average rating of 4.24 and features a twist ending that keeps viewers guessing. You rated "The Shawshank Redemption" and "Star Wars: Episode V - The Empire Strikes Back" 5 stars, and similar users found this film equally compelling.
+   This crime mystery thriller boasts an average rating of 4.24 and features a twist ending that many viewers find captivating. Your high ratings for "The Shawshank Redemption" and "Star Wars: Episode V" align well with the tastes of those who enjoyed this film.
 
-Enjoy your movie night! If you want more options or a specific genre, just let me know.
+Enjoy your movie night! If you want more options or a specific genre, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -165,7 +166,7 @@ Enjoy your movie night! If you want more options or a specific genre, just let m
 
 <details><summary>Tool calls: genre_blind_spots({})</summary>
 
-`genre_blind_spots` (147 ms) ->
+`genre_blind_spots` (44 ms) ->
 ```json
 {
  "user_id": 15,
@@ -265,35 +266,38 @@ Enjoy your movie night! If you want more options or a specific genre, just let m
 
 **Assistant:**
 
-You have a few genre blind spots where you're missing out compared to other users with similar tastes:
+Your current blind spots in movie genres are:
 
 1. **Romance**  
-   - Your average rating in this genre is 3.88, but you've only rated 8 films, which is below the population share of 20%. Users similar to you have a much higher interest in romance films. Some entry points that might appeal to you include:
-     - **Bottle Rocket (1996)** - Average rating of 5.0 among similar users.
-     - **Doctor Zhivago (1965)** - Also rated 5.0 by similar users.
-     - **High Fidelity (2000)** - Average rating of 5.0 among similar users.
+   - You have rated 8 romance films, which is only 9.4% of your total ratings, compared to 20% in the general population. Your average rating in this genre is 3.88, but users similar to you tend to rate it much higher.  
+   - **Entry Points:**  
+     - *Bottle Rocket (1996)* - Average rating among similar users: 5.0  
+     - *Doctor Zhivago (1965)* - Average rating among similar users: 5.0  
+     - *High Fidelity (2000)* - Average rating among similar users: 5.0  
 
 2. **War**  
-   - You have rated only 4 war films, with an impressive average of 4.38, but this is a smaller share compared to the general population. Similar users enjoy this genre more. Recommended films include:
-     - **Doctor Zhivago (1965)** - Rated 5.0 by similar users.
-     - **Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)** - Average rating of 4.86 among similar users.
-     - **Lawrence of Arabia (1962)** - Average rating of 4.61 among similar users.
+   - You've rated 4 war films, making up 4.7% of your ratings, while the population share is 6.1%. Your average rating in this genre is 4.38, which is quite high, indicating you enjoy it when you watch.  
+   - **Entry Points:**  
+     - *Doctor Zhivago (1965)* - Average rating among similar users: 5.0  
+     - *Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)* - Average rating among similar users: 4.86  
+     - *Lawrence of Arabia (1962)* - Average rating among similar users: 4.61  
 
 3. **Comedy**  
-   - You've rated 20 comedies, but your average of 3.42 is lower than the population average. Similar users have rated comedies more favorably. Some films to consider are:
-     - **Army of Darkness (1993)** - Rated 5.0 by similar users.
-     - **Bottle Rocket (1996)** - Average rating of 5.0 among similar users.
-     - **Superstar (1999)** - Rated 5.0 by similar users.
+   - You have rated 20 comedies, which is 23.5% of your ratings, but this is below the population share of 37.3%. Your average rating in this genre is 3.42, and similar users tend to rate it higher.  
+   - **Entry Points:**  
+     - *Army of Darkness (1993)* - Average rating among similar users: 5.0  
+     - *Bottle Rocket (1996)* - Average rating among similar users: 5.0  
+     - *Superstar (1999)* - Average rating among similar users: 5.0  
 
-Exploring these genres might lead you to some enjoyable films that you haven't considered before! If you'd like recommendations in any of these genres, just let me know.
+Exploring these genres could lead to some enjoyable discoveries! If you're interested in recommendations from any of these genres, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** What do people with similar taste think of Inception?
 
-<details><summary>Tool calls: similar_users_opinion({"movie": "Inception"})</summary>
+<details><summary>Tool calls: similar_users_opinion({"movie": "Inception (2010)"})</summary>
 
-`similar_users_opinion` (27 ms) ->
+`similar_users_opinion` (19 ms) ->
 ```json
 {
  "movie": "Inception (2010)",
@@ -372,26 +376,26 @@ Exploring these genres might lead you to some enjoyable films that you haven't c
 
 **Assistant:**
 
-For **Inception (2010)**, here's what users with similar tastes think:
+People with similar taste to you generally have a positive view of **Inception (2010)**. Here's a breakdown of their opinions:
 
-- The average rating among all users is **4.07**.
-- Among users similar to you, the weighted average rating is **4.36**, with a plain average of **4.35**. This indicates a strong appreciation for the film within this group.
-- Notably, **15 out of 20 similar users rated it 4 stars or higher**, showing that it is well-regarded.
+- **Overall Average Rating:** 4.07 from all users who rated it (143 ratings).
+- **Similar Users' Average Rating:** 4.36 from 20 users who share similar tastes with you. Notably, 15 out of these 20 rated it 4 stars or higher.
+- **Your Rating:** You rated it 3.5 stars.
 
-Here are a few specific ratings from users similar to you:
-- User 477 rated it **4.5** and has 44 movies in common with you.
-- User 17 also rated it **4.5**, sharing 24 movies with you.
-- User 464 gave it a perfect **5.0**, with 30 movies in common.
+Some individual ratings from users similar to you include:
+- User 477: 4.5 stars (similarity 0.52, 44 movies in common)
+- User 17: 4.5 stars (similarity 0.49, 24 movies in common)
+- User 464: 5.0 stars (similarity 0.39, 30 movies in common)
 
-Overall, it seems that people with similar tastes to yours have a very positive view of "Inception." If you're considering a rewatch or want to discuss its themes or concepts, it could be a great choice!
+It seems that most users who share your taste enjoyed "Inception" quite a bit more than you did! If you're curious about why they liked it or want to explore similar films, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** Going back to your very first list of suggestions - why would I like the second movie on it?
 
-<details><summary>Tool calls: explain_match({"movie": "Braveheart"})</summary>
+<details><summary>Tool calls: explain_match({"movie": "Braveheart (1995)"})</summary>
 
-`explain_match` (37 ms) ->
+`explain_match` (31 ms) ->
 ```json
 {
  "movie_id": 110,
@@ -465,14 +469,14 @@ Overall, it seems that people with similar tastes to yours have a very positive 
 
 You might enjoy **Braveheart (1995)** for several compelling reasons:
 
-1. **Strong Ratings from Similar Users**: It has an average rating of **4.03** overall, but users similar to you rate it even higher, with an average of **4.42**. Notably, **19 out of 20 similar users rated it 4 stars or higher**, indicating a strong appreciation for the film.
+1. **Strong Ratings from Similar Users:** It has an average rating of 4.03, and users similar to you rate it even higher at 4.42. Out of 20 similar users, 19 rated it 4 stars or higher, indicating a strong consensus of appreciation.
 
-2. **Connection to Your Favorites**: You rated both **Forrest Gump (1994)** and **Terminator 2: Judgment Day (1991)** 5 stars, and users who rated those films similarly also rated "Braveheart" highly. This suggests a shared taste in epic narratives and character-driven stories.
+2. **Connection to Your Favorites:** You rated both *Forrest Gump (1994)* and *Terminator 2: Judgment Day (1991)* 5 stars, and users who liked those films also enjoyed *Braveheart*. This suggests a thematic or emotional resonance that aligns with your taste.
 
-3. **Similar Plots You Liked**: You enjoyed **Gladiator (2000)** and **Star Wars: Episode VI - Return of the Jedi (1983)**, both of which share thematic and plot similarities with "Braveheart." This connection indicates that you might appreciate the historical and inspirational elements of "Braveheart."
+3. **Similar Plot Elements:** You also rated *Gladiator (2000)* and *Star Wars: Episode VI - Return of the Jedi (1983)* 5 stars, both of which share plot similarities with *Braveheart*. This indicates that you might appreciate the epic storytelling and historical drama it offers.
 
-4. **Genre Fit**: Your average ratings in the genres of Action (3.44), Drama (3.86), and War (4.38) suggest that you have a solid appreciation for these types of films, making "Braveheart" a fitting choice.
+4. **Genre Fit:** Your average ratings in the genres of Action (3.44), Drama (3.86), and War (4.38) suggest that you have a solid appreciation for these themes, particularly in the War genre, where you rate above average.
 
-Overall, the evidence suggests that "Braveheart" aligns well with your tastes and could resonate with you as a powerful and inspirational film.
+Overall, the combination of strong ratings from similar users, connections to your favorite films, and thematic similarities makes *Braveheart* a likely candidate for your enjoyment! If you want to explore more about it or need further recommendations, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

@@ -1,0 +1,901 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "repeat": 1,
+    "n_scenario_runs": 18,
+    "n_turns": 20,
+    "turn_pass_rate": 0.95,
+    "scenario_pass_rate": 0.944,
+    "tool_recall": 0.95,
+    "args_ok": 1.0,
+    "turns_with_constraint_violation": 0,
+    "golden_hit_rate": null,
+    "text_checks_passed": 1.0,
+    "hallucinated_titles": 0,
+    "ungrounded_titles": 0,
+    "ungrounded_numbers": 0,
+    "misattributed_numbers": 0,
+    "wrong_user_ratings": 0,
+    "decimal_claims_checked": 100,
+    "rating_claims_checked": 31,
+    "tool_errors": 2,
+    "online_guardrail_revisions": 0,
+    "per_scenario_pass": {
+      "h_u7_heist": "1/1",
+      "h_u68_romance_90s_no_comedy": "1/1",
+      "h_u212_shawshank_vs_everyone": "1/1",
+      "h_u414_harsh_genres": "1/1",
+      "h_u474_old_war": "1/1",
+      "h_u599_alien_no_horror": "1/1",
+      "h_u105_documentaries_then_why": "1/1",
+      "h_u50_titanic_ambiguous": "1/1",
+      "h_u250_avatar": "1/1",
+      "h_u88_newer_than_dataset": "1/1",
+      "h_u7_vi_light_comedy_tonight": "1/1",
+      "h_u68_vi_never_horror": "1/1",
+      "h_u212_mind_bending_not_violent": "1/1",
+      "h_u414_seen_crime": "0/1",
+      "h_u599_pulp_fiction_agree": "1/1",
+      "h_u50_80s_twist": "1/1",
+      "h_u105_feel_good_tonight": "1/1",
+      "h_u250_horror_just_once": "1/1"
+    },
+    "latency_p50_s": 4.4,
+    "latency_p95_s": 16.0,
+    "ttft_p50_s": 2.03
+  },
+  "scenarios": [
+    {
+      "id": "h_u7_heist",
+      "run": 1,
+      "user_id": 7,
+      "turns": [
+        {
+          "q": "Any good heist or con-artist movies you'd pick for me?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Mask (1994)",
+            "Die Hard 2 (1990)",
+            "Sister Act (1992)",
+            "Be Cool (2005)",
+            "Transporter 2 (2005)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.1,
+          "ttft_s": 2.42,
+          "usage": {
+            "input_tokens": 8265,
+            "output_tokens": 384
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5141,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u68_romance_90s_no_comedy",
+      "run": 1,
+      "user_id": 68,
+      "turns": [
+        {
+          "q": "I'm in the mood for something romantic but not a comedy, ideally from the 90s.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "La Femme Nikita (1990)",
+            "Persuasion (1995)",
+            "Rob Roy (1995)",
+            "Hamlet (1996)",
+            "Days of Thunder (1990)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.5,
+          "ttft_s": 2.15,
+          "usage": {
+            "input_tokens": 8225,
+            "output_tokens": 365
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5108,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u212_shawshank_vs_everyone",
+      "run": 1,
+      "user_id": 212,
+      "turns": [
+        {
+          "q": "Do people who share my taste rate The Shawshank Redemption as highly as everyone else does?",
+          "passed": true,
+          "tools_called": [
+            "get_movie_details",
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 3,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.1,
+          "ttft_s": 2.08,
+          "usage": {
+            "input_tokens": 7145,
+            "output_tokens": 168
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 4011,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u414_harsh_genres",
+      "run": 1,
+      "user_id": 414,
+      "turns": [
+        {
+          "q": "Which genres do I rate more harshly than other people do?",
+          "passed": true,
+          "tools_called": [
+            "genre_blind_spots"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 15,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.2,
+          "ttft_s": 1.92,
+          "usage": {
+            "input_tokens": 7665,
+            "output_tokens": 317
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4553,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u474_old_war",
+      "run": 1,
+      "user_id": 474,
+      "turns": [
+        {
+          "q": "Recommend a war film from before 1960 that I haven't rated.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 1,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "To Be or Not to Be (1942)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 14.4,
+          "ttft_s": 13.13,
+          "usage": {
+            "input_tokens": 6773,
+            "output_tokens": 152
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3644,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u599_alien_no_horror",
+      "run": 1,
+      "user_id": 599,
+      "turns": [
+        {
+          "q": "Something like Alien, but please no horror.",
+          "passed": true,
+          "tools_called": [
+            "get_rating_history",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 3,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "One Flew Over the Cuckoo's Nest (1975)",
+            "Metropolis (1927)",
+            "The Machinist (2004)",
+            "North by Northwest (1959)",
+            "The Sting (1973)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.3,
+          "ttft_s": 2.65,
+          "usage": {
+            "input_tokens": 8449,
+            "output_tokens": 419
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 5315,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u105_documentaries_then_why",
+      "run": 1,
+      "user_id": 105,
+      "turns": [
+        {
+          "q": "Give me three documentaries worth watching.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Crumb (1994)",
+            "Hoop Dreams (1994)",
+            "Fahrenheit 9/11 (2004)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.8,
+          "ttft_s": 1.9,
+          "usage": {
+            "input_tokens": 7258,
+            "output_tokens": 281
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 4151,
+          "memory_after": []
+        },
+        {
+          "q": "Why did you pick the first one for me?",
+          "passed": true,
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 4,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.4,
+          "ttft_s": 1.98,
+          "usage": {
+            "input_tokens": 9064,
+            "output_tokens": 171
+          },
+          "guardrail_revised": false,
+          "context_messages": 8,
+          "max_call_input_tokens": 4644,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u50_titanic_ambiguous",
+      "run": 1,
+      "user_id": 50,
+      "turns": [
+        {
+          "q": "What do users similar to me think about Titanic?",
+          "passed": true,
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 4,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.1,
+          "ttft_s": 2.07,
+          "usage": {
+            "input_tokens": 6717,
+            "output_tokens": 132
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3590,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u250_avatar",
+      "run": 1,
+      "user_id": 250,
+      "turns": [
+        {
+          "q": "Is Avatar in your database? If so, what do people like me think of it?",
+          "passed": true,
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 3,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.1,
+          "ttft_s": 1.9,
+          "usage": {
+            "input_tokens": 6706,
+            "output_tokens": 159
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3577,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u88_newer_than_dataset",
+      "run": 1,
+      "user_id": 88,
+      "turns": [
+        {
+          "q": "What do you think I'd make of Star Wars: The Force Awakens?",
+          "passed": true,
+          "tools_called": [
+            "explain_match",
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [
+            "similar_users_opinion",
+            "explain_match"
+          ],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 13.6,
+          "ttft_s": 13.22,
+          "usage": {
+            "input_tokens": 6746,
+            "output_tokens": 113
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 3627,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u7_vi_light_comedy_tonight",
+      "run": 1,
+      "user_id": 7,
+      "turns": [
+        {
+          "q": "Gợi ý cho tôi vài phim hài nhẹ nhàng để xem tối nay nhé.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Forget Paris (1995)",
+            "Wreck-It Ralph (2012)",
+            "Maid to Order (1987)",
+            "The American President (1995)",
+            "Mirror Mirror (2012)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.0,
+          "ttft_s": 1.91,
+          "usage": {
+            "input_tokens": 8226,
+            "output_tokens": 486
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5098,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u68_vi_never_horror",
+      "run": 1,
+      "user_id": 68,
+      "turns": [
+        {
+          "q": "Tôi không bao giờ muốn xem phim kinh dị, hãy nhớ điều đó nhé.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.2,
+          "ttft_s": 2.03,
+          "usage": {
+            "input_tokens": 6325,
+            "output_tokens": 57
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3210,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "Horror"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something for the weekend.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Twelve Monkeys (1995)",
+            "Star Trek: First Contact (1996)",
+            "Unforgiven (1992)",
+            "The Rock (1996)",
+            "Equilibrium (2002)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.2,
+          "ttft_s": 1.87,
+          "usage": {
+            "input_tokens": 8244,
+            "output_tokens": 357
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5121,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "Horror"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "h_u212_mind_bending_not_violent",
+      "run": 1,
+      "user_id": 212,
+      "turns": [
+        {
+          "q": "I'd like a mind-bending sci-fi film that isn't too violent.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 9,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Eternal Sunshine of the Spotless Mind (2004)",
+            "Back to the Future (1985)",
+            "Donnie Darko (2001)",
+            "Twelve Monkeys (1995)",
+            "District 9 (2009)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.3,
+          "ttft_s": 1.89,
+          "usage": {
+            "input_tokens": 8317,
+            "output_tokens": 371
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5188,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u414_seen_crime",
+      "run": 1,
+      "user_id": 414,
+      "turns": [
+        {
+          "q": "I've already watched Heat and Casino, so don't suggest them again. What crime movies would you pick?",
+          "passed": false,
+          "tools_called": [
+            "get_rating_history",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": false,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Psycho (1960)",
+            "Key Largo (1948)",
+            "Blood Simple (1984)",
+            "Hamlet (1996)",
+            "Touch of Evil (1958)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.1,
+          "ttft_s": 2.53,
+          "usage": {
+            "input_tokens": 8473,
+            "output_tokens": 414
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 5354,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u599_pulp_fiction_agree",
+      "run": 1,
+      "user_id": 599,
+      "turns": [
+        {
+          "q": "How did I rate Pulp Fiction, and would people with similar taste agree with me?",
+          "passed": true,
+          "tools_called": [
+            "get_rating_history",
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 1,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.8,
+          "ttft_s": 1.87,
+          "usage": {
+            "input_tokens": 6848,
+            "output_tokens": 140
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 3705,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u50_80s_twist",
+      "run": 1,
+      "user_id": 50,
+      "turns": [
+        {
+          "q": "Suggest a movie from the 1980s with a twist ending.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Videodrome (1983)",
+            "Dangerous Liaisons (1988)",
+            "Meet the Feebles (1989)",
+            "Dead Ringers (1988)",
+            "Day of the Dead (1985)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.4,
+          "ttft_s": 1.86,
+          "usage": {
+            "input_tokens": 8286,
+            "output_tokens": 406
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5155,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u105_feel_good_tonight",
+      "run": 1,
+      "user_id": 105,
+      "turns": [
+        {
+          "q": "Not in the mood for anything sad tonight - a feel-good movie, please.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 10,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Back to the Future (1985)",
+            "Easy A (2010)",
+            "Toy Story (1995)",
+            "Grown Ups (2010)",
+            "Flipped (2010)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 16.0,
+          "ttft_s": 13.04,
+          "usage": {
+            "input_tokens": 8215,
+            "output_tokens": 415
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5099,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "h_u250_horror_just_once",
+      "run": 1,
+      "user_id": 250,
+      "turns": [
+        {
+          "q": "Just this once I'd like a horror movie. What would suit me?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 11,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Aliens (1986)",
+            "Psycho (1960)",
+            "Shaun of the Dead (2004)",
+            "Gremlins (1984)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.8,
+          "ttft_s": 1.86,
+          "usage": {
+            "input_tokens": 8312,
+            "output_tokens": 387
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5187,
+          "memory_after": []
+        }
+      ]
+    }
+  ]
+}

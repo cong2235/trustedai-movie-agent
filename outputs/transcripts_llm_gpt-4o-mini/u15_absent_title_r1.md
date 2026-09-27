@@ -2,7 +2,7 @@
 
 **User:** What do similar users think of The Matrix?
 
-<details><summary>Tool calls: similar_users_opinion({"movie": "The Matrix", "k": 5})</summary>
+<details><summary>Tool calls: similar_users_opinion({"movie": "The Matrix"})</summary>
 
 `similar_users_opinion` (17 ms) ->
 ```json
@@ -41,6 +41,6 @@
 
 **Assistant:**
 
-It seems that "The Matrix" is not present in the dataset, so I can't provide insights on what similar users think about it. If you have another movie in mind or would like to explore something else, please let me know!
+It seems that "The Matrix" is not present in the dataset, so I can't provide insights on what similar users think about it. If you have another movie in mind or would like to explore something else, let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 1, 'explains': 2, 'honest': 5, 'helpful': 3, 'rationale': "The biggest weakness is the lack of personalization, as the assistant does not suggest any of the closest titles or engage with the user's interests."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 1, 'personalised': 1, 'explains': 2, 'honest': 4, 'helpful': 2, 'rationale': "The biggest weakness is that the assistant fails to provide any relevant information about similar titles or suggest alternatives, despite acknowledging the absence of 'The Matrix' in the dataset."}

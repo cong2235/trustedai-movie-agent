@@ -2,17 +2,17 @@
 
 **User:** I want a dark psychological thriller with a twist.
 
-<details><summary>Tool calls: search_movies({"query": "dark psychological thriller with a twist", "n": 5})</summary>
+<details><summary>Tool calls: search_movies({"query": "dark psychological thriller with a twist", "moods": ["dark", "mind-bending"], "twist_ending": true})</summary>
 
-`search_movies` (14763 ms) ->
+`search_movies` (3009 ms) ->
 ```json
 {
  "query": "dark psychological thriller with a twist",
  "personalized_for_user": 15,
  "excluded_movies_you_rated": true,
  "reranker": {
-  "kind": "llm-cache",
-  "ms": 1,
+  "kind": "llm",
+  "ms": 2018,
   "pool": 30
  },
  "results": [
@@ -37,6 +37,14 @@
    "query_match_z": 4.49,
    "rerank_fit_0_10": 10.0,
    "matching_plot_excerpt": "In 1954, two U.S. Marshals, Edward \"Teddy\" Daniels and his new partner, Chuck Aule, travel to the Ashecliffe Hospital for the criminally insane on Shutter Island located in Boston Harbor, as part of an investigation on the disappearance of patient Rachel Solando, incarcerated for drowning her three children. Shortly after arrival, a storm prevents ...",
+   "attributes": {
+    "moods": [
+     "dark",
+     "tense"
+    ],
+    "twist_0_3": 3,
+    "violence_0_3": 2
+   },
    "for_you": {
     "because_you_rated": [
      {
@@ -60,42 +68,37 @@
    }
   },
   {
-   "movie_id": 1625,
-   "title": "The Game (1997)",
+   "movie_id": 4848,
+   "title": "Mulholland Drive (2001)",
    "genres": [
+    "Crime",
     "Drama",
+    "Film-Noir",
     "Mystery",
     "Thriller"
    ],
-   "n_ratings": 77,
-   "avg_rating": 3.7,
-   "tags": [
-    "mystery",
-    "twist ending",
-    "mindfuck",
-    "plot twist",
-    "psychological",
-    "suspense"
-   ],
-   "query_match_z": 2.95,
-   "rerank_fit_0_10": 10.0,
-   "matching_plot_excerpt": "Nicholas Van Orton is a successful and extremely wealthy investment banker, but his success has come at the cost of his personal life. He is estranged from both his ex-wife and his only brother. He remains haunted from having seen his father commit suicide on the latter's 48th birthday. On his own 48th birthday, Conrad , Nicholas' rebellious ...",
+   "n_ratings": 51,
+   "avg_rating": 3.84,
+   "query_match_z": 2.39,
+   "rerank_fit_0_10": 9.0,
+   "matching_plot_excerpt": "The story may not be linear and exhibits several instances of temporal disruption. A dark-haired woman escapes her own murder, surviving a car accident on Mulholland Drive. Injured and in shock, she descends into Los Angeles and sneaks into an apartment which an older, red-headed woman has just vacated. An aspiring actress named Betty Elms arrives ...",
+   "attributes": {
+    "moods": [
+     "dark",
+     "mind-bending"
+    ],
+    "twist_0_3": 3,
+    "violence_0_3": 2
+   },
    "for_you": {
     "because_you_rated": [
      {
-      "title": "Lethal Weapon 2 (1989)",
-      "your_rating": 5.0,
-      "co_rating_similarity": 0.13
+      "title": "Requiem for a Dream (2000)",
+      "your_rating": 4.0,
+      "co_rating_similarity": 0.21
      },
      {
-      "title": "Aliens (1986)",
-      "your_rating": 5.0,
-      "co_rating_similarity": 0.08
-     }
-    ],
-    "similar_users_who_rated_it": {
-     "n": 20,
-     "avg_ratin
+      "title":
 ```
 </details>
 
@@ -103,30 +106,25 @@
 
 Here are some dark psychological thrillers with twists that you might enjoy:
 
-1. **Shutter Island (2010)**  
-   This film features U.S. Marshals investigating a disappearance at a mental institution, leading to a gripping plot filled with twists. You rated "Alien (1979)" and "Terminator 2: Judgment Day (1991)" highly, and similar users also enjoyed this film, giving it an average rating of 4.08.
+1. **Shutter Island (2010)** - This film follows two U.S. Marshals investigating a disappearance at a mental institution. It features a strong plot twist and has an average rating of 4.02, with many similar users rating it highly. You rated "Alien" and "Terminator 2" 5 stars, and users who liked those also enjoyed this film.
 
-2. **The Game (1997)**  
-   A wealthy banker finds himself caught in a mysterious game that blurs the lines between reality and illusion. Given your high ratings for "Lethal Weapon 2 (1989)" and "Aliens (1986)," this film's suspenseful nature aligns well with your taste.
+2. **Mulholland Drive (2001)** - A complex narrative involving a dark-haired woman who escapes her own murder and an aspiring actress. This film has a mind-bending quality and a twist ending, with an average rating of 3.84. Your ratings for "Requiem for a Dream" and "American History X" align with those who appreciated this film.
 
-3. **The Usual Suspects (1995)**  
-   This classic thriller involves a heist and a complex narrative that keeps you guessing until the end. Your top-rated films like "The Shawshank Redemption (1994)" suggest you appreciate intricate storytelling, and this film has a strong average rating of 4.38 among similar users.
+3. **The Usual Suspects (1995)** - A classic thriller with a notorious twist ending, it has an average rating of 4.24. You rated "The Shawshank Redemption" and "Star Wars: Episode V" 5 stars, and many users who liked those films also enjoyed this one.
 
-4. **Nowhere (1997)**  
-   While it has a lower rating and is a bit more obscure, it features a bizarre and dark narrative that could appeal to your interest in psychological twists. However, it has only a few ratings, so the evidence is moderate.
+4. **The Machinist (2004)** - This film features a deeply psychological narrative about a man suffering from insomnia and paranoia. It has an average rating of 3.99 and is known for its powerful ending. Your high ratings for "Alien" and "Star Wars: Episode V" suggest you might appreciate this film as well.
 
-5. **Murder by Death (1976)**  
-   This film combines comedy with mystery and features a unique twist on the classic detective genre. Although it has a lower average rating, it might still intrigue you with its clever plot.
+5. **Dark City (1998)** - A sci-fi thriller about a man suffering from amnesia who discovers a dark conspiracy. It has an average rating of 3.82 and includes elements of mystery and tension, appealing to your taste based on your ratings of "Gattaca" and "Star Wars: Episode V".
 
-Let me know if you'd like more options or details on any of these films!
+These films should provide the dark, twisty experience you're looking for! Let me know if you need more information on any of them.
 
-> PASS · tools_ok=True · golden=True · text_ok=True · issues=none · judge={'grounded': 4, 'personalised': 4, 'explains': 4, 'honest': 3, 'helpful': 5, 'rationale': "The biggest weakness is the assistant's lack of acknowledgment regarding the lower ratings and limited evidence for 'Nowhere' and 'Murder by Death', which could mislead the user about their quality."}
+> PASS · tools_ok=True · golden=True · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 4, 'helpful': 5, 'rationale': "The biggest weakness is the lack of acknowledgment regarding the uncertainty of the user's taste in relation to the recommended films, as the assistant could have mentioned that while these films are likely to appeal based on past ratings, individual preferences may vary."}
 
 **User:** Why would I like the top one?
 
 <details><summary>Tool calls: explain_match({"movie": "Shutter Island (2010)"})</summary>
 
-`explain_match` (30 ms) ->
+`explain_match` (28 ms) ->
 ```json
 {
  "movie_id": 74458,
@@ -198,16 +196,14 @@ Let me know if you'd like more options or details on any of these films!
 
 **Assistant:**
 
-You would likely enjoy **Shutter Island (2010)** for several reasons:
+You might enjoy **Shutter Island (2010)** for several reasons:
 
-- **High Ratings for Similar Movies**: You rated "Alien (1979)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and people who rated those films similarly also rated "Shutter Island" highly, with an average rating of 4.02 among all users.
+- **Similar Ratings**: You rated "Alien" and "Terminator 2: Judgment Day" both 5 stars, and users who liked those films also rated "Shutter Island" highly, with an average of 4.02. This suggests a shared taste in thrilling narratives.
 
-- **Plot Similarity**: You liked "Minority Report (2002)" (rated 4 stars) and "Limitless (2011)" (rated 5 stars), both of which share thematic elements with "Shutter Island." This suggests that you appreciate complex narratives that involve psychological twists and moral dilemmas.
+- **Plot Similarity**: You also liked "Minority Report" (4 stars) and "Limitless" (5 stars), both of which share thematic elements with "Shutter Island." This indicates that you appreciate complex, psychological plots that involve twists and intense character development.
 
-- **Genre Fit**: You have a solid average rating in the Drama genre (3.86) and a decent interest in Mystery (3.25) and Thriller (3.43), indicating that the film's blend of these genres aligns well with your tastes.
+- **Strong Evidence**: The film has a strong evidence strength, meaning that many similar users rated it well, with 15 out of 20 giving it 4 stars or higher. This suggests that it resonates well with viewers who have similar tastes to yours.
 
-- **Strong Evidence**: The evidence supporting your potential enjoyment of this film is strong, given the overlap in ratings and the positive reception from users with similar tastes, where 15 out of 20 similar users rated it 4 stars or higher.
+Overall, the combination of your previous ratings and the film's psychological depth and twist ending aligns well with your preferences.
 
-Overall, "Shutter Island" combines psychological depth, a gripping plot, and strong performances, making it a compelling choice for you.
-
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide a tailored recommendation for 'Shutter Island,' clearly explaining the reasons for the suggestion."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's previous ratings and preferences to provide a tailored recommendation for 'Shutter Island,' clearly explaining the reasoning behind the suggestion."}

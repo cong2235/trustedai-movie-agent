@@ -47,8 +47,8 @@ PASS lt_seen_but_discussable_r3 ['ok', 'ok']
   "ungrounded_numbers": 0,
   "misattributed_numbers": 0,
   "wrong_user_ratings": 0,
-  "decimal_claims_checked": 381,
-  "rating_claims_checked": 201,
+  "decimal_claims_checked": 407,
+  "rating_claims_checked": 184,
   "tool_errors": 3,
   "online_guardrail_revisions": 0,
   "per_scenario_pass": {
@@ -63,7 +63,7 @@ PASS lt_seen_but_discussable_r3 ['ok', 'ok']
     "lt_ambiguous_seen": "3/3",
     "lt_seen_but_discussable": "3/3"
   },
-  "latency_p50_s": 4.7,
-  "latency_p95_s": 22.8,
-  "ttft_p50_s": 2.1
+  "latency_p50_s": 4.3,
+  "latency_p95_s": 15.7,
+  "ttft_p50_s": 1.9
 }

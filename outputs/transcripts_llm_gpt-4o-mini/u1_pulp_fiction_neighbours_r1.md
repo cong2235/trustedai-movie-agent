@@ -2,9 +2,9 @@
 
 **User:** What do people with similar taste to mine think about Pulp Fiction?
 
-<details><summary>Tool calls: similar_users_opinion({"movie": "Pulp Fiction (1994)"})</summary>
+<details><summary>Tool calls: similar_users_opinion({"movie": "Pulp Fiction", "k": 5})</summary>
 
-`similar_users_opinion` (21 ms) ->
+`similar_users_opinion` (34 ms) ->
 ```json
 {
  "movie": "Pulp Fiction (1994)",
@@ -15,13 +15,13 @@
   "avg_rating": 4.2
  },
  "similar_users": {
-  "n": 20,
-  "weighted_avg_rating": 3.89,
-  "plain_avg_rating": 3.88,
-  "n_rated_4_or_higher": 13,
-  "n_rated_2_5_or_lower": 2,
+  "n": 10,
+  "weighted_avg_rating": 4.11,
+  "plain_avg_rating": 4.1,
+  "n_rated_4_or_higher": 7,
+  "n_rated_2_5_or_lower": 0,
   "similarity_range": [
-   0.31,
+   0.34,
    0.38
   ],
   "individual": [
@@ -83,14 +83,13 @@
 
 **Assistant:**
 
-People with similar taste to yours generally have a mixed opinion about *Pulp Fiction (1994)*. The average rating among them is 3.89, which is slightly lower than the overall average of 4.2 from all users. 
+People with similar taste to yours generally have a favorable opinion of *Pulp Fiction (1994)*. Here's a summary of their ratings:
 
-Here's a breakdown of their ratings:
-- 13 out of 20 similar users rated it 4 stars or higher.
-- Only 2 rated it 2.5 stars or lower.
+- The average rating among similar users is **4.11**, with **7 out of 10** rating it **4 or higher**.
+- The overall average rating for the movie is **4.2** from all users.
 
-Your own rating for *Pulp Fiction* is 3 stars, which aligns with some of the similar users who rated it around the same mark. For instance, one user rated it 3.0, while others rated it higher, such as 4.5 and even 5.0.
+You rated it **3.0**, which is below the average of your similar users. This suggests that while you found it less appealing, many others who share your taste enjoyed it quite a bit. 
 
-Overall, while many similar users appreciate the film, your rating suggests a more moderate view compared to the general consensus.
+If you're curious about why it might resonate with others, let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 5, 'helpful': 5, 'rationale': "The biggest weakness is that while the assistant provides a good overview of similar users' opinions, it could have included more specific examples of individual ratings to enhance personalization."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 5, 'helpful': 5, 'rationale': "The biggest weakness is that while the assistant provides a good summary of similar users' opinions, it could have included more specific examples of those users' ratings to enhance personalization."}

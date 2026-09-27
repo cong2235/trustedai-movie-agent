@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: genre_blind_spots({})</summary>
 
-`genre_blind_spots` (103 ms) ->
+`genre_blind_spots` (89 ms) ->
 ```json
 {
  "user_id": 30,
@@ -22,18 +22,24 @@
    "entry_points_liked_by_similar_users": [
     {
      "title": "Unforgiven (1992)",
-     "similar_users_avg": 4.75,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 4.75,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 4.11,
+     "n_ratings_all_users": 45
     },
     {
      "title": "3:10 to Yuma (2007)",
-     "similar_users_avg": 4.4,
-     "n_similar_users": 5
+     "avg_among_your_similar_users": 4.4,
+     "n_similar_users_who_rated_it": 5,
+     "avg_rating_all_users": 4.06,
+     "n_ratings_all_users": 25
     },
     {
      "title": "Tombstone (1993)",
-     "similar_users_avg": 4.25,
-     "n_similar_users": 4
+     "avg_among_your_similar_users": 4.25,
+     "n_similar_users_who_rated_it": 4,
+     "avg_rating_all_users": 3.82,
+     "n_ratings_all_users": 65
     }
    ]
   },
@@ -49,18 +55,24 @@
    "entry_points_liked_by_similar_users": [
     {
      "title": "Across the Universe (2007)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 4.05,
+     "n_ratings_all_users": 11
     },
     {
      "title": "Bedknobs and Broomsticks (1971)",
-     "similar_users_avg": 4.67,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 4.67,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 3.48,
+     "n_ratings_all_users": 24
     },
     {
      "title": "Tangled (2010)",
-     "similar_users_avg": 4.38,
-     "n_similar_users": 4
+     "avg_among_your_similar_users": 4.38,
+     "n_similar_users_who_rated_it": 4,
+     "avg_rating_all_users": 3.92,
+     "n_ratings_all_users": 24
     }
    ]
   },
@@ -76,50 +88,20 @@
    "entry_points_liked_by_similar_users": [
     {
      "title": "Across the Universe (2007)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 4.05,
+     "n_ratings_all_users": 11
     },
     {
      "title": "Army of Darkness (1993)",
-     "similar_users_avg": 4.67,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 4.67,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 4.04,
+     "n_ratings_all_users": 51
     },
     {
-     "title": "Brazil (1985)",
-     "similar_users_avg": 4.5,
-     "n_similar_users": 2
-    }
-   ]
-  },
-  {
-   "genre": "Romance",
-   "your_n_rated": 0,
-   "your_share": 0.0,
-   "population_share": 0.2,
-   "exposure_lift": 0.0,
-   "your_avg_in_genre": null,
-   "similar_users_relative_liking": -0.02,
-   "score": 0.481,
-   "entry_points_liked_by_similar_users": [
-    {
-     "title": "Across the Universe (2007)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
-    },
-    {
-     "title": "Eternal Sunshine of the Spotless Mind (2004)",
-     "similar_users_avg": 4.44,
-     "n_similar_users": 8
-    },
-    {
-     "title": "Casablanca (1942)",
-     "similar_users_avg": 4.42,
-     "n_similar_users": 6
-    }
-   ]
-  },
-  {
-   "genre": "Dram
+     "title": "Braz
 ```
 </details>
 
@@ -127,16 +109,16 @@
 
 Your main blind spots in movie genres are:
 
-1. **Western**: You haven't rated any Western films, while they make up about 2.4% of the population's ratings. Similar users who enjoy this genre have rated films like *Unforgiven (1992)* (4.75★ average) and *3:10 to Yuma (2007)* (4.4★ average).
+1. **Western**: You haven't rated any Westerns, while they make up about 2.4% of the population's ratings. Similar users have rated Westerns positively, with "Unforgiven (1992)" averaging 4.75 among them.
 
-2. **Musical**: This genre accounts for about 4.3% of the population's ratings, and you have no ratings here. Similar users liked *Across the Universe (2007)* (5.0★ average) and *Bedknobs and Broomsticks (1971)* (4.67★ average).
+2. **Musical**: This genre also has no ratings from you, despite being 4.3% of the population's ratings. Similar users enjoyed "Across the Universe (2007)" with an average of 5.0.
 
-3. **Fantasy**: Similar to musicals, you haven't rated any fantasy films, which represent about 10.8% of the population's ratings. Films like *Across the Universe (2007)* (5.0★ average) and *Army of Darkness (1993)* (4.67★ average) are popular among similar users.
+3. **Fantasy**: You haven't rated any Fantasy films, which comprise 10.8% of the population's ratings. "Across the Universe (2007)" is again a popular choice among similar users, averaging 5.0.
 
-4. **Romance**: You also haven't rated any romance films, despite them being 20% of the population's ratings. Similar users enjoyed *Eternal Sunshine of the Spotless Mind (2004)* (4.44★ average) and *Casablanca (1942)* (4.42★ average).
+4. **Romance**: This genre is rated by 20% of the population, but you haven't rated any. "Eternal Sunshine of the Spotless Mind (2004)" is well-liked by similar users, averaging 4.44.
 
-5. **Drama**: While you have rated a few dramas, your engagement is lower compared to the general population. You rated them highly (5.0★ average), but similar users have rated films like *Platoon (1986)* (4.75★ average) as well.
+5. **Drama**: You have rated some Drama films, but your share is lower than the population's. You rated it 5.0 on average, while similar users also enjoy it.
 
-Exploring these genres could lead you to discover some great films that align with your tastes! Would you like recommendations from any of these genres?
+Exploring these genres could lead you to some new favorites! Would you like recommendations from any of these genres?
 
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': "The biggest weakness is in the personalised aspect, as while the assistant identifies blind spots, it could have better tailored the recommendations based on the user's specific tastes or previously rated films."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': "The biggest weakness is in the personalised aspect, as while the assistant identifies blind spots, it could have better tailored the recommendations based on the user's specific tastes or previously rated films."}

@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 5, "exclude_genres": ["Comedy"]}), get_rating_history({"sort": "rating_desc", "limit": 5})</summary>
 
-`recommend_movies` (173 ms) ->
+`recommend_movies` (100 ms) ->
 ```json
 {
  "user_id": 1,
@@ -76,7 +76,15 @@
     "item_knn": 6.7,
     "pure_svd": 6.1
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "emotional",
+     "inspiring"
+    ],
+    "twist_0_3": 2,
+    "violence_0_3": 1
+   }
   },
   {
    "movie_id": 858,
@@ -132,16 +140,9 @@
    },
    "signal_breakdown_z": {
     "item_knn": 8.4,
-    "user_knn": 7.6,
-    "pure_svd": 4.3
-   },
-   "evidence_strength": "strong"
-  },
-  {
-   "movie_id": 589,
-   "title": "Terminato
+    "us
 ```
-`get_rating_history` (15 ms) ->
+`get_rating_history` (11 ms) ->
 ```json
 {
  "user_id": 1,
@@ -201,22 +202,17 @@
 
 Here are some great movie recommendations for tonight, avoiding comedies:
 
-1. **The Shawshank Redemption (1994)**  
-   This classic drama has an average rating of 4.43 and is highly rated by users similar to you, averaging 4.5 stars. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and this film shares similar themes of hope and resilience.
+1. **The Shawshank Redemption (1994)** - This film has a strong emotional and inspiring vibe, and you rated "The Usual Suspects" and "Schindler's List" both 5 stars, which are similar in theme. It has an average rating of 4.43 from a large audience, and similar users rated it 4.5 on average.
 
-2. **The Godfather (1972)**  
-   Another iconic film, it holds an average rating of 4.29. You rated "Goodfellas" 5 stars, which has a strong plot similarity to "The Godfather," making it a perfect match for your taste.
+2. **The Godfather (1972)** - A classic crime drama that you might enjoy, especially since you rated "Goodfellas" 5 stars. It has a dark and emotional tone, and similar users have rated it 4.6 on average.
 
-3. **Terminator 2: Judgment Day (1991)**  
-   This action-packed sci-fi film has an average rating of 3.97. You rated the original "Terminator" 5 stars, and this sequel is likely to resonate with you, given your high rating for action films.
+3. **Terminator 2: Judgment Day (1991)** - This action-packed sci-fi film has a tense atmosphere, and you rated the original "Terminator" 5 stars. It has a solid average rating of 3.97, and similar users rated it 3.95.
 
-4. **The Godfather: Part II (1974)**  
-   With an average rating of 4.26, this sequel is often regarded as one of the best films ever made. It shares strong plot similarities with "Goodfellas," which you rated 5 stars.
+4. **The Godfather: Part II (1974)** - Another masterpiece in the crime genre, you rated "Goodfellas" highly, which shares similar themes. It has an average rating of 4.26, and similar users rated it 4.58.
 
-5. **Blade Runner (1982)**  
-   This sci-fi thriller has an average rating of 4.1. You rated "The Terminator" highly, and "Blade Runner" offers a thought-provoking narrative that aligns well with your preferences.
+5. **Blade Runner (1982)** - This atmospheric sci-fi thriller has a thought-provoking plot, and you rated "The Terminator" 5 stars. It has an average rating of 4.1, with similar users averaging 4.22.
 
-These films should provide a captivating viewing experience tonight! If you have a specific genre or mood in mind, let me know!
+These films should provide a great viewing experience without any comedy! Enjoy your night!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -225,9 +221,9 @@ These films should provide a captivating viewing experience tonight! If you have
 
 **User:** What should I watch tonight?
 
-<details><summary>Tool calls: recommend_movies({"n": 5}), genre_blind_spots({})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (90 ms) ->
+`recommend_movies` (86 ms) ->
 ```json
 {
  "user_id": 1,
@@ -296,7 +292,15 @@ These films should provide a captivating viewing experience tonight! If you have
     "item_knn": 6.7,
     "pure_svd": 6.1
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "emotional",
+     "inspiring"
+    ],
+    "twist_0_3": 2,
+    "violence_0_3": 1
+   }
   },
   {
    "movie_id": 858,
@@ -355,112 +359,28 @@ These films should provide a captivating viewing experience tonight! If you have
     "user_knn": 7.6,
     "pure_svd": 4.3
    },
-   "evidence_strength": "strong"
-  },
-  {
-   "movie_id": 589,
-   "title": "Terminator 2: Judgment Day (1991)",
-   "genres":
-```
-`genre_blind_spots` (124 ms) ->
-```json
-{
- "user_id": 1,
- "n_similar_users_used": 30,
- "blind_spots": [
-  {
-   "genre": "Drama",
-   "your_n_rated": 54,
-   "your_share": 0.284,
-   "population_share": 0.431,
-   "exposure_lift": 0.66,
-   "your_avg_in_genre": 4.52,
-   "similar_users_relative_liking": 0.15,
-   "score": 0.222,
-   "entry_points_liked_by_similar_users": [
-    {
-     "title": "It's a Wonderful Life (1946)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 3,
-     "avg_rating_all_users": 4.03,
-     "n_ratings_all_users": 58
-    },
-    {
-     "title": "Rosencrantz and Guildenstern Are Dead (1990)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 3,
-     "avg_rating_all_users": 3.97,
-     "n_ratings_all_users": 16
-    },
-    {
-     "title": "Broadcast News (1987)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 3,
-     "avg_rating_all_users": 3.43,
-     "n_ratings_all_users": 28
-    }
-   ]
-  },
-  {
-   "genre": "Romance",
-   "your_n_rated": 24,
-   "your_share": 0.126,
-   "population_share": 0.2,
-   "exposure_lift": 0.63,
-   "your_avg_in_genre": 4.33,
-   "similar_users_relative_liking": -0.0,
-   "score": 0.184,
-   "entry_points_liked_by_similar_users": [
-    {
-     "title": "It's a Wonderful Life (1946)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 3,
-     "avg_rating_all_users": 4.03,
-     "n_ratings_all_users": 58
-    },
-    {
-     "title": "Broadcast News (1987)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 3,
-     "avg_rating_all_users": 3.43,
-     "n_ratings_all_users": 28
-    },
-    {
-     "title": "Tangled (2010)",
-     "avg_among_your_similar_users": 5.0,
-     "n_similar_users_who_rated_it": 2,
-     "avg_rating_all_users": 3.92,
-     "n_ratings_all_users": 24
-    }
-   ]
-  }
- ],
- "method": "genres where your share of ratings is <80% of the population's, ranked by exposure gap x how much your most similar users like the genre relative to their own average"
-}
 ```
 </details>
 
 **Assistant:**
 
-Here are some great movie recommendations for you tonight:
+Here are some great movie recommendations for tonight:
 
 1. **The Shawshank Redemption (1994)**  
-   This film has an average rating of 4.43 and is highly rated by users similar to you, averaging 4.5 stars. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many who liked those films also enjoyed this one.
+   This film has an average rating of 4.43 and is highly rated by users similar to you. You rated "The Usual Suspects" (1995) and "Schindler's List" (1993) both 5 stars, and many who liked those films also loved this one. It features emotional and inspiring themes, which align with your taste.
 
 2. **The Godfather (1972)**  
-   Another classic with an average rating of 4.29. You rated "Goodfellas" 5 stars, and this film shares a similar plot. Users like you rate it highly, with 19 out of 20 giving it 4 stars or more.
+   With an average rating of 4.29, this classic is another favorite among users with similar tastes. You rated "Goodfellas" (1990) 5 stars, and this film shares a similar plot style. It's dark and emotional, fitting well with your preferences.
 
 3. **Terminator 2: Judgment Day (1991)**  
-   This action-packed sequel has an average rating of 3.97. You rated the original "The Terminator" 5 stars, and it has a strong plot similarity to that film. It's well-liked by users similar to you.
+   This action-packed film has an average rating of 3.97. You rated the original "The Terminator" (1984) 5 stars, and this sequel is highly regarded by users who enjoy action and sci-fi. It’s tense and has a good mix of excitement.
 
 4. **The Godfather: Part II (1974)**  
-   With an average rating of 4.26, this sequel is also highly rated by users similar to you. You rated "Goodfellas" 5 stars, and it shares a similar plot, making it a likely favorite for you.
+   Another entry in the Godfather series, this film has an average rating of 4.26. It’s well-loved by users similar to you, and you rated "Goodfellas" (1990) highly as well. It features dark and emotional themes, making it a great fit.
 
 5. **Ferris Bueller's Day Off (1986)**  
-   This comedy has an average rating of 3.84. You rated "The Princess Bride" and "Back to the Future" both 5 stars, and this film has a similar vibe that you might enjoy.
+   This comedy has an average rating of 3.84 and is a light-hearted choice for a fun evening. You rated "The Princess Bride" (1987) 5 stars, and this film shares a similar vibe. It's funny and perfect for a relaxed night.
 
-Additionally, you might want to explore more **Drama** films, as you have rated them highly but haven't watched as many compared to the average user. Some entry points liked by users similar to you include **It's a Wonderful Life (1946)** and **Broadcast News (1987)**.
-
-Let me know if you want more options or specific genres!
+Let me know if you want more options or details about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

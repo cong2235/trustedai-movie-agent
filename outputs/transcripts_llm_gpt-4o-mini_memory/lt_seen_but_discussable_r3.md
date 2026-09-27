@@ -2,9 +2,9 @@
 
 **User:** I've already seen Forrest Gump.
 
-<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump"})</summary>
+<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"})</summary>
 
-`remember` (18 ms) ->
+`remember` (17 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-Got it! I've noted that you've seen *Forrest Gump (1994)*, and it will be excluded from future recommendations. If you're looking for something else to watch, just let me know!
+I've noted that you've seen *Forrest Gump (1994)*, and it will be excluded from future recommendations. How can I assist you today?
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none
 
@@ -30,7 +30,7 @@ Got it! I've noted that you've seen *Forrest Gump (1994)*, and it will be exclud
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Forrest Gump (1994)"})</summary>
 
-`similar_users_opinion` (22 ms) ->
+`similar_users_opinion` (23 ms) ->
 ```json
 {
  "movie": "Forrest Gump (1994)",
@@ -109,8 +109,8 @@ Got it! I've noted that you've seen *Forrest Gump (1994)*, and it will be exclud
 
 **Assistant:**
 
-Users with similar taste to you generally have a positive view of *Forrest Gump (1994)*. The average rating among these users is 4.15, with 15 out of 20 similar users rating it 4 stars or higher. 
+Users with similar taste to you rate *Forrest Gump (1994)* quite positively, with an average rating of 4.16 from 329 users. Among the 20 most similar users, the weighted average is 4.15, and notably, 15 of them rated it 4 stars or higher, showing strong appreciation for the film.
 
-Notably, one user rated it 5 stars, while others rated it 4 stars, indicating a strong appreciation for the film. Your predicted rating for *Forrest Gump* is 4.6, suggesting that you would likely enjoy it based on the preferences of those with similar tastes.
+Your predicted rating for *Forrest Gump* is 4.6, suggesting you would likely enjoy it based on your taste profile and the preferences of similar users.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none

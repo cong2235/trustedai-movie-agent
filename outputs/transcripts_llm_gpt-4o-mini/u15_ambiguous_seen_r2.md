@@ -51,6 +51,4 @@ You've rated three Star Wars movies, and you gave them all 5 stars:
 2. **Star Wars: Episode V - The Empire Strikes Back (1980)** - 5★
 3. **Star Wars: Episode VI - Return of the Jedi (1983)** - 5★
 
-It looks like you're a big fan of the original trilogy!
-
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant accurately reflects the user's ratings and provides a clear summary of their preferences."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant accurately reflects the user's ratings and provides a clear and personalized response."}

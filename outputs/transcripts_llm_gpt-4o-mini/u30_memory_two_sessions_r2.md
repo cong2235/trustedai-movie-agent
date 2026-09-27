@@ -2,9 +2,9 @@
 
 **User:** I've already seen Forrest Gump and Back to the Future. Also, remember that I don't like war movies.
 
-<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump"}), remember({"kind": "seen", "movie": "Back to the Future"}), remember({"kind": "avoid_genre", "note": "war"})</summary>
+<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"}), remember({"kind": "seen", "movie": "Back to the Future", "scope": "lasting"}), remember({"kind": "avoid_genre", "note": "War", "scope": "lasting"})</summary>
 
-`remember` (18 ms) ->
+`remember` (20 ms) ->
 ```json
 {
  "ok": true,
@@ -15,7 +15,7 @@
  "effect": "excluded from future recommendations"
 }
 ```
-`remember` (17 ms) ->
+`remember` (18 ms) ->
 ```json
 {
  "ok": true,
@@ -41,9 +41,9 @@
 
 **Assistant:**
 
-I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (1985)**, and that you want to avoid war movies in the future. How can I assist you next?
+I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (1985)**, and you prefer to avoid war movies. If you need any recommendations or have specific requests, just let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 2, 'explains': 1, 'honest': 5, 'helpful': 2, 'rationale': "The biggest weakness is that the assistant did not provide any specific movie recommendations based on the user's preferences."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 5, 'personalised': 2, 'explains': 1, 'honest': 3, 'helpful': 2, 'rationale': "The biggest weakness is that the assistant does not provide any specific movie recommendations or reasoning based on the user's preferences."}
 
 ---
 *(new session - long-term memory carries over)*
@@ -52,7 +52,7 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (56 ms) ->
+`recommend_movies` (61 ms) ->
 ```json
 {
  "user_id": 30,
@@ -139,7 +139,16 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
     "pure_svd": 10.0,
     "item_knn": 6.5
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "dark",
+     "thought-provoking",
+     "mind-bending"
+    ],
+    "twist_0_3": 3,
+    "violence_0_3": 3
+   }
   },
   {
    "movie_id": 296,
@@ -179,15 +188,7 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
      "plot_similarity": 0.55
     },
     {
-     "title": "21 Jump Street (2012)",
-     "your_rating": 5.0,
-     "plot_similarity": 0.54
-    }
-   ],
-   "similar_users_who_rated_it": {
-    "n": 20,
-    "avg_rating": 4.4,
-  
+     "title": "21 Jump Street 
 ```
 </details>
 
@@ -195,21 +196,16 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
 
 Here are some great movie recommendations for tonight:
 
-1. **Fight Club (1999)**  
-   This film blends action, crime, and drama, and you rated "The Shawshank Redemption (1994)" and "Star Wars: Episode V - The Empire Strikes Back (1980)" both 5 stars, which are liked by others who also enjoyed this movie. Its themes of identity and rebellion might resonate with you, and it has a strong predicted rating of 4.9 for you.
+1. **Fight Club (1999)** - This film blends action, crime, and drama, featuring a dark and thought-provoking narrative. You rated "The Shawshank Redemption" (1994) 5 stars, and similar users also rated this highly, averaging 4.55 stars. Its themes resonate with your taste, especially since you enjoyed "Inception" (2010) as well.
 
-2. **Pulp Fiction (1994)**  
-   A cult classic that combines comedy, crime, and drama. You rated "The Shawshank Redemption" and "Star Wars: Episode V" highly, and many similar users also rated this film well. Its unique storytelling style and memorable dialogue could be a hit for you, with a predicted rating of 4.8.
+2. **Pulp Fiction (1994)** - A cult classic that combines comedy, crime, and drama with a non-linear storyline. You rated "The Shawshank Redemption" (1994) 5 stars, and this film has a strong connection to your preferences, with a predicted rating of 4.8 for you.
 
-3. **The Princess Bride (1987)**  
-   This charming mix of action, adventure, and comedy has a whimsical story that you might enjoy, especially since you rated "Star Wars: Episode V" and "Star Wars: Episode IV" 5 stars. It has a predicted rating of 4.8 for you, indicating a good fit.
+3. **The Princess Bride (1987)** - This charming mix of action, adventure, and comedy is beloved for its humor and romance. You rated "Star Wars: Episode V - The Empire Strikes Back" (1980) 5 stars, and this film's light-hearted nature aligns well with your tastes.
 
-4. **The Silence of the Lambs (1991)**  
-   A gripping thriller that combines crime and horror. Given your high rating for "The Shawshank Redemption," this film's psychological depth and suspense could appeal to you, with a predicted rating of 4.6.
+4. **The Silence of the Lambs (1991)** - A gripping thriller that delves into crime and psychology. You rated "The Shawshank Redemption" (1994) 5 stars, and this film's dark and tense atmosphere could appeal to you, with a predicted rating of 4.6.
 
-5. **The Godfather (1972)**  
-   A classic crime drama that has received high praise over the years. You rated "Star Wars: Episode V" and "Star Wars: Episode IV" 5 stars, and this film's intricate storytelling and character development align with your tastes, with a predicted rating of 5.0.
+5. **The Godfather (1972)** - A classic crime drama that explores the mafia underworld. Given your high rating for "Star Wars: Episode V - The Empire Strikes Back" (1980), this film's emotional depth and storytelling are likely to resonate with you, with a predicted rating of 5 stars.
 
-These films should provide a mix of thrilling narratives and engaging characters that align well with your preferences! Enjoy your movie night!
+These films should provide a mix of excitement and depth for your viewing pleasure tonight!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide tailored recommendations, supported by strong evidence from the tool outputs."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide tailored recommendations, supported by strong evidence from the tool outputs."}

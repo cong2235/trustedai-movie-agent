@@ -2,7 +2,7 @@
 
 **User:** I never want war movies recommended to me. Please remember that.
 
-<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "War"})</summary>
+<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "War", "scope": "lasting"})</summary>
 
 `remember` (0 ms) ->
 ```json
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you want to avoid war movies in future recommendations. If you have any other preferences or requests, feel free to let me know!
+I've noted that you never want war movies recommended to you. If you have any other preferences or requests, feel free to share!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'War')] · issues=none
 
@@ -30,7 +30,7 @@ I've noted that you want to avoid war movies in future recommendations. If you h
 
 <details><summary>Tool calls: recommend_movies({"n": 5, "include_genres": ["War"], "exclude_genres": ["War"]})</summary>
 
-`recommend_movies` (115 ms) ->
+`recommend_movies` (60 ms) ->
 ```json
 {
  "user_id": 30,
@@ -110,7 +110,15 @@ I've noted that you want to avoid war movies in future recommendations. If you h
     "pure_svd": 12.2,
     "item_knn": 6.6
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "emotional",
+     "romantic"
+    ],
+    "twist_0_3": 1,
+    "violence_0_3": 1
+   }
   },
   {
    "movie_id": 2028,
@@ -157,32 +165,24 @@ I've noted that you want to avoid war movies in future recommendations. If you h
    "predicted_rating_for_you": 4.5,
    "genre_fit": {
     "Action": {
-     "your_avg": 4.6,
-     "n": 15
-    },
-    "Drama": {
-     "your_avg": 5.0,
-     "n": 4
-    },
-    "War": {
-     "your_avg":
+    
 ```
 </details>
 
 **Assistant:**
 
-Here are some war movies you might enjoy:
+Here are some war movies you might find interesting, just for today:
 
-1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with its war themes. You rated *The Shawshank Redemption (1994)* and *Braveheart (1995)* both 5 stars, and people with similar tastes also rated this highly, averaging 4.16 stars.
+1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with a backdrop of historical events, including the Vietnam War. You rated "The Shawshank Redemption" (1994) and "Braveheart" (1995) both 5 stars, and many users who liked those films also enjoyed this one, averaging a strong 4.16 stars.
 
-2. **Saving Private Ryan (1998)** - A gripping portrayal of World War II, this film has a strong reputation, averaging 4.15 stars. Your high ratings for *Star Wars: Episode V - The Empire Strikes Back (1980)* and *Star Wars: Episode VI - Return of the Jedi (1983)* suggest you might appreciate its intense storytelling.
+2. **Saving Private Ryan (1998)** - A gripping portrayal of World War II, this film is known for its intense realism and emotional depth. You rated "Star Wars: Episode VI - Return of the Jedi" (1983) and "Star Wars: Episode V - The Empire Strikes Back" (1980) both 5 stars, and similar users rated this film 4.15 on average.
 
-3. **Schindler's List (1993)** - This powerful drama about the Holocaust has an average rating of 4.22 stars. You rated *The Shawshank Redemption (1994)* 5 stars, and similar users also rated this film highly, indicating it aligns well with your taste.
+3. **Schindler's List (1993)** - A powerful and moving film about the Holocaust, it has a high average rating of 4.22. Your 5-star rating for "The Shawshank Redemption" (1994) aligns with many users who also rated this film highly.
 
-4. **Inglourious Basterds (2009)** - A unique blend of action and dark comedy set during World War II, this film has an average rating of 4.14 stars. Your appreciation for *Star Wars: Episode V - The Empire Strikes Back (1980)* suggests you might enjoy its bold storytelling.
+4. **Inglourious Basterds (2009)** - This film offers a unique blend of action and dark comedy set during World War II. You rated "Star Wars: Episode V - The Empire Strikes Back" (1980) 5 stars, and many similar users rated this film 4.14 on average.
 
-5. **X-Men: First Class (2011)** - While primarily a superhero film, it incorporates war elements and has an average rating of 3.79 stars. Your high ratings for *Iron Man (2008)* and *Star Trek (2009)* indicate you might find this enjoyable as well.
+5. **X-Men: First Class (2011)** - While primarily a superhero film, it includes significant war themes and has a predicted rating of 4.6 for you. You rated "Iron Man" (2008) 5 stars, and this film has a strong action-packed vibe that aligns with your tastes.
 
-Let me know if you'd like more information on any of these films!
+Let me know if you'd like more information on any of these!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'War')] · issues=none

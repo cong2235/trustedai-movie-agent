@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"]})</summary>
 
-`recommend_movies` (462 ms) ->
+`recommend_movies` (62 ms) ->
 ```json
 {
  "user_id": 15,
@@ -72,7 +72,15 @@
     "item_knn": 3.7,
     "user_knn": 3.3
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "dark",
+     "action-packed"
+    ],
+    "twist_0_3": 1,
+    "violence_0_3": 2
+   }
   },
   {
    "movie_id": 68157,
@@ -128,15 +136,7 @@
     },
     "Drama": {
      "your_avg": 3.86,
-     "n": 35
-    },
-    "War": {
-     "your_avg": 4.38,
-     "n": 4
-    }
-   },
-   "signal_breakdown_z": {
-    "pure_svd": 8.6,
+    
 ```
 </details>
 
@@ -145,21 +145,21 @@
 Here are some movie recommendations made after 2000, excluding horror:
 
 1. **Batman Begins (2005)**  
-   This film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who liked those movies also enjoyed this one.
+   This action-packed film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who rated those movies also enjoyed this one.
 
 2. **Inglourious Basterds (2009)**  
-   With an average rating of 4.14, this film is a favorite among similar users, who rate it 4.05 on average. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it shares plot similarities with "Schindler's List (1993)," which you also rated highly.
+   With an average rating of 4.14, this film combines action and drama. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this highly as well, averaging 4.05.
 
 3. **Ocean's Eleven (2001)**  
-   This heist film has an average rating of 3.84 and is rated 3.88 by users similar to you. Your 5-star rating for "Catch Me If You Can (2002)" aligns well with this movie, which features a similar plot.
+   This heist film has an average rating of 3.84. You rated "Catch Me If You Can (2002)" 5 stars, and users who liked that film also enjoyed "Ocean's Eleven," which has a strong co-rating similarity.
 
 4. **V for Vendetta (2006)**  
-   This film has an average rating of 3.88 and is rated 3.98 by similar users. You rated "The Shawshank Redemption (1994)" 5 stars, and this movie shares thematic elements with "Limitless (2011)," which you also enjoyed.
+   This action and sci-fi film has an average rating of 3.88. You rated "The Shawshank Redemption (1994)" 5 stars, and similar users rated this film 3.98 on average, indicating a good fit for your taste.
 
 5. **Sin City (2005)**  
-   With an average rating of 3.86, this film is rated 4.08 by users similar to you. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it has plot similarities with "Pulp Fiction (1994)," which you rated 4 stars.
+   This stylized action film has an average rating of 3.86. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it shares a similar plot style, making it a strong recommendation for you.
 
-These films should provide a mix of action, drama, and thrilling plots that align with your tastes! Let me know if you need more options or details about any of these movies.
+Let me know if you'd like more options or specific details about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -167,7 +167,7 @@ These films should provide a mix of action, drama, and thrilling plots that alig
 
 <details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"], "n": 3})</summary>
 
-`recommend_movies` (66 ms) ->
+`recommend_movies` (47 ms) ->
 ```json
 {
  "user_id": 15,
@@ -247,7 +247,14 @@ These films should provide a mix of action, drama, and thrilling plots that alig
     "item_knn": 2.7,
     "user_knn": 2.4
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "action-packed"
+    ],
+    "twist_0_3": 0,
+    "violence_0_3": 1
+   }
   },
   {
    "movie_id": 4878,
@@ -292,12 +299,7 @@ These films should provide a mix of action, drama, and thrilling plots that alig
      "plot_similarity": 0.57
     }
    ],
-   "similar_users_who_rated_it": {
-    "n": 20,
-    "avg_rating": 4.28,
-    "n_rated_4_or_higher": 15
-   },
-   "predicted_rating_for_you": 4
+   "similar_users_who_rated_it
 ```
 </details>
 
@@ -306,15 +308,15 @@ These films should provide a mix of action, drama, and thrilling plots that alig
 Here are three more movie recommendations made after 2000, excluding horror:
 
 1. **Pirates of the Caribbean: The Curse of the Black Pearl (2003)**  
-   This action-adventure film has an average rating of 3.78. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and users similar to you rate this film 3.77 on average.
+   This action-adventure film has an average rating of 3.78. You rated both "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and users who liked those films also enjoyed this one.
 
 2. **Donnie Darko (2001)**  
-   With an average rating of 3.98, this film is well-received by similar users, who rate it 4.28 on average. You rated "Catch Me If You Can (2002)" 5 stars, and it shares thematic elements with "Frequency (2000)," which you rated 5 stars as well.
+   With an average rating of 3.98, this drama and mystery film is known for its thought-provoking themes. You rated "Catch Me If You Can (2002)" 5 stars, and similar users rated this film highly, averaging 4.28.
 
 3. **Casino Royale (2006)**  
-   This action-thriller has an average rating of 3.94 and is rated 3.85 by users similar to you. You rated both "Star Wars: Episode VI - Return of the Jedi (1983)" and "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it has plot similarities with "Pulp Fiction (1994)," which you rated 4 stars.
+   This action-adventure film has an average rating of 3.94. You rated "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and users with similar tastes rated this film 3.85 on average.
 
-These films should provide a mix of adventure, drama, and thrilling action! Let me know if you'd like more suggestions or details about any of these movies.
+Let me know if you'd like more options or details about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -322,7 +324,7 @@ These films should provide a mix of adventure, drama, and thrilling action! Let 
 
 <details><summary>Tool calls: recommend_movies({"exclude_genres": ["Horror"], "n": 2})</summary>
 
-`recommend_movies` (44 ms) ->
+`recommend_movies` (41 ms) ->
 ```json
 {
  "user_id": 15,
@@ -401,7 +403,16 @@ These films should provide a mix of adventure, drama, and thrilling action! Let 
     "pure_svd": 9.8,
     "item_knn": 7.1
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "emotional",
+     "inspiring",
+     "action-packed"
+    ],
+    "twist_0_3": 0,
+    "violence_0_3": 2
+   }
   },
   {
    "movie_id": 1221,
@@ -446,17 +457,7 @@ These films should provide a mix of adventure, drama, and thrilling action! Let 
     "n_rated_4_or_higher": 18
    },
    "predicted_rating_for_you": 4.3,
-   "genre_fit": {
-    "Crime": {
-     "your_avg": 3.82,
-     "n": 14
-    },
-    "Drama": {
-     "your_avg": 3.86,
-     "n": 35
-    }
-   },
-   "signal_breakdown_z"
+   "genre_fit": 
 ```
 </details>
 
@@ -465,11 +466,11 @@ These films should provide a mix of adventure, drama, and thrilling action! Let 
 Here are two more movie recommendations, including older films and still excluding horror:
 
 1. **Braveheart (1995)**  
-   This epic historical drama has an average rating of 4.03 and is highly rated by similar users, averaging 4.42. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and it shares plot similarities with "Gladiator (2000)," which you also rated 5 stars.
+   This epic action-drama has an average rating of 4.03. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and users with similar tastes rated this film highly, averaging 4.42.
 
 2. **The Godfather: Part II (1974)**  
-   With an average rating of 4.26, this classic crime drama is rated 4.47 by users similar to you. You rated "The Godfather (1972)" 4 stars, and it has strong thematic connections with "Pulp Fiction (1994)," which you rated 4 stars as well.
+   With an average rating of 4.26, this crime drama is a classic. You rated "The Godfather (1972)" 4 stars, and it shares a strong plot similarity with that film, making it a great fit for your taste.
 
-These films should provide a mix of action, drama, and compelling storytelling! Let me know if you need more options or details about any of these movies.
+Let me know if you need more recommendations or details about these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

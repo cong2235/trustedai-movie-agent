@@ -28,7 +28,7 @@ PASS u15_absent_title_r3 ['ok']
 PASS u15_ambiguous_seen_r1 ['ok']
 PASS u15_ambiguous_seen_r2 ['ok']
 PASS u15_ambiguous_seen_r3 ['ok']
-PASS u30_sparse_tonight_r1 ['ok', 'ok']
+FAIL u30_sparse_tonight_r1 ['ok', {'misattributed_numbers': ['4.16 stated about the movies in this passage (the tools reported it for Forrest Gump (1994))']}]
 PASS u30_sparse_tonight_r2 ['ok', 'ok']
 PASS u30_sparse_tonight_r3 ['ok', 'ok']
 PASS u30_blind_spots_r1 ['ok']
@@ -47,8 +47,8 @@ PASS u30_memory_two_sessions_r3 ['ok', 'ok']
   "repeat": 3,
   "n_scenario_runs": 42,
   "n_turns": 57,
-  "turn_pass_rate": 1.0,
-  "scenario_pass_rate": 1.0,
+  "turn_pass_rate": 0.982,
+  "scenario_pass_rate": 0.976,
   "tool_recall": 1.0,
   "args_ok": 1.0,
   "turns_with_constraint_violation": 0,
@@ -57,10 +57,10 @@ PASS u30_memory_two_sessions_r3 ['ok', 'ok']
   "hallucinated_titles": 0,
   "ungrounded_titles": 0,
   "ungrounded_numbers": 0,
-  "misattributed_numbers": 0,
+  "misattributed_numbers": 1,
   "wrong_user_ratings": 0,
-  "decimal_claims_checked": 206,
-  "rating_claims_checked": 90,
+  "decimal_claims_checked": 227,
+  "rating_claims_checked": 98,
   "tool_errors": 3,
   "online_guardrail_revisions": 1,
   "per_scenario_pass": {
@@ -74,17 +74,17 @@ PASS u30_memory_two_sessions_r3 ['ok', 'ok']
     "u15_toy_story_no_animation": "3/3",
     "u15_absent_title": "3/3",
     "u15_ambiguous_seen": "3/3",
-    "u30_sparse_tonight": "3/3",
+    "u30_sparse_tonight": "2/3",
     "u30_blind_spots": "3/3",
     "u30_light_funny": "3/3",
     "u30_memory_two_sessions": "3/3"
   },
-  "judge_grounded": 4.95,
-  "judge_personalised": 4.3,
+  "judge_grounded": 4.63,
+  "judge_personalised": 4.32,
   "judge_explains": 4.37,
-  "judge_honest": 4.77,
-  "judge_helpful": 4.74,
-  "latency_p50_s": 4.6,
-  "latency_p95_s": 19.5,
-  "ttft_p50_s": 1.97
+  "judge_honest": 4.61,
+  "judge_helpful": 4.65,
+  "latency_p50_s": 3.8,
+  "latency_p95_s": 8.0,
+  "ttft_p50_s": 1.88
 }

@@ -2,9 +2,9 @@
 
 **User:** I finally watched The Machinist last night and loved it - please remember that.
 
-<details><summary>Tool calls: remember({"kind": "liked", "movie": "The Machinist"})</summary>
+<details><summary>Tool calls: remember({"kind": "liked", "movie": "The Machinist", "scope": "lasting"})</summary>
 
-`remember` (21 ms) ->
+`remember` (15 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you loved *The Machinist (2004)*! If you're looking for similar movies or anything else, just let me know!
+I've noted that you loved *The Machinist (2004)*! If you're looking for similar movies or have any other requests, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('liked', 'The Machinist (2004)')] · issues=none
 
@@ -28,9 +28,9 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
 
 **User:** Recommend me something similar to the movie I told you I loved last time.
 
-<details><summary>Tool calls: recommend_movies({"more_like": "The Machinist (2004)"})</summary>
+<details><summary>Tool calls: recommend_movies({"more_like": ["The Machinist (2004)"]})</summary>
 
-`recommend_movies` (162 ms) ->
+`recommend_movies` (114 ms) ->
 ```json
 {
  "user_id": 15,
@@ -107,7 +107,15 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
     "anchor": 5.6,
     "pure_svd": 2.9
    },
-   "evidence_strength": "strong"
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "dark-comedy",
+     "emotional"
+    ],
+    "twist_0_3": 1,
+    "violence_0_3": 2
+   }
   },
   {
    "movie_id": 74458,
@@ -155,31 +163,24 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
     "n": 20,
     "avg_rating": 4.08,
     "n_rated_4_or_higher": 15
-   },
-   "predicted_rating_for_you": 3.9,
-   "genre_fit": {
-    "Drama": {
-     "your_avg": 3.86,
-     "n": 35
-    },
-    "Myster
+   
 ```
 </details>
 
 **Assistant:**
 
-Here are some movies similar to *The Machinist (2004)* that you might enjoy:
+Here are some movie recommendations similar to *The Machinist (2004)* that you might enjoy:
 
-1. **Trainspotting (1996)** - This film has a strong narrative about drug abuse and features dark comedy elements. You rated *Requiem for a Dream (2000)*, which shares similar themes, 4 stars, and many users who liked both films rated *Trainspotting* highly as well.
+1. **Trainspotting (1996)** - This dark comedy-drama about heroin addiction has a strong emotional core and is rated 4.04 on average. You rated *Requiem for a Dream* (2000) 4 stars, which shares similar themes, and many users who liked *The Machinist* also appreciated this film.
 
-2. **Shutter Island (2010)** - A psychological thriller directed by Martin Scorsese, it explores themes of insanity and features a significant plot twist. You rated *Minority Report (2002)* 4 stars, which has a similar plot structure, and similar users rated *Shutter Island* with an average of 4.08 stars.
+2. **Shutter Island (2010)** - A psychological thriller featuring Leonardo DiCaprio, this movie has an average rating of 4.02. It shares plot similarities with *Minority Report* (2002), which you rated 4 stars, and has a tense atmosphere that aligns with your taste.
 
-3. **The Usual Suspects (1995)** - This crime thriller is known for its intricate plot and twist ending. You rated *Pulp Fiction (1994)* 4 stars, which shares a similar narrative style, and many users who liked both films rated *The Usual Suspects* highly.
+3. **The Usual Suspects (1995)** - This crime thriller, known for its twist ending, has an average rating of 4.24. You rated *Pulp Fiction* (1994) 4 stars, which has a similar narrative style, making this a strong match for you.
 
-4. **Donnie Darko (2001)** - A blend of drama, mystery, and sci-fi, this film has a dreamlike quality and explores mental illness. You rated *Frequency (2000)* 5 stars, which has thematic similarities, and users with similar tastes rated *Donnie Darko* 4.28 stars on average.
+4. **Donnie Darko (2001)** - A cult classic that blends drama, mystery, and sci-fi, it has an average rating of 3.98. Its dreamlike and psychological elements resonate with your taste, especially since you rated *American History X* (1998) highly.
 
-5. **Drive (2011)** - This film combines crime and drama with a film-noir style. You rated *Pulp Fiction (1994)* 4 stars, which has a similar vibe, and users who liked both films rated *Drive* with an average of 3.85 stars.
+5. **Drive (2011)** - This stylish crime drama has an average rating of 3.77. It features a tense atmosphere and strong character development, similar to the films you enjoy, like *Pulp Fiction* (1994).
 
-These selections should resonate well with your taste! Let me know if you want more options or details about any specific movie.
+These films should resonate well with your preferences! Would you like more information on any of them?
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('liked', 'The Machinist (2004)')] · issues=none

@@ -96,6 +96,8 @@ def test_telemetry_roundtrip_and_kpis(tmp_path):
     assert k["revision_fix_rate"] == 1.0 and k["thumbs_up_rate"] == 1.0 and k["rerank_calls"] == 3
     assert any("latency_p95_s" in a for a in monitor.alerts(k))  # the 40 s turn breaches the p95 SLO
     assert (tmp_path / "a.jsonl").read_text().count('"event": "tool_call"') == 3
+    later, later_calls = monitor.load(tmp_path / "t.db", since_ts=time.time() + 60)  # parameterised time filter
+    assert later.empty and later_calls.empty
 
 
 def test_reranker_failure_keeps_first_stage_order(data):

@@ -391,3 +391,13 @@ def test_remember_this_request_scope_is_not_stored(data, cf):
     with pytest.raises(ToolError, match="Nothing stored"):
         tools.remember("avoid_genre", note="Comedy", scope="this_request")
     assert not tools.memory.avoided_genres(tools.session.user_id)
+
+
+def test_store_closes_its_connection(tmp_path):
+    import sqlite3
+
+    with MemoryStore(tmp_path / "m.db") as m:
+        m.add(1, "seen", movie_id=356)
+    with pytest.raises(sqlite3.ProgrammingError):  # cannot operate on a closed database
+        m.list(1)
+    NullMemory().close()  # the disabled store has nothing to close

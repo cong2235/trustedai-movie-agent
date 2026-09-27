@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 import pandas as pd
@@ -35,10 +36,11 @@ SLOS = {
 def load(db_path: Path = config.TELEMETRY_DB, since_ts: float | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not Path(db_path).exists():
         return pd.DataFrame(), pd.DataFrame()
-    with sqlite3.connect(db_path) as c:
-        where = f" WHERE ts >= {float(since_ts)}" if since_ts else ""
-        turns = pd.read_sql(f"SELECT * FROM turns{where}", c)
-        calls = pd.read_sql(f"SELECT * FROM tool_calls{where}", c)
+    # closing(): sqlite3's own context manager only commits, it never closes the connection
+    with closing(sqlite3.connect(db_path)) as c:
+        where, params = (" WHERE ts >= ?", (float(since_ts),)) if since_ts else ("", ())
+        turns = pd.read_sql(f"SELECT * FROM turns{where}", c, params=params)
+        calls = pd.read_sql(f"SELECT * FROM tool_calls{where}", c, params=params)
     for df in (turns, calls):
         if not df.empty:
             df["time"] = pd.to_datetime(df["ts"], unit="s")

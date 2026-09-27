@@ -15,3 +15,5 @@ venv/
 *.log.tmp
 *.egg-info/
 build/
+coverage.xml
+.coverage

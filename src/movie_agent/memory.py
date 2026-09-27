@@ -61,6 +61,16 @@ class MemoryStore:
             self._conn.executescript(DEDUPE_AND_INDEX)  # also migrates stores created by the first version
             self._conn.commit()
 
+    def close(self) -> None:
+        with self._lock:
+            self._conn.close()
+
+    def __enter__(self) -> MemoryStore:
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.close()
+
     def add(self, user_id: int, kind: str, movie_id: int | None = None, note: str | None = None) -> int:
         if kind not in KINDS:
             raise ValueError(f"kind must be one of {KINDS}")
@@ -123,6 +133,9 @@ class NullMemory(MemoryStore):
     """Memory disabled: same interface, stores nothing."""
 
     def __init__(self):
+        pass
+
+    def close(self) -> None:
         pass
 
     def add(self, *a, **k):

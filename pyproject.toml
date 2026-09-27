@@ -22,6 +22,17 @@ movie-agent = "movie_agent.cli:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = [
+    # tests build many throwaway in-memory stores; the app opens one store per process and keeps it
+    "ignore:unclosed database:ResourceWarning",
+]
+
+[tool.coverage.run]
+source = ["movie_agent"]
+
+[tool.coverage.report]
+show_missing = false
+skip_empty = true
 
 [tool.ruff]
 line-length = 120

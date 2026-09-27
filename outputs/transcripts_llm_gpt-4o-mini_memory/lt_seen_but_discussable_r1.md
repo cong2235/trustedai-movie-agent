@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"})</summary>
 
-`remember` (16 ms) ->
+`remember` (18 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-Got it! I've noted that you've seen *Forrest Gump (1994)*, so I won't recommend it again. If you're looking for something else to watch, just let me know!
+Got it! I've noted that you've seen *Forrest Gump (1994)*. If you're looking for new movie recommendations, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none
 
@@ -30,7 +30,7 @@ Got it! I've noted that you've seen *Forrest Gump (1994)*, so I won't recommend 
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Forrest Gump (1994)"})</summary>
 
-`similar_users_opinion` (21 ms) ->
+`similar_users_opinion` (20 ms) ->
 ```json
 {
  "movie": "Forrest Gump (1994)",
@@ -109,8 +109,13 @@ Got it! I've noted that you've seen *Forrest Gump (1994)*, so I won't recommend 
 
 **Assistant:**
 
-Users with similar taste to you generally have a positive view of *Forrest Gump (1994)*. The average rating among these users is 4.15, with 15 out of 20 similar users rating it 4 stars or higher. 
+Users with similar taste to you rate **Forrest Gump (1994)** quite positively, with an average rating of **4.16** from a total of **329 users**. Among the 20 most similar users, the weighted average rating is also **4.15**, and notably, **15 out of 20** rated it **4 or higher**.
 
-Notably, one user rated it 4.5, while another gave it a perfect 5. This suggests that those who share your taste appreciate the film quite a bit. Based on this data, your predicted rating for *Forrest Gump* is 4.6, indicating you would likely enjoy it as well.
+Some individual ratings from similar users include:
+- One user rated it **4.5** and shares **8 movies** in common with you.
+- Another rated it **4.0** with **9 movies** in common.
+- A user who rated it **5.0** shares **11 movies** in common.
+
+Your predicted rating for this movie is **4.6**, indicating that you would likely enjoy it based on your preferences and the ratings of similar users.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none

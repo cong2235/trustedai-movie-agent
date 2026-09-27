@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 5, "moods": ["light-hearted", "funny"], "max_violence": 1})</summary>
 
-`recommend_movies` (52 ms) ->
+`recommend_movies` (70 ms) ->
 ```json
 {
  "user_id": 30,
@@ -14,133 +14,136 @@
    "light-hearted",
    "funny"
   ],
-  "max_violence": 1
+  "max_violence": 1,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
   {
-   "movie_id": 4085,
-   "title": "Beverly Hills Cop (1984)",
+   "movie_id": 2706,
+   "title": "American Pie (1999)",
    "genres": [
-    "Action",
     "Comedy",
-    "Crime",
-    "Drama"
+    "Romance"
    ],
-   "n_ratings": 46,
-   "avg_rating": 3.4,
+   "n_ratings": 103,
+   "avg_rating": 3.38,
+   "tags": [
+    "best comedy",
+    "chris klein",
+    "dumb",
+    "jason biggs",
+    "not funny",
+    "pizza beer"
+   ],
    "because_you_rated": [
     {
-     "title": "Star Wars: Episode VI - Return of the Jedi (1983)",
+     "title": "Raiders of the Lost Ark (1981)",
      "your_rating": 5.0,
-     "co_rating_similarity": 0.08
+     "co_rating_similarity": 0.05
     },
     {
-     "title": "Batman Begins (2005)",
+     "title": "Star Trek (2009)",
      "your_rating": 5.0,
-     "co_rating_similarity": 0.08
+     "co_rating_similarity": 0.05
     }
    ],
    "similar_plots_you_liked": [
     {
      "title": "21 Jump Street (2012)",
      "your_rating": 5.0,
-     "plot_similarity": 0.54
+     "plot_similarity": 0.58
     },
     {
-     "title": "Die Hard (1988)",
-     "your_rating": 4.0,
-     "plot_similarity": 0.51
+     "title": "Up (2009)",
+     "your_rating": 5.0,
+     "plot_similarity": 0.43
     }
    ],
    "similar_users_who_rated_it": {
     "n": 20,
-    "avg_rating": 3.42,
-    "n_rated_4_or_higher": 8
+    "avg_rating": 3.33,
+    "n_rated_4_or_higher": 9
    },
-   "predicted_rating_for_you": 4.0,
+   "predicted_rating_for_you": 3.9,
    "genre_fit": {
-    "Action": {
-     "your_avg": 4.6,
-     "n": 15
-    },
     "Comedy": {
      "your_avg": 4.5,
      "n": 2
-    },
-    "Crime": {
-     "your_avg": 4.8,
-     "n": 5
-    },
-    "Drama": {
-     "your_avg": 5.0,
-     "n": 4
     }
    },
    "signal_breakdown_z": {
     "attributes": 2.3,
-    "item_knn": 1.5,
-    "user_knn": 1.0
+    "user_knn": 1.3,
+    "item_knn": 0.2
    },
    "evidence_strength": "strong",
    "attributes": {
     "moods": [
      "funny",
      "light-hearted",
-     "emotional"
+     "romantic"
     ],
     "twist_0_3": 0,
     "violence_0_3": 0
    }
   },
   {
-   "movie_id": 87529,
-   "title": "Your Highness (2011)",
+   "movie_id": 2717,
+   "title": "Ghostbusters II (1989)",
    "genres": [
-    "Action",
-    "Adventure",
     "Comedy",
-    "Fantasy"
+    "Fantasy",
+    "Sci-Fi"
    ],
-   "n_ratings": 9,
-   "avg_rating": 3.11,
+   "n_ratings": 47,
+   "avg_rating": 3.0,
+   "tags": [
+    "ghosts"
+   ],
    "because_you_rated": [
     {
-     "title": "Up (2009)",
-     "your_rating": 5.0,
-     "co_rating_similarity": 0.03
+     "title": "Die Hard (1988)",
+     "your_rating": 4.0,
+     "co_rating_similarity": 0.02
     }
    ],
    "similar_plots_you_liked": [
     {
-     "title": "Indiana Jones and the Last Crusade (1989)",
+     "title": "21 Jump Street (2012)",
      "your_rating": 5.0,
-     "plot_similarity": 0.54
+     "plot_similarity": 0.48
     },
     {
-     "title": "Star Wars: Episode VI - Return of the Jedi (1983)",
+     "title": "Inception (2010)",
      "your_rating": 5.0,
-     "plot_similarity": 0.45
+     "plot_similarity": 0.43
     }
    ],
    "similar_users_who_rated_it": {
-    "n": 7,
-    "avg_rating": 2.93,
-    "n_rated_4_or_higher": 1
+    "n": 20,
+    "avg_rating": 3.08,
+    "n_rated_4_or_higher": 5
    },
-   "predicted_rating_for_you": 3.6,
+   "predicted_rating_for_you": 3.7,
    "genre_fit": {
-    "Action": {
-     "your_avg": 4.6,
-     "n": 15
-    },
-    "Adventure": {
-     "your_avg": 4.78,
-     "n": 9
-    },
     "Comedy": {
      "your_avg": 4.5,
-     
+     "n": 2
+    },
+    "Sci-Fi": {
+     "your_avg": 4.44,
+     "n": 9
+    }
+   },
+   "signal_breakdown_z": {
+    "attributes": 2.3,
+    "user_knn": 0.5,
+    "content": 0.5
+   },
+   "evidence_strength": "moderate",
+   "attributes": {
+ 
 ```
 </details>
 
@@ -148,16 +151,16 @@
 
 Here are some light and funny movie recommendations for tonight, all with minimal violence:
 
-1. **Beverly Hills Cop (1984)** - This action-comedy has an average rating of 3.4, and you might enjoy it since you rated "Star Wars: Episode VI - Return of the Jedi" (1983) 5 stars. It features a similar plot style to "21 Jump Street" (2012), which you also liked.
+1. **American Pie (1999)** - This comedy about high school friends trying to lose their virginity has a light-hearted tone. You rated "Raiders of the Lost Ark (1981)" and "Star Trek (2009)" both 5 stars, and people who liked those also enjoyed this film. It has a predicted rating of 3.9 for you.
 
-2. **Your Highness (2011)** - A fantasy comedy with an average rating of 3.11. It shares plot similarities with "Indiana Jones and the Last Crusade" (1989), which you rated 5 stars. While its average rating is lower, it fits well within your preferred genres.
+2. **Ghostbusters II (1989)** - A sequel to the classic, this film combines comedy with fantasy elements as the Ghostbusters return to save New York. Your similar users rated it an average of 3.08, and it has a predicted rating of 3.7 for you.
 
-3. **Bachelor Party (1984)** - This comedy has an average rating of 2.9. It has some plot similarities to "Up" (2009), which you rated 5 stars. Although its ratings are lower, it might still provide a fun experience.
+3. **Big Trouble in Little China (1986)** - This action-comedy features a truck driver who gets caught up in a supernatural battle in Chinatown. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it has a strong evidence strength with a predicted rating of 4.3 for you.
 
-4. **Zookeeper (2011)** - With an average rating of 2.75, this family-friendly comedy features a light-hearted premise. It has some plot similarities to "Up" (2009) and "21 Jump Street" (2012), both of which you enjoyed.
+4. **Anchors Aweigh (1945)** - A musical comedy about two sailors on leave in Hollywood. Although it has fewer ratings, it aligns well with your taste, especially since you rated "Braveheart (1995)" 5 stars. It has a predicted rating of 3.8 for you.
 
-5. **Pitch Perfect (2012)** - This musical comedy has a higher average rating of 3.62 and is well-liked by users similar to you. It shares plot elements with "21 Jump Street" (2012) and "Up" (2009), both of which you rated highly.
+5. **Airplane! (1980)** - A classic spoof that parodies disaster films, it's filled with puns and visual gags. You rated "Star Wars: Episode IV - A New Hope (1977)" 5 stars, and it has a strong predicted rating of 4.5 for you.
 
-Enjoy your movie night! If you want more options or a different genre, just let me know!
+Enjoy your movie night! If you need more options or a different vibe, just let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively provided personalized recommendations based on the user's preferences and movie ratings, with clear explanations and no evident weaknesses."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 4, 'personalised': 5, 'explains': 4, 'honest': 3, 'helpful': 5, 'rationale': "The biggest weakness is the assistant's failure to acknowledge that 'Big Trouble in Little China' contains some violence, which contradicts the user's request for minimal violence."}

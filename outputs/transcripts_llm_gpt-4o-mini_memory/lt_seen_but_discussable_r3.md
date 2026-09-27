@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"})</summary>
 
-`remember` (17 ms) ->
+`remember` (18 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you've seen *Forrest Gump (1994)*, and it will be excluded from future recommendations. How can I assist you today?
+I've noted that you've seen *Forrest Gump (1994)*. If you're looking for new movie recommendations, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none
 
@@ -30,7 +30,7 @@ I've noted that you've seen *Forrest Gump (1994)*, and it will be excluded from 
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Forrest Gump (1994)"})</summary>
 
-`similar_users_opinion` (23 ms) ->
+`similar_users_opinion` (22 ms) ->
 ```json
 {
  "movie": "Forrest Gump (1994)",
@@ -109,8 +109,8 @@ I've noted that you've seen *Forrest Gump (1994)*, and it will be excluded from 
 
 **Assistant:**
 
-Users with similar taste to you rate *Forrest Gump (1994)* quite positively, with an average rating of 4.16 from 329 users. Among the 20 most similar users, the weighted average is 4.15, and notably, 15 of them rated it 4 stars or higher, showing strong appreciation for the film.
+Users with similar taste to you generally have a positive view of **Forrest Gump (1994)**. The average rating among all users is **4.16**, while those who share your taste rate it slightly lower at **4.15**. Notably, 15 out of 20 similar users rated it 4 stars or higher, indicating strong appreciation.
 
-Your predicted rating for *Forrest Gump* is 4.6, suggesting you would likely enjoy it based on your taste profile and the preferences of similar users.
+Your predicted rating for the film is **4.6**, suggesting you would likely enjoy it even more than the average similar user. This high reliability indicates that the assessment is quite solid.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)')] · issues=none

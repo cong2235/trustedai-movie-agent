@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: remember({"kind": "dismissed", "movie": "Fight Club", "scope": "lasting"})</summary>
 
-`remember` (38 ms) ->
+`remember` (32 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you're not interested in "Fight Club" and will exclude it from future recommendations. If you have any other preferences or requests, feel free to let me know!
+Got it! I won't suggest "Fight Club" (1999) to you again. If there's anything else you'd like to explore or discuss, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('dismissed', 'Fight Club (1999)')] · issues=none
 
@@ -30,12 +30,13 @@ I've noted that you're not interested in "Fight Club" and will exclude it from f
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (59 ms) ->
+`recommend_movies` (58 ms) ->
 ```json
 {
  "user_id": 30,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -161,8 +162,7 @@ I've noted that you're not interested in "Fight Club" and will exclude it from f
    },
    "predicted_rating_for_you": 4.8,
    "genre_fit": {
-    "Adventure": {
-     "your_av
+    "A
 ```
 </details>
 
@@ -171,21 +171,21 @@ I've noted that you're not interested in "Fight Club" and will exclude it from f
 Here are some great movie recommendations for tonight:
 
 1. **Forrest Gump (1994)**  
-   This film has an average rating of 4.16 and is well-loved by users similar to you. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people who liked those films also enjoyed "Forrest Gump." Its emotional and heartwarming story aligns well with your taste.
+   This film has an average rating of 4.16 and is well-loved by users similar to you. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people who liked those movies also enjoyed "Forrest Gump." Its emotional and heartwarming story aligns well with your taste.
 
 2. **Back to the Future (1985)**  
-   With an average rating of 4.04, this classic combines adventure, comedy, and sci-fi elements. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" 5 stars, and those who liked those films also appreciated "Back to the Future." It's light-hearted and inspiring, fitting your preferences perfectly.
+   With an average rating of 4.04, this classic combines adventure, comedy, and sci-fi. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" both 5 stars, and many users who liked those films also enjoyed "Back to the Future." It's light-hearted and inspiring, making it a fun choice for tonight.
 
 3. **Pulp Fiction (1994)**  
-   This cult classic has an average rating of 4.2. You rated "The Shawshank Redemption" and "Star Wars: Episode V" highly, and those with similar tastes found "Pulp Fiction" appealing. Its dark-comedy and thought-provoking themes might resonate with you.
+   This cult classic has an average rating of 4.2. You rated "The Shawshank Redemption" 5 stars, and similar users rated "Pulp Fiction" highly as well. Its dark comedy and thought-provoking narrative might resonate with you, especially since you enjoy crime and drama.
 
 4. **Saving Private Ryan (1998)**  
-   This intense war drama has an average rating of 4.15. Given your high ratings for "Star Wars: Episode VI" and "Star Wars: Episode V," it seems likely you'll appreciate the emotional depth and action-packed scenes in "Saving Private Ryan."
+   This intense war drama has an average rating of 4.15. You rated several Star Wars films 5 stars, and users with similar tastes also appreciated this film. Its emotional depth and action-packed scenes could be a gripping watch tonight.
 
 5. **The Princess Bride (1987)**  
-   With an average rating of 4.23, this film is a delightful mix of action, adventure, and romance. You rated "Star Wars: Episode V" and "Star Wars: Episode IV" 5 stars, and fans of those films also enjoyed "The Princess Bride." It's funny and light-hearted, perfect for a fun night.
+   With an average rating of 4.23, this film blends action, adventure, and romance. You rated "Star Wars: Episode V" highly, and many users who liked it also enjoyed "The Princess Bride." Its funny and light-hearted nature makes it a delightful choice.
 
-Let me know if you'd like more options or details about any of these films!
+Let me know if you need more options or specific genres!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('dismissed', 'Fight Club (1999)')] · issues=none
 
@@ -193,12 +193,13 @@ Let me know if you'd like more options or details about any of these films!
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (77 ms) ->
+`recommend_movies` (59 ms) ->
 ```json
 {
  "user_id": 15,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -326,8 +327,7 @@ Let me know if you'd like more options or details about any of these films!
     "avg_rating": 4.42,
     "n_rated_4_or_higher": 19
    },
-   "predicted_rating_for_you": 4.2,
-   "gen
+   "predicted_rat
 ```
 </details>
 
@@ -335,16 +335,21 @@ Let me know if you'd like more options or details about any of these films!
 
 Here are some great movie recommendations for tonight:
 
-1. **The Silence of the Lambs (1991)** - This gripping thriller has an average rating of 4.16 and is highly rated by users similar to you. You rated "The Shawshank Redemption" and "Schindler's List" both 5 stars, and many users who liked those films also enjoyed this one.
+1. **The Silence of the Lambs (1991)**  
+   This gripping thriller has an average rating of 4.16 and is well-loved by users similar to you, with 17 out of 20 rating it 4 stars or higher. You rated "The Shawshank Redemption" and "Schindler's List" both 5 stars, and many users who liked those films also enjoyed this one.
 
-2. **Braveheart (1995)** - An epic historical drama with a 4.03 average rating. You rated "Forrest Gump" and "Terminator 2" both 5 stars, and users who liked those films also rated "Braveheart" highly. It's emotional and action-packed, fitting well with your taste.
+2. **Braveheart (1995)**  
+   An epic historical drama with a 4.03 average rating, "Braveheart" features themes of inspiration and emotional depth. You rated "Forrest Gump" and "Terminator 2" both 5 stars, and similar users rated this film highly as well.
 
-3. **The Godfather: Part II (1974)** - With an average rating of 4.26, this classic crime drama is a favorite among users with similar tastes. You rated the original "The Godfather" 4 stars, and many who enjoyed that film also loved this sequel.
+3. **The Godfather: Part II (1974)**  
+   This classic crime drama has an average rating of 4.26. You rated the original "The Godfather" 4 stars, and many users who enjoyed that film also loved this sequel, making it a strong pick for you.
 
-4. **The Usual Suspects (1995)** - This crime thriller has a 4.24 average rating and features a twist ending. You rated "The Shawshank Redemption" and "Star Wars: Episode V" both 5 stars, and many users who liked those films also enjoyed this one.
+4. **The Usual Suspects (1995)**  
+   With a 4.24 average rating, this film is known for its suspense and twist ending. You rated "The Shawshank Redemption" and "Star Wars: Episode V" both 5 stars, and similar users rated this film highly, indicating it aligns well with your taste.
 
-5. **Indiana Jones and the Last Crusade (1989)** - An action-adventure film with a 4.05 average rating. You rated "Star Wars: Episode V" and "Star Wars: Episode IV" both 5 stars, and users who liked those films also rated this one highly.
+5. **Indiana Jones and the Last Crusade (1989)**  
+   This action-adventure film has an average rating of 4.05 and is a great fit for fans of the genre. You rated both "Star Wars" films 5 stars, and many users who liked those also enjoyed this film.
 
-These selections should provide a mix of thrilling plots and engaging stories that align with your preferences! Enjoy your movie night!
+These selections should provide a mix of thrilling, emotional, and thought-provoking experiences. Enjoy your movie night!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

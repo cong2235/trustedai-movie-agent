@@ -4,12 +4,13 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (64 ms) ->
+`recommend_movies` (59 ms) ->
 ```json
 {
  "user_id": 1,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -138,8 +139,6 @@
    "signal_breakdown_z": {
     "item_knn": 8.4,
     "user_knn": 7.6,
-    "pure_svd": 4.3
-   },
 ```
 </details>
 
@@ -147,25 +146,30 @@
 
 Here are some great movie recommendations for tonight:
 
-1. **The Shawshank Redemption (1994)** - This highly acclaimed film has an average rating of 4.43 and is loved by many, including you, as you rated "The Usual Suspects" and "Schindler's List" both 5 stars. Its themes of hope and friendship resonate with your taste for emotional and inspiring stories.
+1. **The Shawshank Redemption (1994)**  
+   This film has an average rating of 4.43 and is highly rated by users similar to you. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many users who liked those films also loved this one. Its themes of hope and friendship resonate well with your taste.
 
-2. **The Godfather (1972)** - Another classic, this film averages 4.29 and is a favorite among users with similar tastes. You rated "Goodfellas" 5 stars, which shares a similar plot, indicating you would likely enjoy this mafia drama as well.
+2. **The Godfather (1972)**  
+   With an average rating of 4.29, this classic is a favorite among users with similar tastes. You rated "Goodfellas" 5 stars, and this film shares a similar plot, making it a strong match for you. It's a dark and emotional story that aligns well with your preferences.
 
-3. **Terminator 2: Judgment Day (1991)** - With a predicted rating of 4.7 for you, this action-packed sci-fi film has a strong connection to your love for "The Terminator." It's tense and features a compelling narrative that aligns with your preferences.
+3. **Terminator 2: Judgment Day (1991)**  
+   This action-packed film has an average rating of 3.97. You rated the original "The Terminator" 5 stars, and this sequel is likely to appeal to you as well, given its intense action and sci-fi elements. Users similar to you also rated it highly.
 
-4. **The Godfather: Part II (1974)** - This sequel maintains a high average rating of 4.26 and is well-rated by users similar to you. Given your appreciation for "Goodfellas," this film's dark and emotional themes should appeal to you.
+4. **The Godfather: Part II (1974)**  
+   Another masterpiece from the Godfather series, this film has an average rating of 4.26. You rated "Goodfellas" 5 stars, and this film's plot similarity makes it a great choice for you. It's dark and emotional, fitting your taste perfectly.
 
-5. **Ferris Bueller's Day Off (1986)** - A light-hearted comedy with a predicted rating of 4.7 for you, this film is fun and nostalgic. You rated "The Princess Bride" and "Back to the Future" highly, suggesting you'll enjoy this high school classic.
+5. **Ferris Bueller's Day Off (1986)**  
+   This light-hearted comedy has an average rating of 3.84. You rated "The Princess Bride" 5 stars, and this film shares a similar vibe. It's funny and enjoyable, making it a great option for a more relaxed viewing experience.
 
-Let me know if you want more options or details about any of these films!
+Let me know if you'd like more options or specific genres!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide tailored recommendations, supported by strong evidence from the tool outputs."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide tailored recommendations, supported by specific data from the tool outputs."}
 
 **User:** Why do you think I'd like the first one?
 
 <details><summary>Tool calls: explain_match({"movie": "The Shawshank Redemption (1994)"})</summary>
 
-`explain_match` (30 ms) ->
+`explain_match` (31 ms) ->
 ```json
 {
  "movie_id": 318,
@@ -230,31 +234,32 @@ Let me know if you want more options or details about any of these films!
 
 **Assistant:**
 
-You would likely enjoy **The Shawshank Redemption (1994)** for several reasons:
+You might enjoy **The Shawshank Redemption (1994)** for several reasons:
 
-1. **High Ratings from You**: You rated both "The Usual Suspects" and "Schindler's List" 5 stars, and users who rated those films similarly also rated "The Shawshank Redemption" highly. This suggests a strong connection in taste.
+- **High Ratings from Similar Users**: It has an average rating of 4.43, and among users with similar tastes, it averages 4.5, with 18 out of 20 rating it 4 stars or higher.
 
-2. **Similar Plots**: You have also rated "Bottle Rocket" and "Goodfellas" 5 stars, both of which share thematic elements with "The Shawshank Redemption." This indicates that you appreciate stories of resilience and complex character development.
+- **Your Ratings**: You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and users who liked those films also rated "The Shawshank Redemption" highly. This suggests a strong connection in taste.
 
-3. **Strong Genre Fit**: The film falls within the Crime and Drama genres, which you rate above your average (4.2 for Crime and 4.52 for Drama). This alignment suggests it matches your preferences well.
+- **Similar Plots**: You gave 5 stars to "Bottle Rocket" and "Goodfellas," which share thematic elements with "The Shawshank Redemption." The plot similarity is notable, indicating that you might appreciate its storytelling.
 
-4. **Positive Reception Among Similar Users**: The film has an average rating of 4.5 among users with similar tastes, with 18 out of 20 rating it 4 stars or higher, indicating broad appeal.
+- **Genre Fit**: The film falls under the Crime and Drama genres, where you have a solid average rating (4.2 for Crime and 4.52 for Drama), aligning well with your preferences.
 
-Overall, the combination of your past ratings, thematic similarities, and strong genre fit makes it a compelling choice for you.
+Overall, the combination of these factors strongly suggests that you would likely enjoy this film!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's past ratings and preferences to justify the recommendation, making it a strong and personalized response."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': 'The assistant effectively uses specific data from the tool outputs to support its recommendations, making the response well-grounded and personalized.'}
 
 **User:** Give me three more, but nothing older than 1990.
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "min_year": 1990})</summary>
 
-`recommend_movies` (46 ms) ->
+`recommend_movies` (42 ms) ->
 ```json
 {
  "user_id": 1,
  "applied_constraints": {
   "min_year": 1990,
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 5,
  "recommendations": [
@@ -380,22 +385,23 @@ Overall, the combination of your past ratings, thematic similarities, and strong
     },
     "Adventure": {
      "your_avg": 4.35,
-     "n": 68
-    },
-    "Thriller": 
+     "n": 
 ```
 </details>
 
 **Assistant:**
 
-Here are three more movie recommendations from 1990 and later:
+Here are three more movie recommendations from 1990 and onwards:
 
-1. **Memento (2000)** - This mystery thriller has an average rating of 4.12 and features a unique narrative structure that plays with memory and perception. You rated "Fight Club" 5 stars, which shares a similar dark and cerebral vibe, suggesting you would appreciate this film's twist ending and mind-bending plot.
+1. **Memento (2000)**  
+   This mystery thriller has an average rating of 4.12. You rated "Fight Club" 5 stars, and this film shares a similar cerebral and dark vibe. Users with tastes like yours also rated it highly, making it a strong match for your preferences.
 
-2. **The Hunt for Red October (1990)** - With an average rating of 3.87, this action-adventure thriller is based on Tom Clancy's novel. You rated "Raiders of the Lost Ark" 5 stars, indicating a preference for tense, action-packed stories. This film's themes of espionage and military strategy align well with your interests.
+2. **The Hunt for Red October (1990)**  
+   With an average rating of 3.87, this action-adventure thriller features a gripping plot. You rated "Raiders of the Lost Ark" 5 stars, and this film has a similar adventurous spirit. It's well-rated by users similar to you, suggesting it could be an exciting watch.
 
-3. **Trainspotting (1996)** - This dark comedy-drama averages 4.04 and explores themes of addiction and youth culture. Given your 5-star rating for "Fight Club," you might enjoy its edgy storytelling and emotional depth, as it shares a similar tone and narrative style.
+3. **Trainspotting (1996)**  
+   This dark comedy-drama has an average rating of 4.04. You rated "Fight Club" 5 stars, and this film's themes of youth and rebellion resonate with your taste. It has been well-received by users with similar preferences, indicating it might appeal to you.
 
-Let me know if you need more information or additional recommendations!
+Let me know if you need more options or specific genres!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively provided three relevant movie recommendations from 1990 and later, tailored to the user's preferences and explained the reasoning clearly."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively provided three relevant movie recommendations from 1990 onwards, tailored to the user's preferences and backed by specific data."}

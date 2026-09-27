@@ -2,9 +2,9 @@
 
 **User:** I'd like a movie made after 2000, and no horror please.
 
-<details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"]})</summary>
+<details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"], "n": 5}), get_user_profile({})</summary>
 
-`recommend_movies` (62 ms) ->
+`recommend_movies` (72 ms) ->
 ```json
 {
  "user_id": 15,
@@ -13,7 +13,8 @@
    "Horror"
   ],
   "min_year": 2001,
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -135,8 +136,151 @@
      "n": 35
     },
     "Drama": {
-     "your_avg": 3.86,
-    
+ 
+```
+`get_user_profile` (15 ms) ->
+```json
+{
+ "user_id": 15,
+ "n_ratings": 85,
+ "avg_rating": 3.55,
+ "rating_std": 1.1,
+ "generosity_vs_population": 0.05,
+ "history_size": "moderate",
+ "active_period": "2011-03-06 to 2017-11-13",
+ "favourite_decades": [
+  "2000s",
+  "1990s",
+  "1980s"
+ ],
+ "top_rated": [
+  {
+   "title": "Terminator 2: Judgment Day (1991)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Schindler's List (1993)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Forrest Gump (1994)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "The Shawshank Redemption (1994)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Star Wars: Episode IV - A New Hope (1977)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Star Wars: Episode V - The Empire Strikes Back (1980)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Frequency (2000)",
+   "your_rating": 5.0
+  },
+  {
+   "title": "Back to the Future Part II (1989)",
+   "your_rating": 5.0
+  }
+ ],
+ "lowest_rated": [
+  {
+   "title": "Django Unchained (2012)",
+   "your_rating": 1.0
+  },
+  {
+   "title": "Casper (1995)",
+   "your_rating": 1.0
+  },
+  {
+   "title": "Mortal Kombat (1995)",
+   "your_rating": 1.0
+  },
+  {
+   "title": "The Flintstones (1994)",
+   "your_rating": 1.0
+  },
+  {
+   "title": "Johnny Mnemonic (1995)",
+   "your_rating": 1.0
+  }
+ ],
+ "most_watched_genres": [
+  {
+   "genre": "Sci-Fi",
+   "n_rated": 38,
+   "share": 0.45,
+   "lift_vs_population": 2.59
+  },
+  {
+   "genre": "Action",
+   "n_rated": 35,
+   "share": 0.41,
+   "lift_vs_population": 1.33
+  },
+  {
+   "genre": "Drama",
+   "n_rated": 35,
+   "share": 0.41,
+   "lift_vs_population": 0.96
+  },
+  {
+   "genre": "Adventure",
+   "n_rated": 33,
+   "share": 0.39,
+   "lift_vs_population": 1.53
+  },
+  {
+   "genre": "Thriller",
+   "n_rated": 29,
+   "share": 0.34,
+   "lift_vs_population": 1.21
+  }
+ ],
+ "genres_rated_above_own_average": [
+  {
+   "genre": "War",
+   "avg_rating": 4.38,
+   "n_rated": 4
+  },
+  {
+   "genre": "Drama",
+   "avg_rating": 3.86,
+   "n_rated": 35
+  },
+  {
+   "genre": "Romance",
+   "avg_rating": 3.88,
+   "n_rated": 8
+  },
+  {
+   "genre": "Crime",
+   "avg_rating": 3.82,
+   "n_rated": 14
+  }
+ ],
+ "genres_rated_below_own_average": [
+  {
+   "genre": "Fantasy",
+   "avg_rating": 2.38,
+   "n_rated": 8
+  },
+  {
+   "genre": "Children",
+   "avg_rating": 2.61,
+   "n_rated": 14
+  },
+  {
+   "genre": "Musical",
+   "avg_rating": 2.62,
+   "n_rated": 4
+  }
+ ]
+}
 ```
 </details>
 
@@ -145,21 +289,21 @@
 Here are some movie recommendations made after 2000, excluding horror:
 
 1. **Batman Begins (2005)**  
-   This action-packed film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who rated those movies also enjoyed this one.
+   This action-packed film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who liked those also enjoyed this film.
 
 2. **Inglourious Basterds (2009)**  
-   With an average rating of 4.14, this film combines action and drama. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this highly as well, averaging 4.05.
+   With an average rating of 4.14, this film combines action and drama, appealing to your taste. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this highly as well.
 
 3. **Ocean's Eleven (2001)**  
-   This heist film has an average rating of 3.84. You rated "Catch Me If You Can (2002)" 5 stars, and users who liked that film also enjoyed "Ocean's Eleven," which has a strong co-rating similarity.
+   This heist film has an average rating of 3.84. You rated "Catch Me If You Can (2002)" 5 stars, and there's a strong similarity in ratings among users who enjoyed both films.
 
 4. **V for Vendetta (2006)**  
-   This action and sci-fi film has an average rating of 3.88. You rated "The Shawshank Redemption (1994)" 5 stars, and similar users rated this film 3.98 on average, indicating a good fit for your taste.
+   This action and sci-fi thriller has an average rating of 3.88. You rated "The Shawshank Redemption (1994)" 5 stars, and users with similar tastes rated this film positively.
 
 5. **Sin City (2005)**  
-   This stylized action film has an average rating of 3.86. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it shares a similar plot style, making it a strong recommendation for you.
+   With an average rating of 3.86, this film is known for its unique style and dark themes. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and many users who liked that film also enjoyed "Sin City."
 
-Let me know if you'd like more options or specific details about any of these films!
+Let me know if you'd like more options or specific genres!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -167,7 +311,7 @@ Let me know if you'd like more options or specific details about any of these fi
 
 <details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"], "n": 3})</summary>
 
-`recommend_movies` (47 ms) ->
+`recommend_movies` (51 ms) ->
 ```json
 {
  "user_id": 15,
@@ -176,7 +320,8 @@ Let me know if you'd like more options or specific details about any of these fi
    "Horror"
   ],
   "min_year": 2001,
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 5,
  "recommendations": [
@@ -299,7 +444,7 @@ Let me know if you'd like more options or specific details about any of these fi
      "plot_similarity": 0.57
     }
    ],
-   "similar_users_who_rated_it
+   "
 ```
 </details>
 
@@ -308,21 +453,21 @@ Let me know if you'd like more options or specific details about any of these fi
 Here are three more movie recommendations made after 2000, excluding horror:
 
 1. **Pirates of the Caribbean: The Curse of the Black Pearl (2003)**  
-   This action-adventure film has an average rating of 3.78. You rated both "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and users who liked those films also enjoyed this one.
+   This action-adventure film has an average rating of 3.78. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and many users who enjoyed those films also liked this one.
 
 2. **Donnie Darko (2001)**  
-   With an average rating of 3.98, this drama and mystery film is known for its thought-provoking themes. You rated "Catch Me If You Can (2002)" 5 stars, and similar users rated this film highly, averaging 4.28.
+   With an average rating of 3.98, this drama and mystery film is known for its thought-provoking themes. You rated "Catch Me If You Can (2002)" 5 stars, and users with similar tastes rated this film highly as well.
 
 3. **Casino Royale (2006)**  
-   This action-adventure film has an average rating of 3.94. You rated "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and users with similar tastes rated this film 3.85 on average.
+   This action-adventure film has an average rating of 3.94. You rated "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and similar users also enjoyed this film, making it a good fit for your taste.
 
-Let me know if you'd like more options or details about any of these films!
+Let me know if you need more suggestions or specific genres!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** Actually, older films are fine too - but still no horror. Two more, please.
 
-<details><summary>Tool calls: recommend_movies({"exclude_genres": ["Horror"], "n": 2})</summary>
+<details><summary>Tool calls: recommend_movies({"exclude_genres": ["Horror"], "n": 2}), recommend_movies({"min_year": 1970, "exclude_genres": ["Horror"], "n": 2})</summary>
 
 `recommend_movies` (41 ms) ->
 ```json
@@ -332,7 +477,8 @@ Let me know if you'd like more options or details about any of these films!
   "exclude_genres": [
    "Horror"
   ],
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 8,
  "recommendations": [
@@ -456,21 +602,152 @@ Let me know if you'd like more options or details about any of these films!
     "avg_rating": 4.47,
     "n_rated_4_or_higher": 18
    },
+   "predicted_rating_for_y
+```
+`recommend_movies` (104 ms) ->
+```json
+{
+ "user_id": 15,
+ "applied_constraints": {
+  "exclude_genres": [
+   "Horror"
+  ],
+  "min_year": 1970,
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
+ },
+ "excluded_already_suggested": 10,
+ "recommendations": [
+  {
+   "movie_id": 50,
+   "title": "The Usual Suspects (1995)",
+   "genres": [
+    "Crime",
+    "Mystery",
+    "Thriller"
+   ],
+   "n_ratings": 204,
+   "avg_rating": 4.24,
+   "tags": [
+    "heist",
+    "mindfuck",
+    "suspense",
+    "thriller",
+    "tricky",
+    "twist ending"
+   ],
+   "because_you_rated": [
+    {
+     "title": "The Shawshank Redemption (1994)",
+     "your_rating": 5.0,
+     "co_rating_similarity": 0.39
+    },
+    {
+     "title": "Star Wars: Episode V - The Empire Strikes Back (1980)",
+     "your_rating": 5.0,
+     "co_rating_similarity": 0.3
+    }
+   ],
+   "similar_plots_you_liked": [
+    {
+     "title": "Pulp Fiction (1994)",
+     "your_rating": 4.0,
+     "plot_similarity": 0.65
+    },
+    {
+     "title": "Limitless (2011)",
+     "your_rating": 5.0,
+     "plot_similarity": 0.61
+    }
+   ],
+   "similar_users_who_rated_it": {
+    "n": 20,
+    "avg_rating": 4.38,
+    "n_rated_4_or_higher": 17
+   },
    "predicted_rating_for_you": 4.3,
-   "genre_fit": 
+   "genre_fit": {
+    "Crime": {
+     "your_avg": 3.82,
+     "n": 14
+    },
+    "Mystery": {
+     "your_avg": 3.25,
+     "n": 8
+    },
+    "Thriller": {
+     "your_avg": 3.43,
+     "n": 29
+    }
+   },
+   "signal_breakdown_z": {
+    "user_knn": 12.1,
+    "item_knn": 8.3,
+    "pure_svd": 8.0
+   },
+   "evidence_strength": "strong",
+   "attributes": {
+    "moods": [
+     "dark",
+     "thought-provoking"
+    ],
+    "twist_0_3": 3,
+    "violence_0_3": 2
+   }
+  },
+  {
+   "movie_id": 1291,
+   "title": "Indiana Jones and the Last Crusade (1989)",
+   "genres": [
+    "Action",
+    "Adventure"
+   ],
+   "n_ratings": 140,
+   "avg_rating": 4.05,
+   "tags": [
+    "archaeology",
+    "holy grail"
+   ],
+   "because_you_rated": [
+    {
+     "title": "Star Wars: Episode V - The Empire Strikes Back (1980)",
+     "your_rating": 5.0,
+     "co_rating_similarity": 0.46
+    },
+    {
+     "title": "Star Wars: Episode IV - A New Hope (1977)",
+     "your_rating": 5.0,
+     "co_rating_similarity": 0.38
+    }
+   ],
+   "similar_plots_you_liked": [
+    {
+     "title": "Raiders of the Lost Ark (1981)",
+     "your_rating": 4.0,
+     "plot_similarity": 0.72
+    },
+    {
+     "title": "Back to the Future Part III (1990)",
+     "your_rating": 4.0,
+     "plot_similarity": 0.48
+    }
+   ],
+   "similar_users_who_rated_it": {
+    "n": 20,
+    "avg
 ```
 </details>
 
 **Assistant:**
 
-Here are two more movie recommendations, including older films and still excluding horror:
+Here are two more movie recommendations, including older films, while still excluding horror:
 
 1. **Braveheart (1995)**  
-   This epic action-drama has an average rating of 4.03. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and users with similar tastes rated this film highly, averaging 4.42.
+   This epic historical drama has an average rating of 4.03. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and many users with similar tastes rated this film highly as well.
 
 2. **The Godfather: Part II (1974)**  
-   With an average rating of 4.26, this crime drama is a classic. You rated "The Godfather (1972)" 4 stars, and it shares a strong plot similarity with that film, making it a great fit for your taste.
+   With an average rating of 4.26, this crime drama is a classic. You rated the original "The Godfather (1972)" 4 stars, and users who enjoyed that film also appreciated this sequel.
 
-Let me know if you need more recommendations or details about these films!
+Let me know if you'd like more recommendations or have any specific preferences!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

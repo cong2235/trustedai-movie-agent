@@ -19,7 +19,7 @@ PASS lt_override_in_session_r3 ['ok', 'ok']
 PASS lt_dismissed_and_isolation_r1 ['ok', 'ok', 'ok']
 PASS lt_dismissed_and_isolation_r2 ['ok', 'ok', 'ok']
 PASS lt_dismissed_and_isolation_r3 ['ok', 'ok', 'ok']
-PASS lt_recall_liked_r1 ['ok', 'ok']
+FAIL lt_recall_liked_r1 ['ok', {'misattributed_numbers': ['4.24 stated about The Shawshank Redemption (1994) (the tools reported it for The Usual Suspects (1995))', '3.7 stated about Terminator 2: Judgment Day (1991) (the tools reported it for Drive (2011))', '3.77 stated about Terminator 2: Judgment Day (1991) (the tools reported it for Trainspotting (1996))']}]
 PASS lt_recall_liked_r2 ['ok', 'ok']
 PASS lt_recall_liked_r3 ['ok', 'ok']
 PASS lt_ambiguous_seen_r1 ['ok']
@@ -35,8 +35,8 @@ PASS lt_seen_but_discussable_r3 ['ok', 'ok']
   "repeat": 3,
   "n_scenario_runs": 30,
   "n_turns": 93,
-  "turn_pass_rate": 1.0,
-  "scenario_pass_rate": 1.0,
+  "turn_pass_rate": 0.989,
+  "scenario_pass_rate": 0.967,
   "tool_recall": 1.0,
   "args_ok": 1.0,
   "turns_with_constraint_violation": 0,
@@ -45,12 +45,12 @@ PASS lt_seen_but_discussable_r3 ['ok', 'ok']
   "hallucinated_titles": 0,
   "ungrounded_titles": 0,
   "ungrounded_numbers": 0,
-  "misattributed_numbers": 0,
+  "misattributed_numbers": 3,
   "wrong_user_ratings": 0,
-  "decimal_claims_checked": 407,
-  "rating_claims_checked": 184,
+  "decimal_claims_checked": 408,
+  "rating_claims_checked": 188,
   "tool_errors": 3,
-  "online_guardrail_revisions": 0,
+  "online_guardrail_revisions": 1,
   "per_scenario_pass": {
     "st_second_one_after_compaction": "3/3",
     "st_constraints_carry_and_change": "3/3",
@@ -59,11 +59,11 @@ PASS lt_seen_but_discussable_r3 ['ok', 'ok']
     "lt_one_off_not_stored": "3/3",
     "lt_override_in_session": "3/3",
     "lt_dismissed_and_isolation": "3/3",
-    "lt_recall_liked": "3/3",
+    "lt_recall_liked": "2/3",
     "lt_ambiguous_seen": "3/3",
     "lt_seen_but_discussable": "3/3"
   },
-  "latency_p50_s": 4.3,
-  "latency_p95_s": 15.7,
-  "ttft_p50_s": 1.9
+  "latency_p50_s": 4.4,
+  "latency_p95_s": 13.9,
+  "ttft_p50_s": 1.91
 }

@@ -2,30 +2,9 @@
 
 **User:** I liked Toy Story but I'm tired of animated movies - what else?
 
-<details><summary>Tool calls: get_rating_history({"title_contains": "Toy Story", "limit": 1}), recommend_movies({"more_like": ["Toy Story (1995)"], "exclude_genres": ["Animation"], "n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"exclude_genres": ["Animation"], "more_like": ["Toy Story"]}), remember({"kind": "disliked", "note": "animated movies", "scope": "lasting"})</summary>
 
-`get_rating_history` (23 ms) ->
-```json
-{
- "user_id": 15,
- "n_matching": 1,
- "n_total_ratings": 85,
- "ratings": [
-  {
-   "title": "Toy Story (1995)",
-   "your_rating": 2.5,
-   "genres": [
-    "Adventure",
-    "Animation",
-    "Children",
-    "Comedy",
-    "Fantasy"
-   ]
-  }
- ]
-}
-```
-`recommend_movies` (113 ms) ->
+`recommend_movies` (125 ms) ->
 ```json
 {
  "user_id": 15,
@@ -36,7 +15,8 @@
   "min_ratings": 3,
   "more_like": [
    "Toy Story (1995)"
-  ]
+  ],
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -155,25 +135,30 @@
     },
     {
      "title": "Pulp Fiction (1994)",
-     "your_rating": 4.0,
-  
+ 
+```
+`remember` (0 ms) ->
+```json
+{
+ "error": "kind 'disliked' needs a movie"
+}
 ```
 </details>
 
 **Assistant:**
 
-Here are some great movie recommendations for you, considering you liked "Toy Story" but want to avoid animated films:
+Here are some movie recommendations for you, avoiding animated films while still capturing some of the charm you enjoyed in *Toy Story*:
 
-1. **The Princess Bride (1987)** - This film combines adventure, comedy, and romance, and has a strong average rating of 4.23. You rated "Star Wars: Episode V - The Empire Strikes Back" and "Star Wars: Episode IV - A New Hope" both 5 stars, and many users with similar tastes also enjoyed this movie.
+1. **The Princess Bride (1987)** - This film blends action, adventure, and comedy with a romantic twist. You rated *Star Wars: Episode V - The Empire Strikes Back (1980)* and *Star Wars: Episode IV - A New Hope (1977)* both 5 stars, and many users with similar tastes rated this movie highly, averaging 4.47 stars.
 
-2. **Willy Wonka & the Chocolate Factory (1971)** - Although it has some fantasy elements, this classic is beloved for its whimsical story and humor, averaging 3.87 stars. Your high ratings for "Star Wars" films suggest you might appreciate its charm.
+2. **Willy Wonka & the Chocolate Factory (1971)** - A whimsical tale that combines comedy and fantasy. It has a strong nostalgic appeal, and you rated *Back to the Future (1985)* and *Star Wars: Episode V - The Empire Strikes Back (1980)* highly, which aligns well with the themes in this film.
 
-3. **E.T. the Extra-Terrestrial (1982)** - This touching sci-fi drama has a strong emotional core and is rated 3.77 on average. It shares plot similarities with "Back to the Future," which you rated 5 stars.
+3. **E.T. the Extra-Terrestrial (1982)** - A touching story about friendship and adventure. You rated *Back to the Future (1985)* and *Star Wars: Episode VI - Return of the Jedi (1983)* both 5 stars, and this film has a similar emotional resonance, with an average rating of 4.17 among similar users.
 
-4. **Big (1988)** - A light-hearted comedy-drama about a boy who wishes to be an adult, it has an average rating of 3.72. Your enjoyment of "Back to the Future" indicates you might find this film appealing as well.
+4. **Big (1988)** - This comedy-drama explores themes of childhood and adulthood in a light-hearted way. You rated *Back to the Future (1985)* 5 stars, and this film shares a similar whimsical tone, with a predicted rating of 3.8 for you.
 
-5. **Mary Poppins (1964)** - While it has some musical elements, this classic is known for its family-friendly charm and humor, with an average rating of 3.89. It aligns well with your taste in light-hearted films.
+5. **Mary Poppins (1964)** - A classic musical that combines fantasy and comedy. While it has some animated elements, the live-action storytelling and charm might still appeal to you. It has a strong average rating of 3.89 and resonates with users who enjoyed *Back to the Future (1985)*.
 
-These selections should provide a nice variety while steering clear of animated features. Enjoy your movie night!
+Let me know if you'd like more options or have specific preferences!
 
-> PASS · tools_ok=True · golden=True · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 3, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': "The biggest weakness is the reliance on movies that still contain animated or fantasy elements, which may not align with the user's request to avoid animated films."}
+> PASS · tools_ok=True · golden=True · text_ok=True · memory=[] · issues=none · judge={'grounded': 4, 'personalised': 4, 'explains': 4, 'honest': 3, 'helpful': 5, 'rationale': "The biggest weakness is the assistant's failure to acknowledge that *Mary Poppins* contains animated elements, which contradicts the user's request to avoid animated films."}

@@ -2,9 +2,9 @@
 
 **User:** What do people with similar taste to mine think about Pulp Fiction?
 
-<details><summary>Tool calls: similar_users_opinion({"movie": "Pulp Fiction", "k": 5})</summary>
+<details><summary>Tool calls: similar_users_opinion({"movie": "Pulp Fiction"})</summary>
 
-`similar_users_opinion` (18 ms) ->
+`similar_users_opinion` (20 ms) ->
 ```json
 {
  "movie": "Pulp Fiction (1994)",
@@ -15,13 +15,13 @@
   "avg_rating": 4.2
  },
  "similar_users": {
-  "n": 10,
-  "weighted_avg_rating": 4.11,
-  "plain_avg_rating": 4.1,
-  "n_rated_4_or_higher": 7,
-  "n_rated_2_5_or_lower": 0,
+  "n": 20,
+  "weighted_avg_rating": 3.89,
+  "plain_avg_rating": 3.88,
+  "n_rated_4_or_higher": 13,
+  "n_rated_2_5_or_lower": 2,
   "similarity_range": [
-   0.34,
+   0.31,
    0.38
   ],
   "individual": [
@@ -83,10 +83,13 @@
 
 **Assistant:**
 
-People with similar taste to yours generally have a favorable view of *Pulp Fiction (1994)*. The average rating among similar users is 4.11, with 7 out of 10 of them rating it 4 stars or higher. 
+People with similar taste to yours have mixed opinions about **Pulp Fiction (1994)**. Here's a summary of their ratings:
 
-In contrast, you rated it 3 stars. This suggests that while you found it decent, others who share your preferences appreciate it much more. The overall average rating for the movie is 4.2, indicating it's well-regarded in the broader audience as well. 
+- The average rating from similar users is **3.89**, which is slightly below the overall average of **4.2** from all users.
+- Among the 20 similar users, **13 rated it 4 stars or higher**, indicating that many appreciate the film, while **2 rated it 2.5 or lower**.
 
-If you're curious about why it might resonate more with others, I can look into that!
+Your own rating for the movie is **3.0**, which is lower than the average from similar users. This suggests that while some enjoy it, it may not resonate as strongly with you compared to others. 
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 5, 'helpful': 5, 'rationale': "The biggest weakness is that while the assistant provides a good overview of similar users' ratings, it could have included more specific examples of those users' ratings to enhance personalization."}
+If you're curious about specific users, one rated it **5.0** and has a high similarity with you, while another rated it **4.5**. This indicates that those who share your taste generally find value in the film.
+
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's own rating and the opinions of similar users to provide a nuanced view of how Pulp Fiction is perceived, with clear statistics and comparisons."}

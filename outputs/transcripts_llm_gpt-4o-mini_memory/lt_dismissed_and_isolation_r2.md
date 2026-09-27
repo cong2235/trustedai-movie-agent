@@ -30,12 +30,13 @@ Got it! I won't suggest *Fight Club* (1999) to you again. If there's anything el
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (69 ms) ->
+`recommend_movies` (54 ms) ->
 ```json
 {
  "user_id": 30,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -161,8 +162,7 @@ Got it! I won't suggest *Fight Club* (1999) to you again. If there's anything el
    },
    "predicted_rating_for_you": 4.8,
    "genre_fit": {
-    "Adventure": {
-     "your_av
+    "A
 ```
 </details>
 
@@ -170,17 +170,17 @@ Got it! I won't suggest *Fight Club* (1999) to you again. If there's anything el
 
 Here are some great movie recommendations for tonight:
 
-1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance, and you rated "The Shawshank Redemption" and "Braveheart" both 5 stars, which shows a strong connection to the emotional storytelling in "Forrest Gump." It has a predicted rating of 4.6 for you.
+1. **Forrest Gump (1994)** - This heartwarming film combines elements of comedy, drama, and romance. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people who liked those films also enjoyed "Forrest Gump," which has a predicted rating of 4.6 for you.
 
-2. **Back to the Future (1985)** - A classic adventure-comedy with a time travel twist. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" both 5 stars, indicating a taste for exciting adventures. It has a predicted rating of 4.8 for you.
+2. **Back to the Future (1985)** - A classic adventure-comedy about time travel that you might love, especially since you rated "Raiders of the Lost Ark" and "Star Wars: Episode V" both 5 stars. It has a predicted rating of 4.8 for you.
 
-3. **Pulp Fiction (1994)** - This cult classic combines comedy, crime, and drama. Your high rating for "The Shawshank Redemption" suggests you might enjoy its engaging dialogue and non-linear storytelling. It has a predicted rating of 4.8 for you.
+3. **Pulp Fiction (1994)** - This cult classic blends crime, drama, and dark comedy. Your high rating for "The Shawshank Redemption" suggests you might appreciate its storytelling style, with a predicted rating of 4.8 for you.
 
-4. **Saving Private Ryan (1998)** - An intense war drama that you might appreciate given your high ratings for "Star Wars: Episode VI" and "The Empire Strikes Back." It has a predicted rating of 4.5 for you.
+4. **Saving Private Ryan (1998)** - A gripping war drama that resonates with your taste for emotional storytelling, especially since you rated several war films highly. It has a predicted rating of 4.5 for you.
 
-5. **The Princess Bride (1987)** - A charming mix of action, adventure, and romance that aligns well with your love for "Star Wars." It has a predicted rating of 4.8 for you.
+5. **The Princess Bride (1987)** - A delightful mix of action, adventure, and romance that aligns well with your love for "Star Wars." It has a predicted rating of 4.8 for you.
 
-These films should provide a mix of emotional depth, adventure, and engaging storytelling. Enjoy your movie night!
+Enjoy your movie night! If you have a specific genre or mood in mind, let me know for more tailored suggestions.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('dismissed', 'Fight Club (1999)')] · issues=none
 
@@ -188,12 +188,13 @@ These films should provide a mix of emotional depth, adventure, and engaging sto
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (59 ms) ->
+`recommend_movies` (74 ms) ->
 ```json
 {
  "user_id": 15,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -321,8 +322,7 @@ These films should provide a mix of emotional depth, adventure, and engaging sto
     "avg_rating": 4.42,
     "n_rated_4_or_higher": 19
    },
-   "predicted_rating_for_you": 4.2,
-   "gen
+   "predicted_rat
 ```
 </details>
 
@@ -330,21 +330,16 @@ These films should provide a mix of emotional depth, adventure, and engaging sto
 
 Here are some great movie recommendations for tonight:
 
-1. **The Silence of the Lambs (1991)**  
-   This gripping thriller has an average rating of 4.16 and is highly rated by users similar to you. You rated both *The Shawshank Redemption* and *Schindler's List* 5 stars, and many users who liked those films also enjoyed this one.
+1. **The Silence of the Lambs (1991)** - This gripping thriller has an average rating of 4.16 and is highly rated by users similar to you. You rated "The Shawshank Redemption" and "Schindler's List" both 5 stars, and many users who liked those films also enjoyed this one.
 
-2. **Braveheart (1995)**  
-   With an average rating of 4.03, this epic historical drama features themes of inspiration and emotional depth. You rated *Forrest Gump* and *Terminator 2: Judgment Day* 5 stars, and similar users rated *Braveheart* highly as well.
+2. **Braveheart (1995)** - With an average rating of 4.03, this epic historical drama resonates with your taste, especially since you rated "Forrest Gump" and "Terminator 2" 5 stars. It's known for its emotional and inspiring storytelling.
 
-3. **The Godfather: Part II (1974)**  
-   This classic crime drama has an average rating of 4.26. You rated the original *The Godfather* 4 stars, and many users who liked it also appreciated this sequel, which explores similar themes of family and power.
+3. **The Godfather: Part II (1974)** - This classic crime drama has an average rating of 4.26. You rated "The Godfather" 4 stars, and its plot similarity to films you enjoyed suggests you'll appreciate this sequel as well.
 
-4. **The Usual Suspects (1995)**  
-   This film is a thrilling mystery with a twist ending, boasting an average rating of 4.24. You rated *The Shawshank Redemption* and *Star Wars: Episode V - The Empire Strikes Back* 5 stars, and many similar users enjoyed this film as well.
+4. **The Usual Suspects (1995)** - This crime thriller, averaging 4.24, features a twist ending that many users found compelling. Your high ratings for "The Shawshank Redemption" and "Star Wars: Episode V" indicate you might enjoy its suspenseful narrative.
 
-5. **Indiana Jones and the Last Crusade (1989)**  
-   An action-packed adventure with an average rating of 4.05, this film features archaeology and the quest for the Holy Grail. You rated both *Star Wars* films 5 stars, and users with similar tastes found this movie enjoyable.
+5. **Indiana Jones and the Last Crusade (1989)** - This action-adventure film has an average rating of 4.05. Given your love for the "Star Wars" series, this film's blend of action and adventure is likely to be a hit for you.
 
-Let me know if you'd like more information on any of these films!
+Enjoy your movie night! If you have a specific genre in mind, let me know, and I can refine the suggestions.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

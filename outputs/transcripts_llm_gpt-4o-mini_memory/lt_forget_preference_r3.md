@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you don't like horror movies, and they'll be excluded from future recommendations. If you have any other preferences or requests, feel free to let me know!
+I've noted that you don't like horror movies, and they'll be excluded from future recommendations. If there's anything else you'd like to share or ask, feel free!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'Horror')] · issues=none
 
@@ -28,9 +28,9 @@ I've noted that you don't like horror movies, and they'll be excluded from futur
 
 **User:** Recommend me something for tonight.
 
-<details><summary>Tool calls: recommend_movies({"n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5, "min_avg_rating": 4.0})</summary>
 
-`recommend_movies` (73 ms) ->
+`recommend_movies` (54 ms) ->
 ```json
 {
  "user_id": 30,
@@ -39,6 +39,7 @@ I've noted that you don't like horror movies, and they'll be excluded from futur
    "Horror"
   ],
   "min_ratings": 3,
+  "min_avg_rating": 4.0,
   "genres_avoided_from_memory": [
    "Horror"
   ]
@@ -163,31 +164,25 @@ I've noted that you don't like horror movies, and they'll be excluded from futur
    "similar_users_who_rated_it": {
     "n": 20,
     "avg_rating": 4.45,
-    "n_rated_4_or_higher": 19
-  
+    "n_
 ```
 </details>
 
 **Assistant:**
 
-Here are some movie recommendations for tonight:
+Here are some great movie recommendations for tonight:
 
-1. **Forrest Gump (1994)**  
-   A heartwarming tale that blends comedy, drama, and romance. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people who liked those films also enjoyed this one. It has a strong emotional core, which aligns with your taste.
+1. **Forrest Gump (1994)** - This heartwarming film blends comedy, drama, and romance, and has an average rating of 4.16. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and many users with similar tastes also enjoyed this film.
 
-2. **Back to the Future (1985)**  
-   This classic adventure-comedy about time travel is light-hearted and inspiring. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" 5 stars, and similar users rated this highly as well. It’s a fun choice that fits your adventure genre preference.
+2. **Back to the Future (1985)** - A classic adventure-comedy with a time travel twist, it has an average rating of 4.04. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" both 5 stars, and this film shares similar plot elements that you liked.
 
-3. **Fight Club (1999)**  
-   A thought-provoking film that combines action, crime, and drama with a twist ending. You rated "The Shawshank Redemption" 5 stars, and this film has a similar psychological depth that you might appreciate. It’s rated highly by users with similar tastes.
+3. **Fight Club (1999)** - This thought-provoking drama has an average rating of 4.27 and features a dark, twisty narrative. You rated "The Shawshank Redemption" 5 stars, and it has strong thematic ties to films you enjoy.
 
-4. **Saving Private Ryan (1998)**  
-   An emotional and action-packed war drama that has received strong ratings. You rated "Star Wars: Episode VI" 5 stars, and this film's intense storytelling and themes resonate with your preferences.
+4. **Saving Private Ryan (1998)** - An intense war drama with an average rating of 4.15. You rated "Star Wars: Episode VI" and "Star Wars: Episode V" both 5 stars, and this film's emotional depth aligns with your taste.
 
-5. **Pulp Fiction (1994)**  
-   A cult classic that mixes comedy, crime, and drama with a non-linear narrative. You rated "The Shawshank Redemption" and "Star Wars: Episode V" 5 stars, and this film's unique storytelling style and strong dialogue might appeal to you.
+5. **Pulp Fiction (1994)** - A cult classic with a unique narrative style, it has an average rating of 4.2. You rated "The Shawshank Redemption" 5 stars, and this film's engaging dialogue and storytelling are likely to resonate with you.
 
-Let me know if you'd like more information on any of these films!
+Enjoy your movie night! If you want more options or a specific genre, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'Horror')] · issues=none
 
@@ -212,7 +207,7 @@ Let me know if you'd like more information on any of these films!
 
 **Assistant:**
 
-I've removed the preference to avoid horror movies. If you're interested, I can now recommend some horror films as well! Would you like me to do that?
+I've removed the restriction on horror movies. If you're interested, I can recommend some horror films now! Just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -221,9 +216,9 @@ I've removed the preference to avoid horror movies. If you're interested, I can 
 
 **User:** Recommend me a good horror movie.
 
-<details><summary>Tool calls: recommend_movies({"n": 5, "include_genres": ["Horror"], "min_ratings": 10})</summary>
+<details><summary>Tool calls: recommend_movies({"include_genres": ["Horror"], "min_avg_rating": 4, "n": 5})</summary>
 
-`recommend_movies` (61 ms) ->
+`recommend_movies` (59 ms) ->
 ```json
 {
  "user_id": 30,
@@ -231,7 +226,8 @@ I've removed the preference to avoid horror movies. If you're interested, I can 
   "include_genres": [
    "Horror"
   ],
-  "min_ratings": 10
+  "min_ratings": 3,
+  "min_avg_rating": 4
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -355,25 +351,24 @@ I've removed the preference to avoid horror movies. If you're interested, I can 
    },
    "predicted_rating_for_you": 4.6,
    "genre_fit": {
-    "Comedy": {
-     "your_
+    "
 ```
 </details>
 
 **Assistant:**
 
-Here are some great horror movie recommendations for you:
+Here are some highly-rated horror movies you might enjoy:
 
-1. **The Silence of the Lambs (1991)** - This film combines crime, horror, and thriller elements, and has an average rating of 4.16 from 279 ratings. You rated "The Shawshank Redemption (1994)" 5 stars, and many users who liked both films rated this one highly as well.
+1. **The Silence of the Lambs (1991)** - This film has an average rating of 4.16 and is well-loved by similar users, averaging 4.25. You rated "The Shawshank Redemption (1994)" 5 stars, and many who liked that also appreciated this psychological thriller.
 
-2. **Shaun of the Dead (2004)** - A unique blend of comedy and horror, this movie has an average rating of 4.01 from 77 ratings. Your high rating for "Star Wars: Episode V - The Empire Strikes Back (1980)" aligns with others who enjoyed this film, making it a strong match for your taste.
+2. **Shaun of the Dead (2004)** - A unique blend of comedy and horror, this film has an average rating of 4.01. Your high rating for "Star Wars: Episode V - The Empire Strikes Back (1980)" aligns with others who enjoyed this film, predicting a 4.6 rating for you.
 
-3. **Alien (1979)** - This sci-fi horror classic has an average rating of 3.97. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and there's a notable plot similarity with films you liked, which suggests you might enjoy this one.
+3. **Jaws (1975)** - With an average rating of 4.01, this classic horror film about a shark attack has resonated with many viewers. Your love for "Raiders of the Lost Ark (1981)" suggests you might enjoy the thrilling elements of "Jaws," with a predicted rating of 4.3 for you.
 
-4. **Jaws (1975)** - With an average rating of 4.01, this iconic horror film about a shark attack has been well-received, and your taste in action films like "Raiders of the Lost Ark (1981)" shows a connection to its thrilling elements.
+4. **Army of Darkness (1993)** - This film combines action, adventure, and horror, boasting an average rating of 4.04. Your high ratings for "Indiana Jones and the Last Crusade (1989)" indicate you might appreciate its quirky style, with a predicted rating of 4.5.
 
-5. **Army of Darkness (1993)** - This film mixes action, adventure, and horror with a comedic twist, boasting an average rating of 4.04. Your enjoyment of "Indiana Jones and the Last Crusade (1989)" suggests you might appreciate its quirky style.
+5. **The Shining (1980)** - A masterpiece of psychological horror, this film has an average rating of 4.08. Your appreciation for "Braveheart (1995)" suggests you might find the atmospheric tension of "The Shining" compelling, with a predicted rating of 4.4.
 
-Let me know if you want more information about any of these films!
+These selections should provide a mix of thrills and chills! Let me know if you want more options or details on any of these films.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

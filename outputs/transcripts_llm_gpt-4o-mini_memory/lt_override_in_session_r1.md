@@ -38,7 +38,8 @@ I've noted that you never want war movies recommended to you. If you have any ot
   "include_genres": [
    "War"
   ],
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -163,26 +164,24 @@ I've noted that you never want war movies recommended to you. If you have any ot
     "n_rated_4_or_higher": 13
    },
    "predicted_rating_for_you": 4.5,
-   "genre_fit": {
-    "Action": {
-    
+   "genre_fi
 ```
 </details>
 
 **Assistant:**
 
-Here are some war movies you might find interesting, just for today:
+Here are some war movies you might enjoy, just this once:
 
-1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with a backdrop of historical events, including the Vietnam War. You rated "The Shawshank Redemption" (1994) and "Braveheart" (1995) both 5 stars, and many users who liked those films also enjoyed this one, averaging a strong 4.16 stars.
+1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with its war elements. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people with similar tastes also rated this highly, averaging 4.15 stars.
 
-2. **Saving Private Ryan (1998)** - A gripping portrayal of World War II, this film is known for its intense realism and emotional depth. You rated "Star Wars: Episode VI - Return of the Jedi" (1983) and "Star Wars: Episode V - The Empire Strikes Back" (1980) both 5 stars, and similar users rated this film 4.15 on average.
+2. **Saving Private Ryan (1998)** - A gripping portrayal of World War II, this film has a strong emotional impact. You rated "Star Wars: Episode VI - Return of the Jedi" and "Star Wars: Episode V - The Empire Strikes Back" both 5 stars, and similar users rated this movie 4.12 on average.
 
-3. **Schindler's List (1993)** - A powerful and moving film about the Holocaust, it has a high average rating of 4.22. Your 5-star rating for "The Shawshank Redemption" (1994) aligns with many users who also rated this film highly.
+3. **Schindler's List (1993)** - A powerful and moving film about the Holocaust, it has a high average rating of 4.22. Your rating of "The Shawshank Redemption" aligns with others who rated this film highly, predicting a 4.7 rating for you.
 
-4. **Inglourious Basterds (2009)** - This film offers a unique blend of action and dark comedy set during World War II. You rated "Star Wars: Episode V - The Empire Strikes Back" (1980) 5 stars, and many similar users rated this film 4.14 on average.
+4. **Inglourious Basterds (2009)** - This film offers a unique blend of action and dark comedy set during World War II. You rated "Star Wars: Episode V - The Empire Strikes Back" 5 stars, and similar users rated this movie 4.15 on average.
 
-5. **X-Men: First Class (2011)** - While primarily a superhero film, it includes significant war themes and has a predicted rating of 4.6 for you. You rated "Iron Man" (2008) 5 stars, and this film has a strong action-packed vibe that aligns with your tastes.
+5. **X-Men: First Class (2011)** - While primarily an action and sci-fi film, it incorporates war themes and has a predicted rating of 4.6 for you. You rated "Iron Man" and "Star Trek" both 5 stars, which aligns with the tastes of similar users.
 
-Let me know if you'd like more information on any of these!
+Let me know if you'd like more information about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'War')] · issues=none

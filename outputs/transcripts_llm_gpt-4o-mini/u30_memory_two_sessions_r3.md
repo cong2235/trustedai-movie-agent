@@ -15,7 +15,7 @@
  "effect": "excluded from future recommendations"
 }
 ```
-`remember` (17 ms) ->
+`remember` (21 ms) ->
 ```json
 {
  "ok": true,
@@ -41,18 +41,18 @@
 
 **Assistant:**
 
-I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (1985)**, and you prefer to avoid war movies. If you need any recommendations or have specific requests, feel free to ask!
+I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (1985)**, and you prefer to avoid war movies in the future. If you need any recommendations or have other preferences, just let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 5, 'personalised': 2, 'explains': 1, 'honest': 5, 'helpful': 2, 'rationale': "The biggest weakness is that the assistant does not provide any specific movie recommendations or reasoning based on the user's preferences."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 5, 'personalised': 2, 'explains': 1, 'honest': 5, 'helpful': 2, 'rationale': "The biggest weakness is that the assistant did not provide any specific movie recommendations or reasoning based on the user's preferences."}
 
 ---
 *(new session - long-term memory carries over)*
 
 **User:** What should I watch tonight?
 
-<details><summary>Tool calls: recommend_movies({"n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5, "min_avg_rating": 4.0})</summary>
 
-`recommend_movies` (58 ms) ->
+`recommend_movies` (75 ms) ->
 ```json
 {
  "user_id": 30,
@@ -61,6 +61,7 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
    "War"
   ],
   "min_ratings": 3,
+  "min_avg_rating": 4.0,
   "genres_avoided_from_memory": [
    "War"
   ]
@@ -188,24 +189,24 @@ I've noted that you've seen **Forrest Gump (1994)** and **Back to the Future (19
      "plot_similarity": 0.55
     },
     {
-     "title": "21 Jump Street 
+     
 ```
 </details>
 
 **Assistant:**
 
-Here are some great movie recommendations for you tonight:
+Here are some great movie recommendations for tonight:
 
-1. **Fight Club (1999)** - This film blends action, crime, and drama, and has a strong twist ending. You rated *The Shawshank Redemption (1994)* and *Star Wars: Episode V - The Empire Strikes Back (1980)* both 5 stars, and many users with similar tastes rated this highly, averaging 4.55 stars.
+1. **Fight Club (1999)** - This film combines action, crime, and drama with a thought-provoking plot. You rated *The Shawshank Redemption (1994)* 5 stars, and many users who liked both films rated *Fight Club* highly as well, averaging 4.55 stars among similar users. 
 
-2. **Pulp Fiction (1994)** - A cult classic that combines comedy, crime, and drama. You also rated *The Shawshank Redemption* and *Star Wars: Episode V* highly, and this film has a predicted rating of 4.8 for you based on your preferences.
+2. **Pulp Fiction (1994)** - A cult classic that blends comedy, crime, and drama. You also rated *The Shawshank Redemption* and *Star Wars: Episode V - The Empire Strikes Back (1980)* 5 stars, and *Pulp Fiction* has a strong predicted rating of 4.8 for you based on similar users.
 
-3. **The Princess Bride (1987)** - A charming mix of action, adventure, and comedy that you might enjoy, especially since you rated *Star Wars: Episode IV - A New Hope (1977)* and *Star Wars: Episode V* both 5 stars. It has a predicted rating of 4.8 for you.
+3. **The Princess Bride (1987)** - This action-adventure comedy is beloved for its humor and romance. Your high ratings for *Star Wars* films suggest you'll enjoy its light-heartedness, and it has a strong predicted rating of 4.8 for you.
 
-4. **The Silence of the Lambs (1991)** - A gripping thriller that dives into crime and horror. You rated *The Shawshank Redemption* 5 stars, and this film has a strong predicted rating of 4.6 for you.
+4. **The Silence of the Lambs (1991)** - A gripping crime thriller that delves into psychological suspense. You rated *The Shawshank Redemption* 5 stars, and this film has a predicted rating of 4.6 for you, indicating a strong fit with your taste.
 
-5. **The Godfather (1972)** - A classic crime drama that is highly rated by users with similar tastes. You rated *Star Wars: Episode V* and *Star Wars: Episode IV* both 5 stars, and this film has a predicted rating of 5.0 for you.
+5. **The Godfather (1972)** - A classic crime drama that explores the mafia underworld. Given your high ratings for crime dramas, this film is predicted to resonate with you, with a perfect predicted rating of 5.0.
 
-Enjoy your movie night! If you want more options or have a specific genre in mind, let me know!
+These films should provide a mix of excitement, depth, and entertainment for your evening! Let me know if you want more details on any of them.
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 4, 'personalised': 5, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': 'The biggest weakness is the slight discrepancy in the predicted ratings mentioned in the reply compared to the tool outputs, which could lead to confusion about the accuracy of the recommendations.'}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[('seen', 'Forrest Gump (1994)'), ('seen', 'Back to the Future (1985)'), ('avoid_genre', 'War')] · issues=none · judge={'grounded': 4, 'personalised': 5, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': 'The biggest weakness is the slight discrepancy in the average ratings mentioned for some movies, which could mislead the user about their popularity.'}

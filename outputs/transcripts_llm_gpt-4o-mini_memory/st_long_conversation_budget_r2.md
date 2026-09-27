@@ -4,12 +4,13 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (73 ms) ->
+`recommend_movies` (63 ms) ->
 ```json
 {
  "user_id": 1,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -138,8 +139,6 @@
    "signal_breakdown_z": {
     "item_knn": 8.4,
     "user_knn": 7.6,
-    "pure_svd": 4.3
-   },
 ```
 </details>
 
@@ -147,17 +146,22 @@
 
 Here are some great movie recommendations for tonight:
 
-1. **The Shawshank Redemption (1994)** - This film has an average rating of 4.43 and is highly rated by users similar to you. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many who liked those films also enjoyed this one.
+1. **The Shawshank Redemption (1994)**  
+   A powerful drama about hope and friendship set in a prison. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many users with similar tastes also rated this highly, averaging 4.5 stars.
 
-2. **The Godfather (1972)** - With an average rating of 4.29, this classic is a favorite among users with similar tastes. You rated "Goodfellas" 5 stars, and it shares a strong plot similarity with "The Godfather."
+2. **The Godfather (1972)**  
+   This classic crime drama about a mafia family is a must-see. You gave "Goodfellas" a 5-star rating, and this film has a similar plot, with many users rating it 4.6 stars on average.
 
-3. **Terminator 2: Judgment Day (1991)** - This action-packed film has an average rating of 3.97. You rated the original "The Terminator" 5 stars, and it has a high predicted rating of 4.7 for you based on your preferences.
+3. **Terminator 2: Judgment Day (1991)**  
+   An action-packed sci-fi film that combines thrilling sequences with a compelling story. You rated the original "The Terminator" 5 stars, and this sequel is highly rated by users with similar tastes.
 
-4. **The Godfather: Part II (1974)** - Another highly rated film with an average of 4.26. It has strong connections to "Goodfellas," which you rated 5 stars, making it a likely hit for you.
+4. **The Godfather: Part II (1974)**  
+   The sequel to the original, this film continues the saga of the Corleone family. You rated "Goodfellas" 5 stars, and this film shares a similar plot, making it a strong choice for you.
 
-5. **Ferris Bueller's Day Off (1986)** - This light-hearted comedy has an average rating of 3.84. You rated "The Princess Bride" and "Back to the Future" both 5 stars, indicating you might enjoy this fun high school romp.
+5. **Ferris Bueller's Day Off (1986)**  
+   A light-hearted comedy about a high school student who skips school for a day of fun. You rated "The Princess Bride" and "Back to the Future" both 5 stars, and this film has a similar vibe.
 
-Let me know if you want more information about any of these films!
+Enjoy your movie night! If you want more options or a specific genre, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -165,7 +169,7 @@ Let me know if you want more information about any of these films!
 
 <details><summary>Tool calls: explain_match({"movie": "The Shawshank Redemption (1994)"})</summary>
 
-`explain_match` (35 ms) ->
+`explain_match` (33 ms) ->
 ```json
 {
  "movie_id": 318,
@@ -232,15 +236,15 @@ Let me know if you want more information about any of these films!
 
 You might enjoy **The Shawshank Redemption (1994)** for several reasons:
 
-- **High Ratings from Similar Users**: It has an average rating of 4.43, and 18 out of 20 users similar to you rated it 4 stars or higher, indicating strong approval.
+- **High Ratings**: You rated both "The Usual Suspects" and "Schindler's List" 5 stars, and this film has a strong average rating of 4.43 from a large number of users (317 ratings). 
 
-- **Your Ratings**: You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and there’s a notable co-rating similarity with these films, suggesting that if you liked those, you’re likely to appreciate this one too.
+- **Similar Themes**: The plot shares similarities with movies you loved, like "Bottle Rocket" and "Goodfellas," which you rated 5 stars. This suggests that you appreciate stories about resilience and redemption.
 
-- **Similar Plots**: You also rated "Bottle Rocket" and "Goodfellas" 5 stars, both of which share plot similarities with "The Shawshank Redemption." This indicates that you enjoy stories with similar themes.
+- **Strong User Consensus**: Among users with similar tastes, the average rating for this film is 4.5, with 18 out of 20 users rating it 4 stars or higher, indicating broad appeal.
 
-- **Predicted Rating**: Based on your preferences, it has a predicted rating of 5.0 for you, suggesting it aligns very well with your taste.
+- **Genre Fit**: You have a good track record with the Crime and Drama genres, rating them above your average, which aligns well with this film's classification.
 
-Overall, the combination of strong user ratings, your past ratings, and thematic similarities makes it a compelling choice for you!
+Overall, the combination of your past ratings, the film's strong reputation, and its thematic resonance with your preferences suggests you'll likely enjoy it!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -248,7 +252,7 @@ Overall, the combination of strong user ratings, your past ratings, and thematic
 
 <details><summary>Tool calls: genre_blind_spots({})</summary>
 
-`genre_blind_spots` (107 ms) ->
+`genre_blind_spots` (52 ms) ->
 ```json
 {
  "user_id": 1,
@@ -328,25 +332,25 @@ Overall, the combination of strong user ratings, your past ratings, and thematic
 
 **Assistant:**
 
-Your current genre blind spots are:
+Your main blind spots are in the **Drama** and **Romance** genres:
 
 1. **Drama**: 
-   - You have rated 54 drama films, which is only 28.4% of your total ratings, compared to 43.1% for the average user. 
-   - Your average rating in this genre is 4.52, which is quite high, but you have less exposure to it compared to others.
-   - Entry points that similar users enjoyed include:
-     - **It's a Wonderful Life (1946)** - Average rating among similar users: 5.0
-     - **Rosencrantz and Guildenstern Are Dead (1990)** - Average rating among similar users: 5.0
-     - **Broadcast News (1987)** - Average rating among similar users: 5.0
+   - You have rated 54 drama films, which is only 28.4% of your total ratings, while the average user rates dramas 43.1% of the time. This indicates a lower exposure to the genre compared to others.
+   - Your average rating in this genre is 4.52, which is quite high, suggesting you enjoy it when you do watch dramas. 
+   - Entry points recommended by similar users include:
+     - **It's a Wonderful Life (1946)** - Avg. rating among similar users: 5.0
+     - **Rosencrantz and Guildenstern Are Dead (1990)** - Avg. rating among similar users: 5.0
+     - **Broadcast News (1987)** - Avg. rating among similar users: 5.0
 
-2. **Romance**: 
-   - You have rated 24 romance films, making up only 12.6% of your total ratings, while the average user rates this genre 20% of the time.
-   - Your average rating in this genre is 4.33, indicating you enjoy it, but again, your exposure is lower.
-   - Entry points that similar users liked include:
-     - **It's a Wonderful Life (1946)** - Average rating among similar users: 5.0
-     - **Broadcast News (1987)** - Average rating among similar users: 5.0
-     - **Tangled (2010)** - Average rating among similar users: 5.0
+2. **Romance**:
+   - You have rated 24 romance films, making up only 12.6% of your total ratings, while the average user rates romances 20% of the time.
+   - Your average rating in this genre is 4.33, indicating you also enjoy it when you watch romantic films.
+   - Recommended entry points include:
+     - **It's a Wonderful Life (1946)** - Avg. rating among similar users: 5.0
+     - **Broadcast News (1987)** - Avg. rating among similar users: 5.0
+     - **Tangled (2010)** - Avg. rating among similar users: 5.0
 
-Exploring more films in these genres could enhance your viewing experience!
+Exploring more films in these genres could enhance your viewing experience! If you're interested in recommendations from either genre, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -433,26 +437,27 @@ Exploring more films in these genres could enhance your viewing experience!
 
 **Assistant:**
 
-For **Pulp Fiction (1994)**, here's what people with similar tastes think:
+Among users with similar tastes to yours, **Pulp Fiction (1994)** has received a weighted average rating of **3.89**. Here's a breakdown of their opinions:
 
-- **Overall Rating**: The film has an average rating of 4.2 among all users, indicating it's well-regarded.
+- **Overall Consensus**: The average rating from all users is **4.2**, indicating that it is generally well-regarded.
+- **Similar Users' Ratings**: Out of 20 similar users:
+  - 13 rated it 4 stars or higher.
+  - Only 2 rated it 2.5 stars or lower.
+  
+- **Individual Ratings**: Some notable ratings from similar users include:
+  - User 178: Rated it **4.5** (similarity 0.38, 24 movies in common).
+  - User 226: Rated it **4.5** (similarity 0.38, 82 movies in common).
+  - User 414: Rated it **5.0** (similarity 0.36, 165 movies in common).
 
-- **Similar Users' Ratings**: Among users similar to you, the weighted average rating is 3.89, and the plain average is 3.88. Out of 20 similar users, 13 rated it 4 stars or higher, while only 2 rated it 2.5 or lower.
-
-- **Individual Ratings**: Some notable ratings from users similar to you include:
-  - User 178 rated it 4.5 (similarity 0.38, 24 movies in common).
-  - User 226 also rated it 4.5 (similarity 0.38, 82 movies in common).
-  - User 414 rated it 5.0 (similarity 0.36, 165 movies in common).
-
-Your own rating for this film is 3.0, which is below the average of your similar users. This suggests that while many who share your taste appreciate the film, it didn't resonate with you as much.
+Your own rating for "Pulp Fiction" is **3.0**, which is below the average of your similar users. This suggests that while many people with similar tastes appreciate the film, it didn't resonate with you as much. If you're curious about why it might be popular among others or want to explore similar films, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** Recommend a sci-fi movie made before 1970.
 
-<details><summary>Tool calls: recommend_movies({"include_genres": ["Sci-Fi"], "max_year": 1969, "n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5, "include_genres": ["Sci-Fi"], "max_year": 1969, "min_ratings": 10})</summary>
 
-`recommend_movies` (67 ms) ->
+`recommend_movies` (74 ms) ->
 ```json
 {
  "user_id": 1,
@@ -461,7 +466,8 @@ Your own rating for this film is 3.0, which is below the average of your similar
    "Sci-Fi"
   ],
   "max_year": 1969,
-  "min_ratings": 3
+  "min_ratings": 10,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 5,
  "recommendations": [
@@ -585,9 +591,7 @@ Your own rating for this film is 3.0, which is below the average of your similar
     "Drama": {
      "your_avg": 4.52,
      "n": 54
-    },
-    "Sci-Fi": {
-    
+
 ```
 </details>
 
@@ -596,42 +600,37 @@ Your own rating for this film is 3.0, which is below the average of your similar
 Here are some recommended sci-fi movies made before 1970:
 
 1. **2001: A Space Odyssey (1968)**  
-   - Average Rating: 3.89  
-   - This film has a strong connection to your tastes, as you rated "A Clockwork Orange" and "Full Metal Jacket" both 5 stars. It has a predicted rating of 5.0 for you, indicating it aligns well with your preferences.
+   This iconic film blends adventure, drama, and sci-fi, exploring themes of space and artificial intelligence. It has an average rating of **3.89** and is highly rated by similar users, averaging **4.28**. You rated "A Clockwork Orange" and "Full Metal Jacket" both 5 stars, indicating a strong potential for you to enjoy this film.
 
 2. **Metropolis (1927)**  
-   - Average Rating: 3.86  
-   - This classic has a thought-provoking narrative and shares plot similarities with "Young Frankenstein" and "Frankenstein," both of which you rated highly. It has a predicted rating of 4.4 for you.
+   A groundbreaking silent film that combines drama and sci-fi, depicting a dystopian future. It has an average rating of **3.86** and is also well-received by similar users, averaging **3.89**. You rated "A Clockwork Orange" 5 stars, which aligns with the film's themes.
 
 3. **Night of the Living Dead (1968)**  
-   - Average Rating: 3.75  
-   - This film combines horror and sci-fi elements and has a predicted rating of 4.3 for you. You rated "Planet of the Apes" 5 stars, indicating a potential appreciation for this film's themes.
+   This influential horror-sci-fi film about a zombie apocalypse has an average rating of **3.75**. It has a darker tone, which you might appreciate given your interest in similar films like "Planet of the Apes," which you rated 5 stars.
 
 4. **20,000 Leagues Under the Sea (1954)**  
-   - Average Rating: 3.47  
-   - This adventure-filled sci-fi film has a predicted rating of 4.4 for you. It connects well with your enjoyment of adventure and drama genres.
+   An adventure-drama-sci-fi film with an average rating of **3.47**. It features themes of exploration and adventure, which you tend to enjoy, as indicated by your high ratings in the adventure genre.
 
-5. **Barbarella (1968)**  
-   - Average Rating: 3.17  
-   - A quirky and light-hearted sci-fi adventure, it has a predicted rating of 3.9 for you. It aligns with your taste for adventure and comedy.
+5. **You Only Live Twice (1967)**  
+   A James Bond film that combines action, adventure, and sci-fi elements. It has an average rating of **3.83** and is rated well by similar users. You rated other Bond films highly, suggesting you might enjoy this one too.
 
-Let me know if you'd like more details on any of these films!
+These films offer a mix of classic sci-fi themes and styles that align with your tastes. Enjoy your viewing! If you need more options or specific themes, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** Now a dark psychological thriller with a twist.
 
-<details><summary>Tool calls: search_movies({"query": "dark psychological thriller with a twist", "moods": ["dark"], "twist_ending": true, "n": 5})</summary>
+<details><summary>Tool calls: search_movies({"query": "dark psychological thriller with a twist", "n": 5, "moods": ["dark"], "twist_ending": true})</summary>
 
-`search_movies` (2422 ms) ->
+`search_movies` (64 ms) ->
 ```json
 {
  "query": "dark psychological thriller with a twist",
  "personalized_for_user": 1,
  "excluded_movies_you_rated": true,
  "reranker": {
-  "kind": "llm",
-  "ms": 2339,
+  "kind": "llm-cache",
+  "ms": 0,
   "pool": 30
  },
  "results": [
@@ -719,7 +718,7 @@ Let me know if you'd like more details on any of these films!
      {
       "title": "Fight Club (1999)",
       "your_rating": 5.0,
-      "co_rating_similarity": 0.4
+      "co_rating_similarity": 
 ```
 </details>
 
@@ -728,34 +727,29 @@ Let me know if you'd like more details on any of these films!
 Here are some dark psychological thrillers with a twist that you might enjoy:
 
 1. **Shutter Island (2010)**  
-   - Average Rating: 4.02  
-   - This film features U.S. Marshals investigating a disappearance at a mental institution. You rated "Seven" and "Goodfellas" both 5 stars, and it has a predicted rating of 4.6 for you.
+   A gripping mystery thriller where two U.S. Marshals investigate the disappearance of a patient from a mental institution. With an average rating of **4.02**, it features themes of insanity and psychological tension. You rated "Seven" and "Goodfellas" both 5 stars, and similar users average **3.88** for this film, suggesting it aligns well with your tastes.
 
 2. **Memento (2000)**  
-   - Average Rating: 4.12  
-   - A unique narrative told in reverse, focusing on a man with short-term memory loss trying to solve his wife's murder. You rated "Fight Club" and "American History X" both 5 stars, and it has a predicted rating of 5.0 for you.
+   This mind-bending thriller tells the story of a man with short-term memory loss trying to solve his wife's murder. It has an average rating of **4.12** and is highly rated by similar users, averaging **4.25**. You rated "Fight Club" 5 stars, indicating a strong potential for you to enjoy this film.
 
 3. **The Machinist (2004)**  
-   - Average Rating: 3.99  
-   - This film follows an insomniac machinist whose life unravels as he becomes increasingly paranoid. You rated "The Terminator" and "Full Metal Jacket" both 5 stars, and it has a predicted rating of 4.5 for you.
+   A psychological thriller about an insomniac machinist whose reality begins to unravel. It has an average rating of **3.99** and is well-received by similar users, averaging **3.77**. You rated "The Terminator" and "Full Metal Jacket" both 5 stars, which suggests you might appreciate its dark themes.
 
 4. **Identity (2003)**  
-   - Average Rating: 3.68  
-   - A group of strangers is stranded at a motel during a storm, and they begin to be killed off one by one. You rated "Blazing Saddles" and "American History X" both 5 stars, with a predicted rating of 4.4 for you.
+   A group of strangers finds themselves stranded at a motel during a storm, where they are mysteriously killed one by one. This film has an average rating of **3.68** and is rated well by similar users, averaging **3.6**. You rated "American History X" 5 stars, which aligns with the film's intense themes.
 
 5. **Mulholland Drive (2001)**  
-   - Average Rating: 3.84  
-   - A complex narrative involving a woman who survives a car accident and the mysterious events that follow. You rated "A Clockwork Orange" and "Fight Club" both 5 stars, and it has a predicted rating of 4.5 for you.
+   A surreal thriller that explores the dark side of Hollywood through a complex narrative. It has an average rating of **3.84** and is rated **3.62** by similar users. You rated "A Clockwork Orange" and "Fight Club" both 5 stars, indicating a good fit for your taste.
 
-Let me know if you want more details on any of these films!
+These films should provide the dark psychological thrills you're looking for! If you want more options or have specific preferences, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
 **User:** Have I rated any Star Wars movies?
 
-<details><summary>Tool calls: get_rating_history({"title_contains": "Star Wars", "limit": 5})</summary>
+<details><summary>Tool calls: get_rating_history({"title_contains": "Star Wars", "sort": "rating_desc"})</summary>
 
-`get_rating_history` (2 ms) ->
+`get_rating_history` (15 ms) ->
 ```json
 {
  "user_id": 1,
@@ -796,13 +790,13 @@ Let me know if you want more details on any of these films!
 
 **Assistant:**
 
-Yes, you have rated several Star Wars movies:
+Yes, you have rated the following Star Wars movies, and you gave them all **5 stars**:
 
-1. **Star Wars: Episode IV - A New Hope (1977)** - You rated it 5 stars.
-2. **Star Wars: Episode V - The Empire Strikes Back (1980)** - You rated it 5 stars.
-3. **Star Wars: Episode VI - Return of the Jedi (1983)** - You rated it 5 stars.
+1. **Star Wars: Episode IV - A New Hope (1977)**
+2. **Star Wars: Episode V - The Empire Strikes Back (1980)**
+3. **Star Wars: Episode VI - Return of the Jedi (1983)**
 
-It seems you have a strong appreciation for the original trilogy!
+It looks like you're a big fan of the original trilogy! If you're interested in exploring more Star Wars content or similar films, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -814,6 +808,6 @@ It seems you have a strong appreciation for the original trilogy!
 
 **Assistant:**
 
-The very first movie I recommended to you was **The Shawshank Redemption (1994)**.
+The very first movie I recommended to you in this conversation was **The Shawshank Redemption (1994)**. If you need more information about it or want additional recommendations, feel free to ask!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: remember({"kind": "seen", "movie": "Star Wars", "scope": "lasting"})</summary>
 
-`remember` (17 ms) ->
+`remember` (19 ms) ->
 ```json
 {
  "error": "'Star Wars' is ambiguous or not in this dataset (5,135 movies, 1903-2014; some famous titles are missing). Closest titles below - pick one by movie_id, or tell the user it is absent.",
@@ -41,7 +41,7 @@
 
 **Assistant:**
 
-"Star Wars" is ambiguous in the dataset. Could you specify which one you've seen? Here are the options:
+It seems "Star Wars" is ambiguous in the dataset. Could you specify which one you've seen? Here are the options:
 
 1. **Star Wars: Episode IV - A New Hope (1977)**
 2. **Star Wars: Episode V - The Empire Strikes Back (1980)**
@@ -49,6 +49,6 @@
 4. **Star Wars: The Clone Wars (2008)**
 5. **The Star Wars Holiday Special (1978)**
 
-Please let me know which title to remember!
+Let me know which one to remember!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

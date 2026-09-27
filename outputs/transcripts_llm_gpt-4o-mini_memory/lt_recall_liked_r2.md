@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: remember({"kind": "liked", "movie": "The Machinist", "scope": "lasting"})</summary>
 
-`remember` (15 ms) ->
+`remember` (18 ms) ->
 ```json
 {
  "ok": true,
@@ -19,7 +19,7 @@
 
 **Assistant:**
 
-I've noted that you loved *The Machinist (2004)*! If you're looking for similar movies or have any other requests, just let me know!
+I've noted that you loved *The Machinist (2004)*! If you're looking for similar recommendations or anything else, just let me know!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('liked', 'The Machinist (2004)')] · issues=none
 
@@ -30,7 +30,7 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
 
 <details><summary>Tool calls: recommend_movies({"more_like": ["The Machinist (2004)"]})</summary>
 
-`recommend_movies` (114 ms) ->
+`recommend_movies` (112 ms) ->
 ```json
 {
  "user_id": 15,
@@ -38,7 +38,8 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
   "min_ratings": 3,
   "more_like": [
    "The Machinist (2004)"
-  ]
+  ],
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -162,8 +163,7 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
    "similar_users_who_rated_it": {
     "n": 20,
     "avg_rating": 4.08,
-    "n_rated_4_or_higher": 15
-   
+    "n_
 ```
 </details>
 
@@ -171,16 +171,16 @@ I've noted that you loved *The Machinist (2004)*! If you're looking for similar 
 
 Here are some movie recommendations similar to *The Machinist (2004)* that you might enjoy:
 
-1. **Trainspotting (1996)** - This dark comedy-drama about heroin addiction has a strong emotional core and is rated 4.04 on average. You rated *Requiem for a Dream* (2000) 4 stars, which shares similar themes, and many users who liked *The Machinist* also appreciated this film.
+1. **Trainspotting (1996)** - This dark comedy-drama explores the lives of a group of heroin addicts in Edinburgh. You rated *Requiem for a Dream (2000)* 4 stars, which shares similar themes of addiction, and people who liked both movies rated it highly as well.
 
-2. **Shutter Island (2010)** - A psychological thriller featuring Leonardo DiCaprio, this movie has an average rating of 4.02. It shares plot similarities with *Minority Report* (2002), which you rated 4 stars, and has a tense atmosphere that aligns with your taste.
+2. **Shutter Island (2010)** - A psychological thriller featuring Leonardo DiCaprio, it delves into themes of insanity and mystery. Your high rating for *Minority Report (2002)* shows you enjoy complex narratives, and this film has a strong plot twist that aligns with your taste.
 
-3. **The Usual Suspects (1995)** - This crime thriller, known for its twist ending, has an average rating of 4.24. You rated *Pulp Fiction* (1994) 4 stars, which has a similar narrative style, making this a strong match for you.
+3. **The Usual Suspects (1995)** - This crime thriller is known for its intricate plot and twist ending. You rated *Pulp Fiction (1994)* 4 stars, which has a similar vibe, and many users with tastes like yours rated this movie highly.
 
-4. **Donnie Darko (2001)** - A cult classic that blends drama, mystery, and sci-fi, it has an average rating of 3.98. Its dreamlike and psychological elements resonate with your taste, especially since you rated *American History X* (1998) highly.
+4. **Donnie Darko (2001)** - A psychological thriller that blends elements of drama and sci-fi, it features a dreamlike narrative. Your appreciation for *American History X (1998)* indicates you enjoy thought-provoking films, and this one fits that bill.
 
-5. **Drive (2011)** - This stylish crime drama has an average rating of 3.77. It features a tense atmosphere and strong character development, similar to the films you enjoy, like *Pulp Fiction* (1994).
+5. **Drive (2011)** - A stylish crime drama that combines elements of thriller and film-noir. You rated *Pulp Fiction (1994)* highly, and this film shares a similar tone and intensity.
 
-These films should resonate well with your preferences! Would you like more information on any of them?
+These films have been selected based on their thematic and stylistic similarities to *The Machinist*, as well as your previous ratings. Enjoy your viewing!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('liked', 'The Machinist (2004)')] · issues=none

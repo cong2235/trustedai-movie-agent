@@ -2,7 +2,7 @@
 
 **User:** I never want war movies recommended to me. Please remember that.
 
-<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "never want war movies recommended", "scope": "lasting"})</summary>
+<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "War", "scope": "lasting"})</summary>
 
 `remember` (0 ms) ->
 ```json
@@ -30,7 +30,7 @@ I've noted that you never want war movies recommended to you. If you have any ot
 
 <details><summary>Tool calls: recommend_movies({"n": 5, "include_genres": ["War"], "exclude_genres": ["War"]})</summary>
 
-`recommend_movies` (63 ms) ->
+`recommend_movies` (60 ms) ->
 ```json
 {
  "user_id": 30,
@@ -38,7 +38,8 @@ I've noted that you never want war movies recommended to you. If you have any ot
   "include_genres": [
    "War"
   ],
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -163,26 +164,24 @@ I've noted that you never want war movies recommended to you. If you have any ot
     "n_rated_4_or_higher": 13
    },
    "predicted_rating_for_you": 4.5,
-   "genre_fit": {
-    "Action": {
-    
+   "genre_fi
 ```
 </details>
 
 **Assistant:**
 
-Here are some war movies you might enjoy, just for today:
+Here are some war movie recommendations for you, just this once:
 
-1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with its war themes. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and people who liked those films also enjoyed this one, averaging a strong 4.16 stars.
+1. **Forrest Gump (1994)** - This film blends comedy, drama, and romance with a backdrop of war. You rated "The Shawshank Redemption (1994)" and "Braveheart (1995)" both 5 stars, and users with similar tastes also rated this movie highly, averaging 4.16 stars.
 
-2. **Saving Private Ryan (1998)** - A gripping war drama that you might appreciate, especially since you rated "Star Wars: Episode VI - Return of the Jedi" and "Star Wars: Episode V - The Empire Strikes Back" both 5 stars. It has a similar emotional impact and is rated 4.15 on average.
+2. **Saving Private Ryan (1998)** - A gripping portrayal of World War II, this film has an average rating of 4.15. You rated "Star Wars: Episode VI - Return of the Jedi (1983)" and "Star Wars: Episode V - The Empire Strikes Back (1980)" both 5 stars, and similar users also enjoyed this film, predicting you would rate it around 4.5.
 
-3. **Schindler's List (1993)** - This powerful film about the Holocaust is highly rated at 4.22. You rated "The Shawshank Redemption" 5 stars, and it shares a similar emotional depth that you seem to enjoy.
+3. **Schindler's List (1993)** - This powerful drama about the Holocaust has an average rating of 4.22. You rated "The Shawshank Redemption (1994)" 5 stars, and similar users rated it highly as well, with a predicted rating for you of 4.7.
 
-4. **Inglourious Basterds (2009)** - A unique take on war with a blend of action and dark comedy, rated 4.14. You rated "Star Wars: Episode V - The Empire Strikes Back" 5 stars, and this film has a similar tone that might resonate with you.
+4. **Inglourious Basterds (2009)** - A unique blend of action and dark comedy set during World War II, this film has an average rating of 4.14. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it has a strong appeal among users with similar tastes.
 
-5. **X-Men: First Class (2011)** - While it leans more into action and sci-fi, it includes war elements and is rated 3.79. You rated "Iron Man" and "Star Trek" both 5 stars, indicating a preference for action-packed narratives.
+5. **X-Men: First Class (2011)** - While primarily an action and sci-fi film, it includes war elements and has an average rating of 3.79. You rated "Iron Man (2008)" 5 stars, and it has a predicted rating for you of 4.6.
 
-Let me know if you'd like more information on any of these!
+Let me know if you'd like more information on any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[('avoid_genre', 'War')] · issues=none

@@ -2,9 +2,9 @@
 
 **User:** I'd like a movie made after 2000, and no horror please.
 
-<details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"]})</summary>
+<details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"], "n": 5})</summary>
 
-`recommend_movies` (60 ms) ->
+`recommend_movies` (58 ms) ->
 ```json
 {
  "user_id": 15,
@@ -13,7 +13,8 @@
    "Horror"
   ],
   "min_year": 2001,
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -135,8 +136,7 @@
      "n": 35
     },
     "Drama": {
-     "your_avg": 3.86,
-    
+ 
 ```
 </details>
 
@@ -145,21 +145,21 @@
 Here are some movie recommendations made after 2000, excluding horror:
 
 1. **Batman Begins (2005)**  
-   This film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who rated those movies also enjoyed this one.
+   This action-packed film has an average rating of 3.86 and is well-liked by users similar to you, averaging 4.08. You rated "Gladiator (2000)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and people who rated those movies also enjoyed this one.
 
 2. **Inglourious Basterds (2009)**  
-   With an average rating of 4.14, this film is another strong choice. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this highly as well. Its plot shares similarities with "Schindler's List (1993)," which you rated 5 stars.
+   With an average rating of 4.14, this film combines action and drama. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this highly as well, averaging 4.05.
 
 3. **Ocean's Eleven (2001)**  
-   This heist film has an average rating of 3.84. You rated "Catch Me If You Can (2002)" 5 stars, and it has a similar vibe. Users with tastes like yours also rated it well, averaging 3.88.
+   This heist film has an average rating of 3.84. You rated "Catch Me If You Can (2002)" 5 stars, and users who liked that film also enjoyed "Ocean's Eleven," which has a strong plot similarity to "Pulp Fiction (1994)," which you rated 4 stars.
 
 4. **V for Vendetta (2006)**  
-   This action-packed film has an average rating of 3.88. You rated "The Shawshank Redemption (1994)" 5 stars, and it shares thematic elements with movies you enjoy. Similar users rated it 3.98 on average.
+   This thought-provoking action film has an average rating of 3.88. You rated "The Shawshank Redemption (1994)" 5 stars, and users with similar tastes rated this movie highly as well.
 
 5. **Sin City (2005)**  
-   With an average rating of 3.86, this film is noted for its unique style and storytelling. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and it has a similar dark tone that you might appreciate.
+   This dark and stylized film has an average rating of 3.86. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated "Sin City" 4.08 on average.
 
-Let me know if you'd like more options or details about any of these films!
+Let me know if you'd like more options or specific details about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -167,7 +167,7 @@ Let me know if you'd like more options or details about any of these films!
 
 <details><summary>Tool calls: recommend_movies({"min_year": 2001, "exclude_genres": ["Horror"], "n": 3})</summary>
 
-`recommend_movies` (47 ms) ->
+`recommend_movies` (70 ms) ->
 ```json
 {
  "user_id": 15,
@@ -176,7 +176,8 @@ Let me know if you'd like more options or details about any of these films!
    "Horror"
   ],
   "min_year": 2001,
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 5,
  "recommendations": [
@@ -299,7 +300,7 @@ Let me know if you'd like more options or details about any of these films!
      "plot_similarity": 0.57
     }
    ],
-   "similar_users_who_rated_it
+   "
 ```
 </details>
 
@@ -308,15 +309,15 @@ Let me know if you'd like more options or details about any of these films!
 Here are three more movie recommendations made after 2000, excluding horror:
 
 1. **Pirates of the Caribbean: The Curse of the Black Pearl (2003)**  
-   This action-adventure film has an average rating of 3.78. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and it shares a fun, adventurous spirit with those films.
+   This action-adventure film has an average rating of 3.78. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode VI - Return of the Jedi (1983)" both 5 stars, and users who enjoyed those films also liked this one.
 
 2. **Donnie Darko (2001)**  
-   With an average rating of 3.98, this film is a thought-provoking mystery that you might enjoy. You rated "Catch Me If You Can (2002)" 5 stars, and it has a similar vibe. Users with tastes like yours rated it even higher, averaging 4.28.
+   With an average rating of 3.98, this film blends drama, mystery, and sci-fi. You rated "Catch Me If You Can (2002)" 5 stars, and users with similar tastes rated this highly, averaging 4.28.
 
 3. **Casino Royale (2006)**  
-   This action-thriller has an average rating of 3.94. You rated "Star Wars: Episode VI - Return of the Jedi (1983)" 5 stars, and it has a similar action-packed feel. Similar users rated it 3.85 on average.
+   This action-thriller has an average rating of 3.94. You rated both "Star Wars: Episode VI - Return of the Jedi (1983)" and "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this film positively as well.
 
-Let me know if you need more suggestions or details!
+Let me know if you need more options or details about any of these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -324,7 +325,7 @@ Let me know if you need more suggestions or details!
 
 <details><summary>Tool calls: recommend_movies({"exclude_genres": ["Horror"], "n": 2})</summary>
 
-`recommend_movies` (37 ms) ->
+`recommend_movies` (38 ms) ->
 ```json
 {
  "user_id": 15,
@@ -332,7 +333,8 @@ Let me know if you need more suggestions or details!
   "exclude_genres": [
    "Horror"
   ],
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 8,
  "recommendations": [
@@ -456,8 +458,7 @@ Let me know if you need more suggestions or details!
     "avg_rating": 4.47,
     "n_rated_4_or_higher": 18
    },
-   "predicted_rating_for_you": 4.3,
-   "genre_fit": 
+   "predicted_rating_for_y
 ```
 </details>
 
@@ -466,11 +467,11 @@ Let me know if you need more suggestions or details!
 Here are two more movie recommendations, including older films and still excluding horror:
 
 1. **Braveheart (1995)**  
-   This epic historical drama has an average rating of 4.03. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and it shares a similar emotional and inspiring tone. Users with tastes like yours rated it even higher, averaging 4.42.
+   This epic historical drama has an average rating of 4.03. You rated "Forrest Gump (1994)" and "Terminator 2: Judgment Day (1991)" both 5 stars, and users similar to you rated this film highly, averaging 4.42.
 
 2. **The Godfather: Part II (1974)**  
-   With an impressive average rating of 4.26, this classic crime drama is highly regarded. You rated "The Godfather (1972)" 4 stars, and it has a strong plot connection to that film. Similar users rated it 4.47 on average, indicating its strong appeal.
+   With an impressive average rating of 4.26, this crime drama is a classic. You rated "The Godfather (1972)" 4 stars and "Star Wars: Episode V - The Empire Strikes Back (1980)" 5 stars, and similar users rated this film 4.47 on average.
 
-Let me know if you need more suggestions or information!
+Let me know if you need more suggestions or details about these films!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

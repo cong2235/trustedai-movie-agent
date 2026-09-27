@@ -1,0 +1,65 @@
+PASS h_u7_heist ['ok']
+PASS h_u68_romance_90s_no_comedy ['ok']
+PASS h_u212_shawshank_vs_everyone ['ok']
+PASS h_u414_harsh_genres ['ok']
+FAIL h_u474_old_war [{'text_check_ok': False}]
+PASS h_u599_alien_no_horror ['ok']
+PASS h_u105_documentaries_then_why ['ok', 'ok']
+PASS h_u50_titanic_ambiguous ['ok']
+PASS h_u250_avatar ['ok']
+PASS h_u88_newer_than_dataset ['ok']
+PASS h_u7_vi_light_comedy_tonight ['ok']
+PASS h_u68_vi_never_horror ['ok', 'ok']
+PASS h_u212_mind_bending_not_violent ['ok']
+PASS h_u414_seen_crime ['ok']
+PASS h_u599_pulp_fiction_agree ['ok']
+PASS h_u50_80s_twist ['ok']
+PASS h_u105_feel_good_tonight ['ok']
+PASS h_u250_horror_just_once ['ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 1,
+  "n_scenario_runs": 18,
+  "n_turns": 20,
+  "turn_pass_rate": 0.95,
+  "scenario_pass_rate": 0.944,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": null,
+  "text_checks_passed": 0.95,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 87,
+  "rating_claims_checked": 39,
+  "tool_errors": 1,
+  "online_guardrail_revisions": 0,
+  "per_scenario_pass": {
+    "h_u7_heist": "1/1",
+    "h_u68_romance_90s_no_comedy": "1/1",
+    "h_u212_shawshank_vs_everyone": "1/1",
+    "h_u414_harsh_genres": "1/1",
+    "h_u474_old_war": "0/1",
+    "h_u599_alien_no_horror": "1/1",
+    "h_u105_documentaries_then_why": "1/1",
+    "h_u50_titanic_ambiguous": "1/1",
+    "h_u250_avatar": "1/1",
+    "h_u88_newer_than_dataset": "1/1",
+    "h_u7_vi_light_comedy_tonight": "1/1",
+    "h_u68_vi_never_horror": "1/1",
+    "h_u212_mind_bending_not_violent": "1/1",
+    "h_u414_seen_crime": "1/1",
+    "h_u599_pulp_fiction_agree": "1/1",
+    "h_u50_80s_twist": "1/1",
+    "h_u105_feel_good_tonight": "1/1",
+    "h_u250_horror_just_once": "1/1"
+  },
+  "latency_p50_s": 4.8,
+  "latency_p95_s": 15.9,
+  "ttft_p50_s": 2.08
+}

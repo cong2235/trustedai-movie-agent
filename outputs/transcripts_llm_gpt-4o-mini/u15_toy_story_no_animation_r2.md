@@ -2,20 +2,9 @@
 
 **User:** I liked Toy Story but I'm tired of animated movies - what else?
 
-<details><summary>Tool calls: remember({"kind": "disliked", "movie": "Toy Story", "scope": "lasting"}), recommend_movies({"more_like": ["Toy Story"], "exclude_genres": ["Animation"], "n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"exclude_genres": ["Animation"], "more_like": ["Toy Story"]}), remember({"kind": "avoid_genre", "note": "Animation", "scope": "lasting"})</summary>
 
-`remember` (18 ms) ->
-```json
-{
- "ok": true,
- "memory_id": 1,
- "kind": "disliked",
- "movie": "Toy Story (1995)",
- "note": null,
- "effect": "excluded from future recommendations"
-}
-```
-`recommend_movies` (99 ms) ->
+`recommend_movies` (108 ms) ->
 ```json
 {
  "user_id": 15,
@@ -26,7 +15,8 @@
   "min_ratings": 3,
   "more_like": [
    "Toy Story (1995)"
-  ]
+  ],
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -145,25 +135,35 @@
     },
     {
      "title": "Pulp Fiction (1994)",
-     "your_rating": 4.0,
-  
+ 
+```
+`remember` (0 ms) ->
+```json
+{
+ "ok": true,
+ "memory_id": 1,
+ "kind": "avoid_genre",
+ "movie": null,
+ "note": "Animation",
+ "effect": "Animation movies are excluded from future recommendations"
+}
 ```
 </details>
 
 **Assistant:**
 
-Here are some movie recommendations for you, considering you liked "Toy Story" but want to avoid animated films:
+Here are some movie recommendations for you, avoiding animated films while still capturing a similar vibe to "Toy Story":
 
-1. **The Princess Bride (1987)** - This film blends action, adventure, and comedy with a romantic twist. You rated "Star Wars: Episode IV - A New Hope" and "Star Wars: Episode V - The Empire Strikes Back" both 5 stars, and many users with similar tastes rated this highly, averaging 4.47 stars.
+1. **The Princess Bride (1987)** - This film combines action, adventure, and comedy with a romantic twist. You rated "Star Wars: Episode V - The Empire Strikes Back (1980)" and "Star Wars: Episode IV - A New Hope (1977)" both 5 stars, and many users who liked those films also enjoyed this one, with an average rating of 4.23.
 
-2. **Willy Wonka & the Chocolate Factory (1971)** - A whimsical tale that combines comedy and fantasy. While it's technically a children's film, it has a nostalgic charm that you might enjoy, especially since you rated "Back to the Future" and "Star Wars" highly.
+2. **Willy Wonka & the Chocolate Factory (1971)** - A whimsical tale that blends comedy and fantasy, this movie has a nostalgic charm. It has a solid average rating of 3.87, and you rated "Back to the Future (1985)" and "Star Wars: Episode V - The Empire Strikes Back (1980)" highly, indicating a potential match for your taste.
 
-3. **E.T. the Extra-Terrestrial (1982)** - A classic that mixes drama and sci-fi elements. It has a strong emotional core, and similar users rated it 4.17 on average, indicating it resonates well with audiences who enjoy heartfelt stories.
+3. **E.T. the Extra-Terrestrial (1982)** - This classic drama and sci-fi film tells a heartwarming story about friendship. With an average rating of 3.77, it resonates well with your ratings for "Back to the Future (1985)" and "Star Wars: Episode VI - Return of the Jedi (1983)", both rated 5 stars by you.
 
-4. **Big (1988)** - This comedy-drama about a boy who magically becomes an adult has a light-hearted and romantic feel. It has a predicted rating of 3.8 for you, based on your past ratings of similar films.
+4. **Big (1988)** - A charming comedy-drama about a boy who wishes to be an adult. It has an average rating of 3.72, and you rated "Back to the Future (1985)" highly, which suggests you might enjoy this film's light-hearted and emotional themes.
 
-5. **Mary Poppins (1964)** - Another family-friendly classic that combines comedy and fantasy. It has a nostalgic appeal and is rated 3.89 on average, making it a beloved choice among users with similar tastes.
+5. **Mary Poppins (1964)** - This musical comedy is a delightful family-friendly film with a magical touch. It has an average rating of 3.89, and your high ratings for "Back to the Future (1985)" and "Schindler's List (1993)" show a diverse taste that could appreciate this classic.
 
-These films should provide a nice variety while steering clear of animation. Let me know if you'd like more options or a different genre!
+Let me know if you'd like more options or specific genres!
 
-> PASS · tools_ok=True · golden=True · text_ok=True · memory=[('disliked', 'Toy Story (1995)')] · issues=none · judge={'grounded': 4, 'personalised': 3, 'explains': 4, 'honest': 3, 'helpful': 4, 'rationale': "The biggest weakness is that some recommended films, like 'Willy Wonka & the Chocolate Factory' and 'Mary Poppins', are animated or children's films, which contradicts the user's request to avoid animated movies."}
+> PASS · tools_ok=True · golden=True · text_ok=True · memory=[('avoid_genre', 'Animation')] · issues=none · judge={'grounded': 5, 'personalised': 4, 'explains': 4, 'honest': 4, 'helpful': 5, 'rationale': "The biggest weakness is the slight over-reliance on animated films in the recommendations despite the user's request to avoid them, particularly with 'Willy Wonka & the Chocolate Factory' and 'Mary Poppins', which may not align with the user's current preferences."}

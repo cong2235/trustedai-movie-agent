@@ -2,14 +2,15 @@
 
 **User:** What should I watch tonight?
 
-<details><summary>Tool calls: recommend_movies({"n": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5, "min_avg_rating": 4.0})</summary>
 
-`recommend_movies` (51 ms) ->
+`recommend_movies` (68 ms) ->
 ```json
 {
  "user_id": 30,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 4.0
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -135,8 +136,7 @@
    },
    "predicted_rating_for_you": 4.8,
    "genre_fit": {
-    "Adventure": {
-     "your_av
+    "Ad
 ```
 </details>
 
@@ -145,29 +145,29 @@
 Here are some great movie recommendations for tonight:
 
 1. **Forrest Gump (1994)**  
-   This film has an average rating of 4.16 and is well-loved by users similar to you, with 15 out of 20 rating it 4 or higher. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and it shares similar emotional and heartwarming themes.
+   This heartwarming film has an average rating of 4.16 and is well-loved by users similar to you. You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and it shares similar emotional and romantic themes with those films.
 
 2. **Back to the Future (1985)**  
-   With an average rating of 4.04, this classic features time travel and adventure. You rated "Raiders of the Lost Ark" and "Star Wars: Episode V" both 5 stars, and it has a strong appeal to users with similar tastes, with 19 out of 20 rating it 4 or higher.
+   With an average rating of 4.04, this classic adventure-comedy features time travel and has been rated highly by users with tastes like yours. You gave 5 stars to "Raiders of the Lost Ark," which shares a similar adventurous spirit.
 
 3. **Fight Club (1999)**  
-   This film has a higher average rating of 4.27 and is known for its dark themes and thought-provoking plot. You rated "The Shawshank Redemption" 5 stars, and it has a strong connection to your tastes, with a predicted rating of 4.9 for you.
+   This thought-provoking film has an average rating of 4.27. You rated "The Shawshank Redemption" 5 stars, and it has a similar psychological depth and twist ending that you might enjoy.
 
 4. **Saving Private Ryan (1998)**  
-   An action-packed drama with an average rating of 4.15, this film resonates with your love for emotional storytelling. You rated "Star Wars: Episode VI" 5 stars, and it has a solid reputation among similar users.
+   An intense war drama with an average rating of 4.15, this film resonates with your high ratings for "Star Wars" films. It combines emotional storytelling with action-packed sequences.
 
 5. **Pulp Fiction (1994)**  
-   This cult classic has an average rating of 4.2 and is known for its great dialogue and non-linear storytelling. You rated "The Shawshank Redemption" 5 stars, and it has a strong appeal to users with similar tastes, with 16 out of 20 rating it 4 or higher.
+   This cult classic has an average rating of 4.20 and features a non-linear narrative that might intrigue you. You rated "The Shawshank Redemption" 5 stars, and it shares a similar level of depth and engaging dialogue.
 
-These films should provide a mix of emotional depth, adventure, and thought-provoking themes that align well with your preferences! Enjoy your movie night!
+Enjoy your movie night! If you want more options or a specific genre, just let me know!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's rating history and the tool outputs to provide tailored recommendations with clear explanations."}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide tailored recommendations, supported by specific ratings and similarities."}
 
 **User:** Why do you think I'd like that first one?
 
 <details><summary>Tool calls: explain_match({"movie": "Forrest Gump (1994)"})</summary>
 
-`explain_match` (27 ms) ->
+`explain_match` (38 ms) ->
 ```json
 {
  "movie_id": 356,
@@ -241,14 +241,14 @@ These films should provide a mix of emotional depth, adventure, and thought-prov
 
 You might enjoy **Forrest Gump (1994)** for several reasons:
 
-1. **Similar Ratings**: You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and users who rated those films similarly also appreciated "Forrest Gump." This suggests a strong connection in taste.
+- **Similar Ratings**: You rated "The Shawshank Redemption" and "Braveheart" both 5 stars, and users who rated those films highly also rated "Forrest Gump" positively. It has a co-rating similarity of 0.42 with "The Shawshank Redemption" and 0.32 with "Braveheart."
 
-2. **Plot Similarity**: The film shares thematic elements with "The Shawshank Redemption" and "Up," both of which you rated highly (5 stars). This indicates that you may appreciate the emotional and heartwarming storytelling found in "Forrest Gump."
+- **Plot Similarity**: The film shares thematic elements with movies you've loved, like "The Shawshank Redemption" (0.46 similarity) and "Up" (0.43 similarity). Both of these films also explore deep emotional narratives.
 
-3. **Strong User Ratings**: Among users with similar tastes, "Forrest Gump" has an average rating of 4.15, with 15 out of 20 rating it 4 stars or higher, indicating that it's well-regarded by people who enjoy similar films.
+- **Strong Genre Fit**: You have a high average rating for Drama (5.0) and Comedy (4.5), which aligns well with the genres of "Forrest Gump."
 
-4. **Genre Fit**: The film falls into genres you rate highly, such as Drama (average rating of 5.0) and Comedy (average rating of 4.5), which aligns well with your preferences.
+- **Predicted Enjoyment**: Based on your taste, it's predicted that you would rate it around 4.6, indicating a strong likelihood that you would enjoy it.
 
-Overall, the combination of these factors suggests that "Forrest Gump" would resonate with you!
+Overall, the emotional depth and heartwarming storytelling in "Forrest Gump" resonate well with your preferences!
 
-> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide a well-supported recommendation for 'Forrest Gump.'"}
+> PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none · judge={'grounded': 5, 'personalised': 5, 'explains': 5, 'honest': 5, 'helpful': 5, 'rationale': "The assistant effectively uses the user's ratings and preferences to provide a well-supported recommendation for 'Forrest Gump'."}

@@ -2,9 +2,9 @@
 
 **User:** Just for tonight I'm not in the mood for comedies - what should I watch?
 
-<details><summary>Tool calls: recommend_movies({"n": 5, "exclude_genres": ["Comedy"]}), get_rating_history({"sort": "rating_desc", "limit": 5})</summary>
+<details><summary>Tool calls: recommend_movies({"n": 5, "exclude_genres": ["Comedy"], "min_avg_rating": 3.5}), get_rating_history({"sort": "rating_desc", "limit": 5})</summary>
 
-`recommend_movies` (100 ms) ->
+`recommend_movies` (65 ms) ->
 ```json
 {
  "user_id": 1,
@@ -12,7 +12,8 @@
   "exclude_genres": [
    "Comedy"
   ],
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 3.5
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -139,10 +140,9 @@
     }
    },
    "signal_breakdown_z": {
-    "item_knn": 8.4,
-    "us
+   
 ```
-`get_rating_history` (11 ms) ->
+`get_rating_history` (2 ms) ->
 ```json
 {
  "user_id": 1,
@@ -202,17 +202,17 @@
 
 Here are some great movie recommendations for tonight, avoiding comedies:
 
-1. **The Shawshank Redemption (1994)** - This film has a strong emotional and inspiring vibe, and you rated "The Usual Suspects" and "Schindler's List" both 5 stars, which are similar in theme. It has an average rating of 4.43 from a large audience, and similar users rated it 4.5 on average.
+1. **The Shawshank Redemption (1994)** - This film has an average rating of 4.43 and is highly rated by users similar to you. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many users who liked those films also loved this one.
 
-2. **The Godfather (1972)** - A classic crime drama that you might enjoy, especially since you rated "Goodfellas" 5 stars. It has a dark and emotional tone, and similar users have rated it 4.6 on average.
+2. **The Godfather (1972)** - Another classic with an average rating of 4.29. You rated "Goodfellas" 5 stars, and this film shares a similar plot, making it a strong match for your taste.
 
-3. **Terminator 2: Judgment Day (1991)** - This action-packed sci-fi film has a tense atmosphere, and you rated the original "Terminator" 5 stars. It has a solid average rating of 3.97, and similar users rated it 3.95.
+3. **Terminator 2: Judgment Day (1991)** - This action-packed sci-fi film has a solid average rating of 3.97. You rated the original "Terminator" 5 stars, indicating a strong likelihood you'll enjoy this sequel as well.
 
-4. **The Godfather: Part II (1974)** - Another masterpiece in the crime genre, you rated "Goodfellas" highly, which shares similar themes. It has an average rating of 4.26, and similar users rated it 4.58.
+4. **The Godfather: Part II (1974)** - With an average rating of 4.26, this sequel is highly regarded and aligns well with your love for crime dramas, as shown by your ratings of "Goodfellas" and "Reservoir Dogs."
 
-5. **Blade Runner (1982)** - This atmospheric sci-fi thriller has a thought-provoking plot, and you rated "The Terminator" 5 stars. It has an average rating of 4.1, with similar users averaging 4.22.
+5. **Blade Runner (1982)** - This atmospheric sci-fi thriller has an average rating of 4.1. You rated "The Terminator" highly, and this film's thought-provoking themes and similar plot elements make it a great choice.
 
-These films should provide a great viewing experience without any comedy! Enjoy your night!
+Enjoy your movie night! If you need more options or have a specific genre in mind, just let me know.
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none
 
@@ -223,12 +223,13 @@ These films should provide a great viewing experience without any comedy! Enjoy 
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (86 ms) ->
+`recommend_movies` (67 ms) ->
 ```json
 {
  "user_id": 1,
  "applied_constraints": {
-  "min_ratings": 3
+  "min_ratings": 3,
+  "min_avg_rating": 2.75
  },
  "excluded_already_suggested": 0,
  "recommendations": [
@@ -357,8 +358,6 @@ These films should provide a great viewing experience without any comedy! Enjoy 
    "signal_breakdown_z": {
     "item_knn": 8.4,
     "user_knn": 7.6,
-    "pure_svd": 4.3
-   },
 ```
 </details>
 
@@ -367,20 +366,20 @@ These films should provide a great viewing experience without any comedy! Enjoy 
 Here are some great movie recommendations for tonight:
 
 1. **The Shawshank Redemption (1994)**  
-   This film has an average rating of 4.43 and is highly rated by users similar to you. You rated "The Usual Suspects" (1995) and "Schindler's List" (1993) both 5 stars, and many who liked those films also loved this one. It features emotional and inspiring themes, which align with your taste.
+   This film has an average rating of 4.43 and is highly rated by users similar to you, averaging 4.5 stars. You rated "The Usual Suspects" and "Schindler's List" both 5 stars, and many who liked those also loved this film. It features emotional and inspiring themes, making it a compelling choice.
 
 2. **The Godfather (1972)**  
-   With an average rating of 4.29, this classic is another favorite among users with similar tastes. You rated "Goodfellas" (1990) 5 stars, and this film shares a similar plot style. It's dark and emotional, fitting well with your preferences.
+   With an average rating of 4.29, this classic is adored by many, including users who rated "Goodfellas" highly, which you also rated 5 stars. It has dark and emotional moods, fitting well with your taste in crime dramas.
 
 3. **Terminator 2: Judgment Day (1991)**  
-   This action-packed film has an average rating of 3.97. You rated the original "The Terminator" (1984) 5 stars, and this sequel is highly regarded by users who enjoy action and sci-fi. It’s tense and has a good mix of excitement.
+   This action-packed sci-fi film has an average rating of 3.97. You rated the original "The Terminator" 5 stars, and this sequel is likely to resonate with you as well, given its tense atmosphere and strong action elements.
 
 4. **The Godfather: Part II (1974)**  
-   Another entry in the Godfather series, this film has an average rating of 4.26. It’s well-loved by users similar to you, and you rated "Goodfellas" (1990) highly as well. It features dark and emotional themes, making it a great fit.
+   Another masterpiece in the crime genre, it holds an average rating of 4.26. Similar users who rated "Goodfellas" highly also enjoyed this film, and it shares emotional and dark themes that align with your preferences.
 
 5. **Ferris Bueller's Day Off (1986)**  
-   This comedy has an average rating of 3.84 and is a light-hearted choice for a fun evening. You rated "The Princess Bride" (1987) 5 stars, and this film shares a similar vibe. It's funny and perfect for a relaxed night.
+   A light-hearted comedy with an average rating of 3.84. You rated "The Princess Bride" and "Back to the Future" highly, and this film captures a fun, funny vibe that you might enjoy.
 
-Let me know if you want more options or details about any of these films!
+These selections should provide a mix of emotional depth, thrilling action, and light-hearted fun. Enjoy your movie night!
 
 > PASS · tools_ok=True · golden=None · text_ok=True · memory=[] · issues=none

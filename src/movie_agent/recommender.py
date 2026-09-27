@@ -300,7 +300,23 @@ class Recommender:
             sig = {k: round(float(v[row]), 1) for k, v in zs.items() if not np.isnan(v[row])}
             out["signal_breakdown_z"] = dict(sorted(sig.items(), key=lambda kv: -kv[1])[:3])  # top 3 drivers
         out["evidence_strength"] = _evidence_strength(out)
+        if (fit := _expected_fit(out.get("predicted_rating_for_you"))) is not None:
+            out["expected_fit"] = fit
         return out
+
+
+def _expected_fit(predicted: float | None) -> str | None:
+    """What the evidence says, as opposed to how much evidence there is (evidence_strength).
+
+    Found in live use: Kick-Ass had 20 similar raters ("strong" evidence) and a predicted 3.5 stars, and the answer
+    presented it like the 4-star picks. The thresholds follow the like threshold (4.0) used everywhere else."""
+    if predicted is None:
+        return None
+    if predicted >= config.LIKE_THRESHOLD:
+        return "good match"
+    if predicted >= 3.75:
+        return "likely match"
+    return "uncertain match: say so"
 
 
 def _evidence_strength(ev: dict) -> str:

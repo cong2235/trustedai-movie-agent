@@ -1,0 +1,49 @@
+PASS st_second_one_after_compaction ['ok', 'ok', 'ok', 'ok']
+PASS st_constraints_carry_and_change ['ok', 'ok', 'ok']
+PASS st_long_conversation_budget ['ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok', 'ok']
+PASS lt_forget_preference ['ok', 'ok', 'ok', 'ok']
+PASS lt_one_off_not_stored ['ok', 'ok']
+PASS lt_override_in_session ['ok', 'ok']
+PASS lt_dismissed_and_isolation ['ok', 'ok', 'ok']
+PASS lt_recall_liked ['ok', 'ok']
+PASS lt_ambiguous_seen ['ok']
+PASS lt_seen_but_discussable ['ok', 'ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 1,
+  "n_scenario_runs": 10,
+  "n_turns": 31,
+  "turn_pass_rate": 1.0,
+  "scenario_pass_rate": 1.0,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": null,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 153,
+  "rating_claims_checked": 53,
+  "tool_errors": 1,
+  "online_guardrail_revisions": 0,
+  "per_scenario_pass": {
+    "st_second_one_after_compaction": "1/1",
+    "st_constraints_carry_and_change": "1/1",
+    "st_long_conversation_budget": "1/1",
+    "lt_forget_preference": "1/1",
+    "lt_one_off_not_stored": "1/1",
+    "lt_override_in_session": "1/1",
+    "lt_dismissed_and_isolation": "1/1",
+    "lt_recall_liked": "1/1",
+    "lt_ambiguous_seen": "1/1",
+    "lt_seen_but_discussable": "1/1"
+  },
+  "latency_p50_s": 4.9,
+  "latency_p95_s": 16.6,
+  "ttft_p50_s": 2.04
+}

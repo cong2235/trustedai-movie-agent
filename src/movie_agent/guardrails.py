@@ -171,6 +171,28 @@ def _is_subject(text: str, pos: int) -> bool:
     return opens_line and "**" in text[pos : pos + 10]
 
 
+def _recommended_ids(outputs: list) -> set[int]:
+    ids = set()
+    for o in outputs:
+        if isinstance(o, dict):
+            for key in ("recommendations", "results"):
+                ids |= {r["movie_id"] for r in o.get(key, []) if isinstance(r, dict) and "movie_id" in r}
+    return ids
+
+
+_ABSENT_IN_TOOL = re.compile(r"'([^']+)' is ambiguous or not in this dataset|No movie matching '([^']+)'")
+
+
+def _bare_title(title: str) -> str:
+    """'The Matrix (1999)' -> 'the matrix': the model may look a title up with or without its year."""
+    return re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip().lower()
+
+
+def _reported_absent(blob: str) -> set[str]:
+    """Titles a tool already told the model are not in the dataset. Naming them is how the answer says so."""
+    return {_bare_title(a or b) for a, b in _ABSENT_IN_TOOL.findall(blob)}
+
+
 def misattributed_numbers(answer: str, outputs: list, titles: TitleIndex) -> list[str]:
     """Numbers are attributed to the *subject* movie of their block (the bold/heading title the paragraph or list
     item is about), not to whichever title happens to precede them: in "**Fight Club (1999)** - you rated *Star Wars*
@@ -180,6 +202,12 @@ def misattributed_numbers(answer: str, outputs: list, titles: TitleIndex) -> lis
     if not found:
         return []
     movie_vals, free = _scopes(outputs, titles.data)
+    # An answer about exactly one recommended movie ("I recommend **Alphaville (1965)**. ... You rated **Alien (1979)**
+    # 4 stars ... your Drama average is 4.52") has that movie as its topic even where a block opens with no bold
+    # title: its numbers (including the genre_fit nested in its card) belong to it. False alarm in a regression run.
+    recommended = _recommended_ids(outputs)
+    topic = {mid for _, mid in found if mid in recommended}
+    topic_scope = movie_vals.get(next(iter(topic)), set()) if len(topic) == 1 else set()
     issues = []
     for a, b in _blocks(answer):
         in_block = [(pos, mid) for pos, mid in found if a <= pos < b]
@@ -192,9 +220,10 @@ def misattributed_numbers(answer: str, outputs: list, titles: TitleIndex) -> lis
             prior_subjects = [mid for pos, mid in subjects if pos < m.start()]
             subject = prior_subjects[-1] if prior_subjects else None
             ok_scope = set(movie_vals.get(subject, ())) if subject else set()
-            if subject is None:  # no bold title: any movie named in the block will do
+            if subject is None:  # no bold title: any movie named in the block, or the answer's single topic
                 for mid in block_movies:
                     ok_scope |= movie_vals.get(mid, set())
+                ok_scope |= topic_scope
             if _close(x, ok_scope) or _close(x, free):
                 continue
             others = [
@@ -245,6 +274,9 @@ def check_answer(answer: str, outputs: list, titles: TitleIndex, user_id: int | 
     ungrounded = [
         titles.data.label(m) for m in mentioned if f'"movie_id": {m},' not in blob and titles.data.label(m) not in blob
     ]
+    absent = _reported_absent(blob)
+    # "I couldn't find The Matrix (1999) in the dataset" is the correct answer, not a hallucination
+    unknown = [t for t in unknown if not any(_bare_title(t).endswith(a) for a in absent)]
     return {
         "n_titles": len(mentioned),
         "n_decimals": len(DECIMAL.findall(answer)),

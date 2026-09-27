@@ -283,3 +283,30 @@ and calibrate it on ~50 human-labelled turns.
 **Reproducibility and cost.** Everything except the LLM transcripts is deterministic and runs on a laptop CPU without API
 keys. Plot embedding takes about 29 minutes once. The offline evaluation takes about 5.5 minutes, including a 288-point grid search run
 three times. A full LLM suite run (19 turns + judge) with gpt-4o-mini uses about 100k input tokens, roughly $0.02-0.04.
+
+## Live-use review: three Vietnamese questions (user 23)
+
+A manual session in the web UI ("gợi ý cho tôi vài phim hành động" → "gợi ý thêm cho tôi 3 phim nữa" → "có phim nào
+mới hơn không") was replayed from telemetry and checked against the data. Every title and number was correct and no
+movie was repeated. What was wrong, and what changed:
+
+| Finding | Fix | Layer |
+|---|---|---|
+| For "3 more", the model passed its own earlier picks as `already_seen`, which wrote 8 movies the user never said they had watched into long-term memory | movies suggested in the session are excluded but never stored from `already_seen`; the bad rows were removed (DB backed up first) | tool |
+| Answers in English to Vietnamese questions | "reply in the language of the user's latest message" | prompt |
+| Co-rating evidence described as shared themes ("aligns with its themes") | explicit forbidden phrasing in the evidence rule | prompt |
+| Everyone's average presented as the similar users' | field-by-field "whose number" rule | prompt |
+| Kick-Ass / Django (predicted 3.5) presented like the 4-star picks | new `expected_fit` field ("uncertain match: say so") next to `evidence_strength`, which counts evidence rather than judging it | tool |
+| "After 2010" for `min_year=2010` | "describe filters exactly as applied" | prompt |
+| 14.6 s turn | 10.5 s before the provider's first chunk: the known gpt-4o-mini stall, not the code | - |
+
+Replaying after the fixes: Vietnamese answers, memory untouched, numbers attributed correctly. gpt-4o-mini still
+sometimes ignores `expected_fit` and once read "newer" as `max_year=2014`, so the prompt rules are not a complete fix.
+gpt-4.1-mini on the same conversation (2 runs) followed intent and format rules better but cited almost no numbers and
+described plots from its own knowledge without saying so; gpt-4o-mini stays the default until a model change is made
+on the full suites.
+
+The regression runs exposed two more guardrail false alarms, both fixed with tests built from the exact sentences:
+naming an absent title with its year ("I couldn't find The Matrix (1999)") after a tool had reported it absent, and
+numbers in a block without a bold subject when the answer is about a single recommended movie. Main suite after all
+changes: 14/14 conversations, 19/19 turns, 0 guardrail revisions; memory suite 10/10.

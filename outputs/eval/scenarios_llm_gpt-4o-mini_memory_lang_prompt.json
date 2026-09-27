@@ -1,0 +1,1242 @@
+{
+  "aggregate": {
+    "mode": "llm",
+    "provider": "openai",
+    "model": "gpt-4o-mini",
+    "repeat": 1,
+    "n_scenario_runs": 10,
+    "n_turns": 31,
+    "turn_pass_rate": 1.0,
+    "scenario_pass_rate": 1.0,
+    "tool_recall": 1.0,
+    "args_ok": 1.0,
+    "turns_with_constraint_violation": 0,
+    "golden_hit_rate": null,
+    "text_checks_passed": 1.0,
+    "hallucinated_titles": 0,
+    "ungrounded_titles": 0,
+    "ungrounded_numbers": 0,
+    "misattributed_numbers": 0,
+    "wrong_user_ratings": 0,
+    "decimal_claims_checked": 153,
+    "rating_claims_checked": 53,
+    "tool_errors": 1,
+    "online_guardrail_revisions": 0,
+    "per_scenario_pass": {
+      "st_second_one_after_compaction": "1/1",
+      "st_constraints_carry_and_change": "1/1",
+      "st_long_conversation_budget": "1/1",
+      "lt_forget_preference": "1/1",
+      "lt_one_off_not_stored": "1/1",
+      "lt_override_in_session": "1/1",
+      "lt_dismissed_and_isolation": "1/1",
+      "lt_recall_liked": "1/1",
+      "lt_ambiguous_seen": "1/1",
+      "lt_seen_but_discussable": "1/1"
+    },
+    "latency_p50_s": 4.9,
+    "latency_p95_s": 16.6,
+    "ttft_p50_s": 2.04
+  },
+  "scenarios": [
+    {
+      "id": "st_second_one_after_compaction",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "What should I watch tonight? Give me four options.",
+          "passed": true,
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Godfather: Part II (1974)",
+            "The Usual Suspects (1995)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.5,
+          "ttft_s": 2.4,
+          "usage": {
+            "input_tokens": 9566,
+            "output_tokens": 365
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 6050,
+          "memory_after": []
+        },
+        {
+          "q": "What's my blind spot? Which genres am I missing?",
+          "passed": true,
+          "tools_called": [
+            "genre_blind_spots"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 15,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.6,
+          "ttft_s": 1.93,
+          "usage": {
+            "input_tokens": 13674,
+            "output_tokens": 459
+          },
+          "guardrail_revised": false,
+          "context_messages": 9,
+          "max_call_input_tokens": 7293,
+          "memory_after": []
+        },
+        {
+          "q": "What do people with similar taste think of Inception?",
+          "passed": true,
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 13,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 15.2,
+          "ttft_s": 12.84,
+          "usage": {
+            "input_tokens": 15977,
+            "output_tokens": 261
+          },
+          "guardrail_revised": false,
+          "context_messages": 13,
+          "max_call_input_tokens": 8220,
+          "memory_after": []
+        },
+        {
+          "q": "Going back to your very first list of suggestions - why would I like the second movie on it?",
+          "passed": true,
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.7,
+          "ttft_s": 1.99,
+          "usage": {
+            "input_tokens": 12287,
+            "output_tokens": 355
+          },
+          "guardrail_revised": false,
+          "context_messages": 14,
+          "max_call_input_tokens": 6335,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "st_constraints_carry_and_change",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I'd like a movie made after 2000, and no horror please.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 7,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Batman Begins (2005)",
+            "Inglourious Basterds (2009)",
+            "Ocean's Eleven (2001)",
+            "V for Vendetta (2006)",
+            "Sin City (2005)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 16.7,
+          "ttft_s": 12.96,
+          "usage": {
+            "input_tokens": 9149,
+            "output_tokens": 442
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5629,
+          "memory_after": []
+        },
+        {
+          "q": "Give me three more.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 3,
+          "n_rating_claims": 3,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Pirates of the Caribbean: The Curse of the Black Pearl (2003)",
+            "Donnie Darko (2001)",
+            "Casino Royale (2006)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 15.3,
+          "ttft_s": 12.95,
+          "usage": {
+            "input_tokens": 13524,
+            "output_tokens": 279
+          },
+          "guardrail_revised": false,
+          "context_messages": 8,
+          "max_call_input_tokens": 7466,
+          "memory_after": []
+        },
+        {
+          "q": "Actually, older films are fine too - but still no horror. Two more, please.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 2,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Braveheart (1995)",
+            "The Godfather: Part II (1974)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.6,
+          "ttft_s": 1.84,
+          "usage": {
+            "input_tokens": 16416,
+            "output_tokens": 200
+          },
+          "guardrail_revised": false,
+          "context_messages": 12,
+          "max_call_input_tokens": 8675,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "st_long_conversation_budget",
+      "run": 1,
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "What should I watch tonight?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 3,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Shawshank Redemption (1994)",
+            "The Godfather (1972)",
+            "Terminator 2: Judgment Day (1991)",
+            "The Godfather: Part II (1974)",
+            "Ferris Bueller's Day Off (1986)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.1,
+          "ttft_s": 2.04,
+          "usage": {
+            "input_tokens": 8971,
+            "output_tokens": 406
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5476,
+          "memory_after": []
+        },
+        {
+          "q": "Why do you think I'd like the first one?",
+          "passed": true,
+          "tools_called": [
+            "explain_match"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 4,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 15.7,
+          "ttft_s": 13.13,
+          "usage": {
+            "input_tokens": 12119,
+            "output_tokens": 332
+          },
+          "guardrail_revised": false,
+          "context_messages": 8,
+          "max_call_input_tokens": 6235,
+          "memory_after": []
+        },
+        {
+          "q": "What's my blind spot?",
+          "passed": true,
+          "tools_called": [
+            "genre_blind_spots"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 8,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.8,
+          "ttft_s": 2.03,
+          "usage": {
+            "input_tokens": 13745,
+            "output_tokens": 378
+          },
+          "guardrail_revised": false,
+          "context_messages": 12,
+          "max_call_input_tokens": 7189,
+          "memory_after": []
+        },
+        {
+          "q": "What do people with similar taste think about Pulp Fiction?",
+          "passed": true,
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 11,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.2,
+          "ttft_s": 1.96,
+          "usage": {
+            "input_tokens": 11648,
+            "output_tokens": 270
+          },
+          "guardrail_revised": false,
+          "context_messages": 14,
+          "max_call_input_tokens": 6056,
+          "memory_after": []
+        },
+        {
+          "q": "Recommend a sci-fi movie made before 1970.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 8,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "2001: A Space Odyssey (1968)",
+            "Metropolis (1927)",
+            "Night of the Living Dead (1968)",
+            "20,000 Leagues Under the Sea (1954)",
+            "Barbarella (1968)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.4,
+          "ttft_s": 2.01,
+          "usage": {
+            "input_tokens": 14006,
+            "output_tokens": 444
+          },
+          "guardrail_revised": false,
+          "context_messages": 16,
+          "max_call_input_tokens": 8036,
+          "memory_after": []
+        },
+        {
+          "q": "Now a dark psychological thriller with a twist.",
+          "passed": true,
+          "tools_called": [
+            "search_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 12,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Shutter Island (2010)",
+            "Memento (2000)",
+            "Mulholland Drive (2001)",
+            "The Machinist (2004)",
+            "Donnie Darko (2001)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 6.3,
+          "ttft_s": 2.74,
+          "usage": {
+            "input_tokens": 17575,
+            "output_tokens": 490
+          },
+          "guardrail_revised": false,
+          "context_messages": 18,
+          "max_call_input_tokens": 9741,
+          "memory_after": []
+        },
+        {
+          "q": "Have I rated any Star Wars movies?",
+          "passed": true,
+          "tools_called": [
+            "get_rating_history"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 3,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.5,
+          "ttft_s": 1.98,
+          "usage": {
+            "input_tokens": 19699,
+            "output_tokens": 140
+          },
+          "guardrail_revised": false,
+          "context_messages": 20,
+          "max_call_input_tokens": 9940,
+          "memory_after": []
+        },
+        {
+          "q": "Remind me: what was the very first movie you recommended to me in this conversation?",
+          "passed": true,
+          "tools_called": [],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.0,
+          "ttft_s": 1.0,
+          "usage": {
+            "input_tokens": 8017,
+            "output_tokens": 24
+          },
+          "guardrail_revised": false,
+          "context_messages": 20,
+          "max_call_input_tokens": 8017,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "lt_forget_preference",
+      "run": 1,
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "Please remember that I don't like horror movies.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.2,
+          "ttft_s": 1.94,
+          "usage": {
+            "input_tokens": 7117,
+            "output_tokens": 60
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3606,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "Horror"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something for tonight.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Forrest Gump (1994)",
+            "Back to the Future (1985)",
+            "Fight Club (1999)",
+            "Saving Private Ryan (1998)",
+            "Pulp Fiction (1994)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.1,
+          "ttft_s": 2.24,
+          "usage": {
+            "input_tokens": 9289,
+            "output_tokens": 389
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5763,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "Horror"
+            ]
+          ]
+        },
+        {
+          "q": "Actually, I've changed my mind - I'm fine with horror movies now. Please forget that.",
+          "passed": true,
+          "tools_called": [
+            "forget_memory"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.2,
+          "ttft_s": 2.09,
+          "usage": {
+            "input_tokens": 12349,
+            "output_tokens": 49
+          },
+          "guardrail_revised": false,
+          "context_messages": 8,
+          "max_call_input_tokens": 6195,
+          "memory_after": []
+        },
+        {
+          "q": "Recommend me a good horror movie.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Shaun of the Dead (2004)",
+            "Jaws (1975)",
+            "Army of Darkness (1993)",
+            "The Shining (1980)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 15.6,
+          "ttft_s": 13.0,
+          "usage": {
+            "input_tokens": 9118,
+            "output_tokens": 353
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5609,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "lt_one_off_not_stored",
+      "run": 1,
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "Just for tonight I'm not in the mood for comedies - what should I watch?",
+          "passed": true,
+          "tools_called": [
+            "get_user_profile",
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Shawshank Redemption (1994)",
+            "The Godfather (1972)",
+            "Terminator 2: Judgment Day (1991)",
+            "The Godfather: Part II (1974)",
+            "Blade Runner (1982)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 16.6,
+          "ttft_s": 13.55,
+          "usage": {
+            "input_tokens": 9819,
+            "output_tokens": 437
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 6313,
+          "memory_after": []
+        },
+        {
+          "q": "What should I watch tonight?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 10,
+          "n_rating_claims": 5,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Shawshank Redemption (1994)",
+            "The Godfather (1972)",
+            "Terminator 2: Judgment Day (1991)",
+            "The Godfather: Part II (1974)",
+            "Ferris Bueller's Day Off (1986)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.3,
+          "ttft_s": 2.01,
+          "usage": {
+            "input_tokens": 8971,
+            "output_tokens": 433
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5476,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "lt_override_in_session",
+      "run": 1,
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "I never want war movies recommended to me. Please remember that.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.0,
+          "ttft_s": 1.78,
+          "usage": {
+            "input_tokens": 7122,
+            "output_tokens": 61
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3607,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "War"
+            ]
+          ]
+        },
+        {
+          "q": "Today I'm curious though - recommend me a war movie, just this once.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 1,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Forrest Gump (1994)",
+            "Saving Private Ryan (1998)",
+            "Schindler's List (1993)",
+            "Inglourious Basterds (2009)",
+            "X-Men: First Class (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.9,
+          "ttft_s": 2.19,
+          "usage": {
+            "input_tokens": 9266,
+            "output_tokens": 367
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5731,
+          "memory_after": [
+            [
+              "avoid_genre",
+              "War"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_dismissed_and_isolation",
+      "run": 1,
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "I'm not interested in Fight Club, please never suggest it to me.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.7,
+          "ttft_s": 1.78,
+          "usage": {
+            "input_tokens": 7120,
+            "output_tokens": 67
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3604,
+          "memory_after": [
+            [
+              "dismissed",
+              "Fight Club (1999)"
+            ]
+          ]
+        },
+        {
+          "q": "What should I watch tonight?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 10,
+          "n_rating_claims": 4,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Forrest Gump (1994)",
+            "Back to the Future (1985)",
+            "Pulp Fiction (1994)",
+            "Saving Private Ryan (1998)",
+            "The Princess Bride (1987)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 5.2,
+          "ttft_s": 2.41,
+          "usage": {
+            "input_tokens": 9232,
+            "output_tokens": 381
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5710,
+          "memory_after": [
+            [
+              "dismissed",
+              "Fight Club (1999)"
+            ]
+          ]
+        },
+        {
+          "q": "What should I watch tonight?",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 5,
+          "n_rating_claims": 2,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "The Silence of the Lambs (1991)",
+            "Braveheart (1995)",
+            "The Godfather: Part II (1974)",
+            "The Usual Suspects (1995)",
+            "Indiana Jones and the Last Crusade (1989)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.9,
+          "ttft_s": 1.95,
+          "usage": {
+            "input_tokens": 9165,
+            "output_tokens": 405
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5654,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "lt_recall_liked",
+      "run": 1,
+      "user_id": 15,
+      "turns": [
+        {
+          "q": "I finally watched The Machinist last night and loved it - please remember that.",
+          "passed": true,
+          "tools_called": [
+            "get_rating_history",
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 13.9,
+          "ttft_s": 13.07,
+          "usage": {
+            "input_tokens": 7206,
+            "output_tokens": 91
+          },
+          "guardrail_revised": false,
+          "context_messages": 5,
+          "max_call_input_tokens": 3684,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        },
+        {
+          "q": "Recommend me something similar to the movie I told you I loved last time.",
+          "passed": true,
+          "tools_called": [
+            "recommend_movies"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 6,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [
+            "Trainspotting (1996)",
+            "Shutter Island (2010)",
+            "The Usual Suspects (1995)",
+            "Donnie Darko (2001)",
+            "Drive (2011)"
+          ],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 4.7,
+          "ttft_s": 2.05,
+          "usage": {
+            "input_tokens": 9273,
+            "output_tokens": 369
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 5737,
+          "memory_after": [
+            [
+              "liked",
+              "The Machinist (2004)"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lt_ambiguous_seen",
+      "run": 1,
+      "user_id": 1,
+      "turns": [
+        {
+          "q": "I've seen Star Wars, remember that so you don't suggest it.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [
+            "remember"
+          ],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.3,
+          "ttft_s": 1.88,
+          "usage": {
+            "input_tokens": 7251,
+            "output_tokens": 140
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3749,
+          "memory_after": []
+        }
+      ]
+    },
+    {
+      "id": "lt_seen_but_discussable",
+      "run": 1,
+      "user_id": 30,
+      "turns": [
+        {
+          "q": "I've already seen Forrest Gump.",
+          "passed": true,
+          "tools_called": [
+            "remember"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 0,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 2.9,
+          "ttft_s": 1.93,
+          "usage": {
+            "input_tokens": 7109,
+            "output_tokens": 62
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3600,
+          "memory_after": [
+            [
+              "seen",
+              "Forrest Gump (1994)"
+            ]
+          ]
+        },
+        {
+          "q": "What do users with similar taste think of Forrest Gump?",
+          "passed": true,
+          "tools_called": [
+            "similar_users_opinion"
+          ],
+          "tool_recall_ok": true,
+          "arg_problems": [],
+          "tool_errors": [],
+          "n_decimals": 4,
+          "n_rating_claims": 0,
+          "hallucinated_titles": [],
+          "ungrounded_titles": [],
+          "ungrounded_numbers": [],
+          "misattributed_numbers": [],
+          "wrong_user_ratings": [],
+          "recommended": [],
+          "constraint_violations": [],
+          "golden_hit": null,
+          "text_check_ok": true,
+          "memory_problems": [],
+          "latency_s": 3.9,
+          "ttft_s": 2.22,
+          "usage": {
+            "input_tokens": 7511,
+            "output_tokens": 176
+          },
+          "guardrail_revised": false,
+          "context_messages": 4,
+          "max_call_input_tokens": 3982,
+          "memory_after": [
+            [
+              "seen",
+              "Forrest Gump (1994)"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -166,7 +166,7 @@ def test_already_seen_is_excluded_and_remembered(tools):
 
 def test_already_seen_reports_titles_it_cannot_resolve(tools):
     out = tools.search_movies("a crime film", n=3, already_seen=["The Matrix"])
-    assert out["already_seen_not_resolved"][0]["title"] == "The Matrix"
+    assert out["already_seen_not_stored"][0]["title"] == "The Matrix"
     assert not tools.memory.list(USER)  # nothing wrong was stored
 
 
@@ -200,3 +200,13 @@ def test_quality_floor_is_relaxed_and_flagged_when_it_leaves_nothing(tools):
     assert "below" in out["quality_floor_relaxed"]
     strict = tools.recommend_movies(n=3, include_genres=["Comedy"])
     assert "quality_floor_relaxed" not in strict  # normal requests are untouched
+
+
+def test_own_suggestions_passed_as_already_seen_are_not_remembered(tools):
+    # live use: "3 more" -> the model passed its earlier picks as already_seen to avoid repeats
+    first = [r["title"] for r in tools.recommend_movies(n=3, include_genres=["Action"])["recommendations"]]
+    out = tools.recommend_movies(n=3, include_genres=["Action"], already_seen=first)
+    assert not set(first) & {r["title"] for r in out["recommendations"]}  # still excluded
+    assert not tools.memory.list(USER)  # but nothing was written to long-term memory
+    assert "remembered_as_seen" not in out
+    assert {p["title"] for p in out["already_seen_not_stored"]} == set(first)

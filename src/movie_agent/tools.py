@@ -212,12 +212,26 @@ class MovieTools:
         Held-out finding: given only exclude_titles, the model excluded the movies for one request and never called
         remember, so a later session could suggest them again. Taking the fact as an argument of the recommendation
         itself means the correct behaviour no longer depends on a second tool call. Titles that do not resolve are
-        reported back instead of failing the whole request."""
-        stored, problems = self._resolve_all(titles)
-        if uid is not None:
-            for mid in stored:
+        reported back instead of failing the whole request.
+
+        Movies this session already suggested are excluded but NOT stored. Found in live use: asked for "3 more",
+        the model passed its own earlier picks as already_seen to avoid repeats, which wrote 8 movies the user never
+        said they had watched into long-term memory. Repeats are already prevented per session; if the user really
+        did watch a suggested movie, remember(kind='seen') stores it explicitly."""
+        ids, problems = self._resolve_all(titles)
+        suggested = set(self.session.suggested)
+        for mid in ids:
+            if mid in suggested:
+                problems.append(
+                    {
+                        "title": self.data.label(mid),
+                        "error": "suggested earlier in this session, so excluded but not remembered as seen; "
+                        "call remember(kind='seen') only if the user said they watched it",
+                    }
+                )
+            elif uid is not None:
                 self.memory.add(uid, "seen", mid, None)
-        return stored, problems
+        return ids, problems
 
     def _resolve_all(self, titles: list[str] | None) -> tuple[list[int], list[dict]]:
         """Resolve several titles, reporting the ones that fail instead of failing the whole request.
@@ -236,10 +250,12 @@ class MovieTools:
 
     def _seen_report(self, seen_now: list[int], not_stored: list[dict]) -> dict:
         out = {}
-        if seen_now:
-            out["remembered_as_seen"] = [self.data.label(m) for m in seen_now]
+        not_stored_ids = {p["title"] for p in not_stored}
+        remembered = [self.data.label(m) for m in seen_now if self.data.label(m) not in not_stored_ids]
+        if remembered:
+            out["remembered_as_seen"] = remembered
         if not_stored:
-            out["already_seen_not_resolved"] = not_stored
+            out["already_seen_not_stored"] = not_stored
         return out
 
     def _memory_excluded(self, uid: int) -> list[int]:
@@ -816,8 +832,9 @@ _request_args = {
     "already_seen": {
         "type": "array",
         "items": {"type": "string"},
-        "description": "Movies the user says they have already watched. They are excluded now AND remembered as "
-        "seen for future sessions, so no separate remember call is needed for them.",
+        "description": "ONLY movies the user says they have watched. They are excluded now AND remembered as seen "
+        "for future sessions. Never use it to avoid repeating your own suggestions: the tools already never "
+        "repeat a movie within a session.",
     },
     "min_avg_rating": {
         "type": "number",

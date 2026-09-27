@@ -179,3 +179,12 @@ def test_unexpected_tool_exception_is_reported_not_raised(tools, monkeypatch):
     monkeypatch.setattr(tools, "get_user_profile", boom)
     text, is_error = tools.call("get_user_profile", {})
     assert is_error and "KeyError" in text
+
+
+def test_expected_fit_reflects_the_prediction_not_the_amount_of_evidence():
+    from movie_agent.recommender import _expected_fit
+
+    assert _expected_fit(4.2) == "good match"
+    assert _expected_fit(3.8) == "likely match"
+    assert _expected_fit(3.5).startswith("uncertain")  # Kick-Ass for user 23: 20 raters, predicted 3.5
+    assert _expected_fit(None) is None

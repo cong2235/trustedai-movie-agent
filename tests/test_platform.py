@@ -414,3 +414,40 @@ def test_no_hedge_when_fast(monkeypatch):
     text, _, _, u = be.step("ctx", [])
     assert text == "req0-areq0-b" and not u["call"]["hedged"] and len(made) == 1
     assert u["input_tokens"] == 10 and u["output_tokens"] == 2
+
+
+def test_absent_title_reported_by_a_tool_is_not_a_hallucination(titles):
+    # regression run: the correct answer named the absent movie with its year
+    outputs = [{"error": "'The Matrix' is ambiguous or not in this dataset (5,135 movies, 1903-2014)."}]
+    rep = check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', outputs, titles)
+    assert rep["hallucinated_titles"] == []
+    # without the tool saying so, the same sentence is still flagged
+    assert check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', [], titles)["hallucinated_titles"]
+
+
+def test_numbers_in_a_subjectless_block_belong_to_the_single_recommended_movie(data, titles):
+    alphaville = next(int(m) for m in data.movies.index if data.label(int(m)) == "Alphaville (1965)")
+    alien = next(int(m) for m in data.movies.index if data.label(int(m)) == "Alien (1979)")
+    card = {
+        "movie_id": alphaville,
+        "title": "Alphaville (1965)",
+        "avg_rating": 4.12,
+        "because_you_rated": [{"title": "Alien (1979)", "your_rating": 4.0}],
+        "genre_fit": {"Drama": {"your_avg": 4.52, "n": 20}, "Mystery": {"your_avg": 4.27, "n": 5}},
+    }
+    other = {"movie_id": alien, "title": "Alien (1979)", "avg_rating": 3.61}
+    outputs = [{"recommendations": [card]}, {"movie": other}]
+    answer = (
+        "I recommend **Alphaville (1965)**. It has an average rating of 4.12.\n\n"
+        "You rated **Alien (1979)** 4 stars, and your averages in Drama (4.52) and Mystery (4.27) fit it."
+    )
+    assert check_answer(answer, outputs, titles)["misattributed_numbers"] == []
+    # a number that belongs to the evidence movie only is still caught when put on the recommendation
+    wrong = "I recommend **Alphaville (1965)**, which everyone rates 3.61 on average."
+    assert check_answer(wrong, outputs, titles)["misattributed_numbers"]
+
+
+def test_absent_title_looked_up_with_its_year(titles):
+    outputs = [{"error": "'The Matrix (1999)' is ambiguous or not in this dataset (5,135 movies, 1903-2014)."}]
+    rep = check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', outputs, titles)
+    assert rep["hallucinated_titles"] == []

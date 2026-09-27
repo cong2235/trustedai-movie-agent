@@ -1,0 +1,57 @@
+PASS u1_tonight_then_why ['ok', 'ok', 'ok']
+PASS u1_pulp_fiction_neighbours ['ok']
+PASS u1_terminator_2 ['ok']
+PASS u1_blind_spots ['ok']
+PASS u1_old_scifi ['ok']
+PASS u15_dark_twist ['ok', 'ok']
+PASS u15_inception_neighbours ['ok']
+PASS u15_toy_story_no_animation ['ok']
+PASS u15_absent_title ['ok']
+PASS u15_ambiguous_seen ['ok']
+PASS u30_sparse_tonight ['ok', 'ok']
+PASS u30_blind_spots ['ok']
+PASS u30_light_funny ['ok']
+PASS u30_memory_two_sessions ['ok', 'ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 1,
+  "n_scenario_runs": 14,
+  "n_turns": 19,
+  "turn_pass_rate": 1.0,
+  "scenario_pass_rate": 1.0,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 0,
+  "golden_hit_rate": 1.0,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 70,
+  "rating_claims_checked": 24,
+  "tool_errors": 1,
+  "online_guardrail_revisions": 0,
+  "per_scenario_pass": {
+    "u1_tonight_then_why": "1/1",
+    "u1_pulp_fiction_neighbours": "1/1",
+    "u1_terminator_2": "1/1",
+    "u1_blind_spots": "1/1",
+    "u1_old_scifi": "1/1",
+    "u15_dark_twist": "1/1",
+    "u15_inception_neighbours": "1/1",
+    "u15_toy_story_no_animation": "1/1",
+    "u15_absent_title": "1/1",
+    "u15_ambiguous_seen": "1/1",
+    "u30_sparse_tonight": "1/1",
+    "u30_blind_spots": "1/1",
+    "u30_light_funny": "1/1",
+    "u30_memory_two_sessions": "1/1"
+  },
+  "latency_p50_s": 4.8,
+  "latency_p95_s": 14.9,
+  "ttft_p50_s": 2.04
+}

@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from . import config
 from .cf import CFModel, preference_weight
 from .content import ContentIndex
 from .data import MovieData
@@ -105,12 +106,14 @@ class Recommender:
                   exclude_movie_ids: list[int] | None = None,
                   anchor_movie_ids: list[int] | None = None,
                   query_relevance: np.ndarray | None = None,
+                  attribute_relevance: np.ndarray | None = None,
                   diversify: bool = True,
                   rerank_query: str | None = None, reranker=None) -> list[dict]:
         """Top-n unseen movies for the user under hard constraints, with evidence for each.
 
         anchor_movie_ids: "more like X" - blends item-item and plot similarity to the anchors into the score.
         query_relevance:  per-movie relevance of a free-text request (from ContentIndex.relevance).
+        attribute_relevance: per-movie match with requested moods / twist (from MovieAttributes.match).
         """
         total, zs, cand = self.score(user_id)
         mask = cand & self._constraint_mask(include_genres, exclude_genres, min_year, max_year,
@@ -132,8 +135,11 @@ class Recommender:
         if query_relevance is not None:
             zs["query"] = _z(query_relevance, cand)
             request += zs["query"]
+        if attribute_relevance is not None:
+            zs["attributes"] = _z(attribute_relevance, cand)
+            request += config.ATTRIBUTE_WEIGHT * zs["attributes"]
 
-        if anchor_movie_ids or query_relevance is not None:
+        if anchor_movie_ids or query_relevance is not None or attribute_relevance is not None:
             # Two-stage: retrieve by the explicit request, then re-rank that pool by request + personal taste
             # using percentiles. v1 added the request z-score to the personal blend; CF z-scores are heavy-tailed
             # (top items reach z≈10), so "more like Toy Story" returned The Silence of the Lambs.

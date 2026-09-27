@@ -57,6 +57,11 @@ LLM_RERANK_MODEL = os.environ.get("MOVIE_AGENT_RERANK_MODEL", "gpt-4o-mini")
 RERANK_POOL = 30               # candidates sent to the re-ranker
 RERANK_TIMEOUT_S = 8.0         # past this, fall back to the stage-1 order (logged as a re-rank error)
 
+# --- Offline movie attributes (data/derived/movie_attributes.jsonl) ----------------------------------------
+# Weight of the requested-attribute match (z-scored) in stage-1 search and in the request signal of recommend.
+# Set a priori equal to the weight of query relevance (1.0), not tuned on the tag labels used to evaluate it.
+ATTRIBUTE_WEIGHT = 1.0
+
 # --- Telemetry ---------------------------------------------------------------
 LOG_DIR = REPO_ROOT / "logs"
 TELEMETRY_DB = LOG_DIR / "telemetry.db"

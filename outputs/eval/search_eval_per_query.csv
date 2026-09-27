@@ -1,241 +1,421 @@
 backend,set,query,method,P@10,NDCG@10,n_labelled,ms
 bge-small,topic,characters travel back in time and change history,dense only,0.2,0.16421958630632802,13,0
 bge-small,topic,characters travel back in time and change history,stage 1 (dense+lexical+quality),0.4,0.3885264725763437,13,0
-bge-small,topic,characters travel back in time and change history,stage 1 + cross rerank,0.4,0.467122359745432,13,14347
-bge-small,topic,characters travel back in time and change history,stage 1 + llm rerank,0.5,0.6275071330616558,13,9434
+bge-small,topic,characters travel back in time and change history,stage 1 + attributes,0.4,0.3885264725763437,13,0
+bge-small,topic,characters travel back in time and change history,stage 1 + cross rerank,0.4,0.467122359745432,13,11096
+bge-small,topic,characters travel back in time and change history,stage 1 + attributes + cross rerank,0.4,0.467122359745432,13,1432
+bge-small,topic,characters travel back in time and change history,stage 1 + llm rerank,0.5,0.6275071330616558,13,0
+bge-small,topic,characters travel back in time and change history,stage 1 + attributes + llm rerank,0.5,0.6275071330616558,13,0
 bge-small,topic,an adventure set in outer space,dense only,0.2,0.2489083270225946,11,0
 bge-small,topic,an adventure set in outer space,stage 1 (dense+lexical+quality),0.2,0.23365080824310533,11,0
-bge-small,topic,an adventure set in outer space,stage 1 + cross rerank,0.2,0.1635413866202963,11,2009
-bge-small,topic,an adventure set in outer space,stage 1 + llm rerank,0.3,0.3628869103342175,11,3315
+bge-small,topic,an adventure set in outer space,stage 1 + attributes,0.2,0.23365080824310533,11,0
+bge-small,topic,an adventure set in outer space,stage 1 + cross rerank,0.2,0.1635413866202963,11,1381
+bge-small,topic,an adventure set in outer space,stage 1 + attributes + cross rerank,0.2,0.1635413866202963,11,1332
+bge-small,topic,an adventure set in outer space,stage 1 + llm rerank,0.3,0.3628869103342175,11,0
+bge-small,topic,an adventure set in outer space,stage 1 + attributes + llm rerank,0.3,0.3628869103342175,11,0
 bge-small,topic,aliens come to earth,dense only,0.4,0.3214961622634444,12,0
 bge-small,topic,aliens come to earth,stage 1 (dense+lexical+quality),0.3,0.3125291152215463,12,0
-bge-small,topic,aliens come to earth,stage 1 + cross rerank,0.3,0.42520843362602373,12,2018
-bge-small,topic,aliens come to earth,stage 1 + llm rerank,0.3,0.30240383049385083,12,2089
+bge-small,topic,aliens come to earth,stage 1 + attributes,0.3,0.3125291152215463,12,0
+bge-small,topic,aliens come to earth,stage 1 + cross rerank,0.3,0.42520843362602373,12,1786
+bge-small,topic,aliens come to earth,stage 1 + attributes + cross rerank,0.3,0.42520843362602373,12,1694
+bge-small,topic,aliens come to earth,stage 1 + llm rerank,0.3,0.30240383049385083,12,0
+bge-small,topic,aliens come to earth,stage 1 + attributes + llm rerank,0.3,0.30240383049385083,12,0
 bge-small,topic,a mob family and organized crime,dense only,0.2,0.33013764944712026,11,0
 bge-small,topic,a mob family and organized crime,stage 1 (dense+lexical+quality),0.2,0.3589542101716347,11,0
-bge-small,topic,a mob family and organized crime,stage 1 + cross rerank,0.4,0.501749354207772,11,2370
-bge-small,topic,a mob family and organized crime,stage 1 + llm rerank,0.6,0.7084409501232899,11,2773
+bge-small,topic,a mob family and organized crime,stage 1 + attributes,0.2,0.3589542101716347,11,0
+bge-small,topic,a mob family and organized crime,stage 1 + cross rerank,0.4,0.501749354207772,11,1619
+bge-small,topic,a mob family and organized crime,stage 1 + attributes + cross rerank,0.4,0.501749354207772,11,1504
+bge-small,topic,a mob family and organized crime,stage 1 + llm rerank,0.6,0.7084409501232899,11,0
+bge-small,topic,a mob family and organized crime,stage 1 + attributes + llm rerank,0.6,0.7084409501232899,11,0
 bge-small,topic,a superhero with special powers fights a villain,dense only,0.1,0.06362078819895171,12,0
 bge-small,topic,a superhero with special powers fights a villain,stage 1 (dense+lexical+quality),0.1,0.07839826897867533,12,0
-bge-small,topic,a superhero with special powers fights a villain,stage 1 + cross rerank,0.1,0.07336392209936005,12,1428
-bge-small,topic,a superhero with special powers fights a villain,stage 1 + llm rerank,0.2,0.14465249243306436,12,2275
+bge-small,topic,a superhero with special powers fights a villain,stage 1 + attributes,0.1,0.07839826897867533,12,0
+bge-small,topic,a superhero with special powers fights a villain,stage 1 + cross rerank,0.1,0.07336392209936005,12,1510
+bge-small,topic,a superhero with special powers fights a villain,stage 1 + attributes + cross rerank,0.1,0.07336392209936005,12,1393
+bge-small,topic,a superhero with special powers fights a villain,stage 1 + llm rerank,0.2,0.14465249243306436,12,0
+bge-small,topic,a superhero with special powers fights a villain,stage 1 + attributes + llm rerank,0.2,0.14465249243306436,12,0
 bge-small,topic,a character struggling with mental illness,dense only,0.1,0.13886244387355454,13,0
 bge-small,topic,a character struggling with mental illness,stage 1 (dense+lexical+quality),0.3,0.424926013816671,13,0
-bge-small,topic,a character struggling with mental illness,stage 1 + cross rerank,0.3,0.37185395737611554,13,1398
-bge-small,topic,a character struggling with mental illness,stage 1 + llm rerank,0.4,0.4721567066247473,13,2218
+bge-small,topic,a character struggling with mental illness,stage 1 + attributes,0.3,0.424926013816671,13,0
+bge-small,topic,a character struggling with mental illness,stage 1 + cross rerank,0.3,0.37185395737611554,13,1367
+bge-small,topic,a character struggling with mental illness,stage 1 + attributes + cross rerank,0.3,0.37185395737611554,13,1349
+bge-small,topic,a character struggling with mental illness,stage 1 + llm rerank,0.4,0.4721567066247473,13,0
+bge-small,topic,a character struggling with mental illness,stage 1 + attributes + llm rerank,0.4,0.4721567066247473,13,0
 bge-small,topic,teenagers dealing with life in high school,dense only,0.1,0.07336392209936005,14,0
 bge-small,topic,teenagers dealing with life in high school,stage 1 (dense+lexical+quality),0.2,0.12987501165334076,14,0
-bge-small,topic,teenagers dealing with life in high school,stage 1 + cross rerank,0.1,0.06943122193677727,14,1617
-bge-small,topic,teenagers dealing with life in high school,stage 1 + llm rerank,0.4,0.3570575716509045,14,3186
+bge-small,topic,teenagers dealing with life in high school,stage 1 + attributes,0.2,0.12987501165334076,14,0
+bge-small,topic,teenagers dealing with life in high school,stage 1 + cross rerank,0.1,0.06943122193677727,14,1427
+bge-small,topic,teenagers dealing with life in high school,stage 1 + attributes + cross rerank,0.1,0.06943122193677727,14,1406
+bge-small,topic,teenagers dealing with life in high school,stage 1 + llm rerank,0.4,0.3570575716509045,14,0
+bge-small,topic,teenagers dealing with life in high school,stage 1 + attributes + llm rerank,0.4,0.3570575716509045,14,0
 bge-small,topic,"a story about faith, god and religion",dense only,0.2,0.30523488393970116,14,0
 bge-small,topic,"a story about faith, god and religion",stage 1 (dense+lexical+quality),0.5,0.4138836150091172,14,0
-bge-small,topic,"a story about faith, god and religion",stage 1 + cross rerank,0.3,0.31833954895937183,14,1803
-bge-small,topic,"a story about faith, god and religion",stage 1 + llm rerank,0.3,0.30240383049385083,14,2728
+bge-small,topic,"a story about faith, god and religion",stage 1 + attributes,0.5,0.4138836150091172,14,0
+bge-small,topic,"a story about faith, god and religion",stage 1 + cross rerank,0.3,0.31833954895937183,14,1326
+bge-small,topic,"a story about faith, god and religion",stage 1 + attributes + cross rerank,0.3,0.31833954895937183,14,1322
+bge-small,topic,"a story about faith, god and religion",stage 1 + llm rerank,0.3,0.30240383049385083,14,0
+bge-small,topic,"a story about faith, god and religion",stage 1 + attributes + llm rerank,0.3,0.30240383049385083,14,0
 bge-small,topic,"political intrigue, elections and government",dense only,0.1,0.06362078819895171,15,0
 bge-small,topic,"political intrigue, elections and government",stage 1 (dense+lexical+quality),0.1,0.06943122193677727,15,0
-bge-small,topic,"political intrigue, elections and government",stage 1 + cross rerank,0.1,0.07839826897867533,15,1362
-bge-small,topic,"political intrigue, elections and government",stage 1 + llm rerank,0.3,0.2329726085570736,15,2151
+bge-small,topic,"political intrigue, elections and government",stage 1 + attributes,0.1,0.06943122193677727,15,0
+bge-small,topic,"political intrigue, elections and government",stage 1 + cross rerank,0.1,0.07839826897867533,15,1313
+bge-small,topic,"political intrigue, elections and government",stage 1 + attributes + cross rerank,0.1,0.07839826897867533,15,1282
+bge-small,topic,"political intrigue, elections and government",stage 1 + llm rerank,0.3,0.2329726085570736,15,0
+bge-small,topic,"political intrigue, elections and government",stage 1 + attributes + llm rerank,0.3,0.2329726085570736,15,0
 bge-small,topic,reporters investigating a story for a newspaper,dense only,0.2,0.20483424751859086,11,0
 bge-small,topic,reporters investigating a story for a newspaper,stage 1 (dense+lexical+quality),0.2,0.30523488393970116,11,0
-bge-small,topic,reporters investigating a story for a newspaper,stage 1 + cross rerank,0.5,0.47010174003740723,11,1610
-bge-small,topic,reporters investigating a story for a newspaper,stage 1 + llm rerank,0.4,0.5388856921828065,11,2165
+bge-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes,0.2,0.30523488393970116,11,0
+bge-small,topic,reporters investigating a story for a newspaper,stage 1 + cross rerank,0.5,0.47010174003740723,11,1474
+bge-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes + cross rerank,0.5,0.47010174003740723,11,1485
+bge-small,topic,reporters investigating a story for a newspaper,stage 1 + llm rerank,0.4,0.5388856921828065,11,0
+bge-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes + llm rerank,0.4,0.5388856921828065,11,0
 bge-small,topic,a boxer training for the big fight,dense only,0.4,0.3374506539680634,9,0
 bge-small,topic,a boxer training for the big fight,stage 1 (dense+lexical+quality),0.2,0.24952583878244933,9,0
-bge-small,topic,a boxer training for the big fight,stage 1 + cross rerank,0.6,0.5704707007904076,9,1360
-bge-small,topic,a boxer training for the big fight,stage 1 + llm rerank,0.5,0.5959934864972766,9,2253
+bge-small,topic,a boxer training for the big fight,stage 1 + attributes,0.2,0.24952583878244933,9,0
+bge-small,topic,a boxer training for the big fight,stage 1 + cross rerank,0.6,0.5704707007904076,9,1386
+bge-small,topic,a boxer training for the big fight,stage 1 + attributes + cross rerank,0.6,0.5704707007904076,9,1346
+bge-small,topic,a boxer training for the big fight,stage 1 + llm rerank,0.5,0.5959934864972766,9,0
+bge-small,topic,a boxer training for the big fight,stage 1 + attributes + llm rerank,0.5,0.5959934864972766,9,0
 bge-small,topic,soldiers in the Vietnam war,dense only,0.2,0.17465294461817232,9,0
 bge-small,topic,soldiers in the Vietnam war,stage 1 (dense+lexical+quality),0.2,0.2187513829195429,9,0
-bge-small,topic,soldiers in the Vietnam war,stage 1 + cross rerank,0.2,0.19167138999231725,9,1557
-bge-small,topic,soldiers in the Vietnam war,stage 1 + llm rerank,0.2,0.3525683241217281,9,2218
+bge-small,topic,soldiers in the Vietnam war,stage 1 + attributes,0.2,0.2187513829195429,9,0
+bge-small,topic,soldiers in the Vietnam war,stage 1 + cross rerank,0.2,0.19167138999231725,9,1354
+bge-small,topic,soldiers in the Vietnam war,stage 1 + attributes + cross rerank,0.2,0.19167138999231725,9,1364
+bge-small,topic,soldiers in the Vietnam war,stage 1 + llm rerank,0.2,0.3525683241217281,9,0
+bge-small,topic,soldiers in the Vietnam war,stage 1 + attributes + llm rerank,0.2,0.3525683241217281,9,0
 bge-small,topic,a courtroom trial drama,dense only,0.1,0.07834851647149513,9,0
 bge-small,topic,a courtroom trial drama,stage 1 (dense+lexical+quality),0.3,0.2663052541163536,9,0
-bge-small,topic,a courtroom trial drama,stage 1 + cross rerank,0.2,0.3833427799846345,9,1414
-bge-small,topic,a courtroom trial drama,stage 1 + llm rerank,0.3,0.33376340619568257,9,2172
+bge-small,topic,a courtroom trial drama,stage 1 + attributes,0.3,0.2663052541163536,9,0
+bge-small,topic,a courtroom trial drama,stage 1 + cross rerank,0.2,0.3833427799846345,9,1438
+bge-small,topic,a courtroom trial drama,stage 1 + attributes + cross rerank,0.2,0.3833427799846345,9,1508
+bge-small,topic,a courtroom trial drama,stage 1 + llm rerank,0.3,0.33376340619568257,9,0
+bge-small,topic,a courtroom trial drama,stage 1 + attributes + llm rerank,0.3,0.33376340619568257,9,0
 bge-small,topic,a Stephen King adaptation,dense only,0.0,0.0,11,0
 bge-small,topic,a Stephen King adaptation,stage 1 (dense+lexical+quality),0.0,0.0,11,0
-bge-small,topic,a Stephen King adaptation,stage 1 + cross rerank,0.0,0.0,11,1463
-bge-small,topic,a Stephen King adaptation,stage 1 + llm rerank,0.1,0.22009176629808017,11,2291
+bge-small,topic,a Stephen King adaptation,stage 1 + attributes,0.0,0.0,11,0
+bge-small,topic,a Stephen King adaptation,stage 1 + cross rerank,0.0,0.0,11,1394
+bge-small,topic,a Stephen King adaptation,stage 1 + attributes + cross rerank,0.0,0.0,11,1371
+bge-small,topic,a Stephen King adaptation,stage 1 + llm rerank,0.1,0.22009176629808017,11,0
+bge-small,topic,a Stephen King adaptation,stage 1 + attributes + llm rerank,0.1,0.22009176629808017,11,0
 bge-small,topic,robots and artificial intelligence,dense only,0.2,0.2918104499436024,7,0
 bge-small,topic,robots and artificial intelligence,stage 1 (dense+lexical+quality),0.3,0.383435894248366,7,0
-bge-small,topic,robots and artificial intelligence,stage 1 + cross rerank,0.3,0.5546406709327603,7,1426
-bge-small,topic,robots and artificial intelligence,stage 1 + llm rerank,0.4,0.5087056958335153,7,2492
+bge-small,topic,robots and artificial intelligence,stage 1 + attributes,0.3,0.383435894248366,7,0
+bge-small,topic,robots and artificial intelligence,stage 1 + cross rerank,0.3,0.5546406709327603,7,1507
+bge-small,topic,robots and artificial intelligence,stage 1 + attributes + cross rerank,0.3,0.5546406709327603,7,1605
+bge-small,topic,robots and artificial intelligence,stage 1 + llm rerank,0.4,0.5087056958335153,7,0
+bge-small,topic,robots and artificial intelligence,stage 1 + attributes + llm rerank,0.4,0.5087056958335153,7,0
 bge-small,topic,a movie set at Christmas,dense only,0.2,0.20678808725291634,8,0
 bge-small,topic,a movie set at Christmas,stage 1 (dense+lexical+quality),0.2,0.16321684709627762,8,0
-bge-small,topic,a movie set at Christmas,stage 1 + cross rerank,0.1,0.08431423425588572,8,1712
-bge-small,topic,a movie set at Christmas,stage 1 + llm rerank,0.3,0.2722658375434138,8,3936
+bge-small,topic,a movie set at Christmas,stage 1 + attributes,0.2,0.16321684709627762,8,0
+bge-small,topic,a movie set at Christmas,stage 1 + cross rerank,0.1,0.08431423425588572,8,1601
+bge-small,topic,a movie set at Christmas,stage 1 + attributes + cross rerank,0.1,0.08431423425588572,8,1405
+bge-small,topic,a movie set at Christmas,stage 1 + llm rerank,0.3,0.2722658375434138,8,0
+bge-small,topic,a movie set at Christmas,stage 1 + attributes + llm rerank,0.3,0.2722658375434138,8,0
 bge-small,topic,an adaptation of a Shakespeare play,dense only,0.0,0.0,8,0
 bge-small,topic,an adaptation of a Shakespeare play,stage 1 (dense+lexical+quality),0.1,0.07311683844390995,8,0
-bge-small,topic,an adaptation of a Shakespeare play,stage 1 + cross rerank,0.1,0.12647135138382856,8,2098
-bge-small,topic,an adaptation of a Shakespeare play,stage 1 + llm rerank,0.1,0.12647135138382856,8,2786
+bge-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes,0.1,0.07311683844390995,8,0
+bge-small,topic,an adaptation of a Shakespeare play,stage 1 + cross rerank,0.1,0.12647135138382856,8,1640
+bge-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes + cross rerank,0.1,0.12647135138382856,8,1628
+bge-small,topic,an adaptation of a Shakespeare play,stage 1 + llm rerank,0.1,0.12647135138382856,8,0
+bge-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes + llm rerank,0.1,0.12647135138382856,8,0
 bge-small,topic,a film about racism and prejudice,dense only,0.0,0.0,7,0
 bge-small,topic,a film about racism and prejudice,stage 1 (dense+lexical+quality),0.1,0.10633668103022986,7,0
-bge-small,topic,a film about racism and prejudice,stage 1 + cross rerank,0.2,0.22906361076190906,7,1329
-bge-small,topic,a film about racism and prejudice,stage 1 + llm rerank,0.2,0.2437748474873753,7,2077
+bge-small,topic,a film about racism and prejudice,stage 1 + attributes,0.1,0.10633668103022986,7,0
+bge-small,topic,a film about racism and prejudice,stage 1 + cross rerank,0.2,0.22906361076190906,7,1342
+bge-small,topic,a film about racism and prejudice,stage 1 + attributes + cross rerank,0.2,0.22906361076190906,7,1156
+bge-small,topic,a film about racism and prejudice,stage 1 + llm rerank,0.2,0.2437748474873753,7,0
+bge-small,topic,a film about racism and prejudice,stage 1 + attributes + llm rerank,0.2,0.2437748474873753,7,0
 bge-small,tone,a thriller with a shocking twist ending,dense only,0.0,0.0,13,0
 bge-small,tone,a thriller with a shocking twist ending,stage 1 (dense+lexical+quality),0.0,0.0,13,0
-bge-small,tone,a thriller with a shocking twist ending,stage 1 + cross rerank,0.0,0.0,13,1298
-bge-small,tone,a thriller with a shocking twist ending,stage 1 + llm rerank,0.1,0.08514311764162098,13,2334
+bge-small,tone,a thriller with a shocking twist ending,stage 1 + attributes,0.2,0.15850703974098102,13,0
+bge-small,tone,a thriller with a shocking twist ending,stage 1 + cross rerank,0.0,0.0,13,1143
+bge-small,tone,a thriller with a shocking twist ending,stage 1 + attributes + cross rerank,0.0,0.0,13,1262
+bge-small,tone,a thriller with a shocking twist ending,stage 1 + llm rerank,0.1,0.08514311764162098,13,0
+bge-small,tone,a thriller with a shocking twist ending,stage 1 + attributes + llm rerank,0.2,0.23365080824310533,13,6451
 bge-small,tone,a pitch-black dark comedy,dense only,0.0,0.0,16,0
 bge-small,tone,a pitch-black dark comedy,stage 1 (dense+lexical+quality),0.0,0.0,16,0
-bge-small,tone,a pitch-black dark comedy,stage 1 + cross rerank,0.0,0.0,16,1421
-bge-small,tone,a pitch-black dark comedy,stage 1 + llm rerank,0.0,0.0,16,1965
+bge-small,tone,a pitch-black dark comedy,stage 1 + attributes,0.1,0.06943122193677727,16,0
+bge-small,tone,a pitch-black dark comedy,stage 1 + cross rerank,0.0,0.0,16,1182
+bge-small,tone,a pitch-black dark comedy,stage 1 + attributes + cross rerank,0.0,0.0,16,1136
+bge-small,tone,a pitch-black dark comedy,stage 1 + llm rerank,0.0,0.0,16,0
+bge-small,tone,a pitch-black dark comedy,stage 1 + attributes + llm rerank,0.1,0.09478836436955078,16,2398
 bge-small,tone,"a surreal, dreamlike film",dense only,0.0,0.0,15,0
 bge-small,tone,"a surreal, dreamlike film",stage 1 (dense+lexical+quality),0.1,0.07839826897867533,15,0
-bge-small,tone,"a surreal, dreamlike film",stage 1 + cross rerank,0.1,0.13886244387355454,15,1285
-bge-small,tone,"a surreal, dreamlike film",stage 1 + llm rerank,0.1,0.11004588314904008,15,2460
+bge-small,tone,"a surreal, dreamlike film",stage 1 + attributes,0.0,0.0,15,0
+bge-small,tone,"a surreal, dreamlike film",stage 1 + cross rerank,0.1,0.13886244387355454,15,1076
+bge-small,tone,"a surreal, dreamlike film",stage 1 + attributes + cross rerank,0.0,0.0,15,1201
+bge-small,tone,"a surreal, dreamlike film",stage 1 + llm rerank,0.1,0.11004588314904008,15,0
+bge-small,tone,"a surreal, dreamlike film",stage 1 + attributes + llm rerank,0.1,0.08514311764162098,15,2414
 bge-small,tone,"a moody, atmospheric film",dense only,0.0,0.0,20,0
 bge-small,tone,"a moody, atmospheric film",stage 1 (dense+lexical+quality),0.0,0.0,20,0
-bge-small,tone,"a moody, atmospheric film",stage 1 + cross rerank,0.0,0.0,20,1380
-bge-small,tone,"a moody, atmospheric film",stage 1 + llm rerank,0.0,0.0,20,1995
+bge-small,tone,"a moody, atmospheric film",stage 1 + attributes,0.0,0.0,20,0
+bge-small,tone,"a moody, atmospheric film",stage 1 + cross rerank,0.0,0.0,20,1086
+bge-small,tone,"a moody, atmospheric film",stage 1 + attributes + cross rerank,0.0,0.0,20,1283
+bge-small,tone,"a moody, atmospheric film",stage 1 + llm rerank,0.0,0.0,20,0
+bge-small,tone,"a moody, atmospheric film",stage 1 + attributes + llm rerank,0.1,0.06362078819895171,20,2853
 bge-small,tone,a really funny movie that makes you laugh out loud,dense only,0.0,0.0,11,0
 bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 (dense+lexical+quality),0.1,0.07839826897867533,11,0
-bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + cross rerank,0.1,0.06362078819895171,11,1499
-bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + llm rerank,0.0,0.0,11,2782
+bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes,0.0,0.0,11,0
+bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + cross rerank,0.1,0.06362078819895171,11,1154
+bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes + cross rerank,0.0,0.0,11,1335
+bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + llm rerank,0.0,0.0,11,0
+bge-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes + llm rerank,0.0,0.0,11,2083
 bge-small,tone,"a quirky, offbeat movie",dense only,0.0,0.0,13,0
 bge-small,tone,"a quirky, offbeat movie",stage 1 (dense+lexical+quality),0.0,0.0,13,0
-bge-small,tone,"a quirky, offbeat movie",stage 1 + cross rerank,0.0,0.0,13,1447
-bge-small,tone,"a quirky, offbeat movie",stage 1 + llm rerank,0.0,0.0,13,2135
+bge-small,tone,"a quirky, offbeat movie",stage 1 + attributes,0.0,0.0,13,0
+bge-small,tone,"a quirky, offbeat movie",stage 1 + cross rerank,0.0,0.0,13,1120
+bge-small,tone,"a quirky, offbeat movie",stage 1 + attributes + cross rerank,0.0,0.0,13,1177
+bge-small,tone,"a quirky, offbeat movie",stage 1 + llm rerank,0.0,0.0,13,0
+bge-small,tone,"a quirky, offbeat movie",stage 1 + attributes + llm rerank,0.0,0.0,13,2003
 bge-small,tone,a thought-provoking film that makes you think,dense only,0.0,0.0,19,0
 bge-small,tone,a thought-provoking film that makes you think,stage 1 (dense+lexical+quality),0.0,0.0,19,0
-bge-small,tone,a thought-provoking film that makes you think,stage 1 + cross rerank,0.0,0.0,19,2157
-bge-small,tone,a thought-provoking film that makes you think,stage 1 + llm rerank,0.0,0.0,19,2304
+bge-small,tone,a thought-provoking film that makes you think,stage 1 + attributes,0.0,0.0,19,0
+bge-small,tone,a thought-provoking film that makes you think,stage 1 + cross rerank,0.0,0.0,19,1465
+bge-small,tone,a thought-provoking film that makes you think,stage 1 + attributes + cross rerank,0.1,0.07336392209936005,19,1332
+bge-small,tone,a thought-provoking film that makes you think,stage 1 + llm rerank,0.0,0.0,19,0
+bge-small,tone,a thought-provoking film that makes you think,stage 1 + attributes + llm rerank,0.3,0.2685529228900211,19,2237
 bge-small,tone,"a tense, suspenseful film",dense only,0.0,0.0,13,0
 bge-small,tone,"a tense, suspenseful film",stage 1 (dense+lexical+quality),0.0,0.0,13,0
-bge-small,tone,"a tense, suspenseful film",stage 1 + cross rerank,0.0,0.0,13,1326
-bge-small,tone,"a tense, suspenseful film",stage 1 + llm rerank,0.0,0.0,13,1968
+bge-small,tone,"a tense, suspenseful film",stage 1 + attributes,0.0,0.0,13,0
+bge-small,tone,"a tense, suspenseful film",stage 1 + cross rerank,0.0,0.0,13,1107
+bge-small,tone,"a tense, suspenseful film",stage 1 + attributes + cross rerank,0.0,0.0,13,1049
+bge-small,tone,"a tense, suspenseful film",stage 1 + llm rerank,0.0,0.0,13,0
+bge-small,tone,"a tense, suspenseful film",stage 1 + attributes + llm rerank,0.2,0.14279514403613733,13,2091
 bge-small,tone,a deeply emotional tearjerker,dense only,0.0,0.0,8,0
 bge-small,tone,a deeply emotional tearjerker,stage 1 (dense+lexical+quality),0.0,0.0,8,0
-bge-small,tone,a deeply emotional tearjerker,stage 1 + cross rerank,0.0,0.0,8,1230
-bge-small,tone,a deeply emotional tearjerker,stage 1 + llm rerank,0.0,0.0,8,2408
+bge-small,tone,a deeply emotional tearjerker,stage 1 + attributes,0.0,0.0,8,0
+bge-small,tone,a deeply emotional tearjerker,stage 1 + cross rerank,0.0,0.0,8,1139
+bge-small,tone,a deeply emotional tearjerker,stage 1 + attributes + cross rerank,0.0,0.0,8,1107
+bge-small,tone,a deeply emotional tearjerker,stage 1 + llm rerank,0.0,0.0,8,0
+bge-small,tone,a deeply emotional tearjerker,stage 1 + attributes + llm rerank,0.0,0.0,8,2107
 bge-small,tone,"a disturbing, unsettling film",dense only,0.0,0.0,8,0
 bge-small,tone,"a disturbing, unsettling film",stage 1 (dense+lexical+quality),0.0,0.0,8,0
-bge-small,tone,"a disturbing, unsettling film",stage 1 + cross rerank,0.0,0.0,8,1391
-bge-small,tone,"a disturbing, unsettling film",stage 1 + llm rerank,0.1,0.07979453856244818,8,2007
+bge-small,tone,"a disturbing, unsettling film",stage 1 + attributes,0.0,0.0,8,0
+bge-small,tone,"a disturbing, unsettling film",stage 1 + cross rerank,0.0,0.0,8,1272
+bge-small,tone,"a disturbing, unsettling film",stage 1 + attributes + cross rerank,0.0,0.0,8,1312
+bge-small,tone,"a disturbing, unsettling film",stage 1 + llm rerank,0.1,0.07979453856244818,8,0
+bge-small,tone,"a disturbing, unsettling film",stage 1 + attributes + llm rerank,0.0,0.0,8,2081
 bge-small,tone,a mind-bending psychological movie that messes with your head,dense only,0.0,0.0,14,0
 bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 (dense+lexical+quality),0.1,0.06625422345438903,14,0
-bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + cross rerank,0.0,0.0,14,1368
-bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + llm rerank,0.1,0.13886244387355454,14,1962
+bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes,0.1,0.13886244387355454,14,0
+bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + cross rerank,0.0,0.0,14,1248
+bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes + cross rerank,0.0,0.0,14,1259
+bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + llm rerank,0.1,0.13886244387355454,14,0
+bge-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes + llm rerank,0.2,0.33013764944712026,14,2231
 bge-small,tone,a satire that mocks society,dense only,0.0,0.0,14,0
 bge-small,tone,a satire that mocks society,stage 1 (dense+lexical+quality),0.0,0.0,14,0
-bge-small,tone,a satire that mocks society,stage 1 + cross rerank,0.0,0.0,14,1360
-bge-small,tone,a satire that mocks society,stage 1 + llm rerank,0.0,0.0,14,2373
+bge-small,tone,a satire that mocks society,stage 1 + attributes,0.0,0.0,14,0
+bge-small,tone,a satire that mocks society,stage 1 + cross rerank,0.0,0.0,14,1253
+bge-small,tone,a satire that mocks society,stage 1 + attributes + cross rerank,0.0,0.0,14,1452
+bge-small,tone,a satire that mocks society,stage 1 + llm rerank,0.0,0.0,14,0
+bge-small,tone,a satire that mocks society,stage 1 + attributes + llm rerank,0.1,0.13886244387355454,14,2461
 openai-3-small,topic,characters travel back in time and change history,dense only,0.3,0.23690530871965634,13,0
 openai-3-small,topic,characters travel back in time and change history,stage 1 (dense+lexical+quality),0.4,0.3312392961638527,13,0
-openai-3-small,topic,characters travel back in time and change history,stage 1 + cross rerank,0.3,0.31833954895937183,13,1301
-openai-3-small,topic,characters travel back in time and change history,stage 1 + llm rerank,0.6,0.680450372435079,13,14030
+openai-3-small,topic,characters travel back in time and change history,stage 1 + attributes,0.4,0.3312392961638527,13,0
+openai-3-small,topic,characters travel back in time and change history,stage 1 + cross rerank,0.3,0.31833954895937183,13,1202
+openai-3-small,topic,characters travel back in time and change history,stage 1 + attributes + cross rerank,0.3,0.31833954895937183,13,1274
+openai-3-small,topic,characters travel back in time and change history,stage 1 + llm rerank,0.6,0.680450372435079,13,0
+openai-3-small,topic,characters travel back in time and change history,stage 1 + attributes + llm rerank,0.6,0.680450372435079,13,0
 openai-3-small,topic,an adventure set in outer space,dense only,0.1,0.08514311764162098,11,0
 openai-3-small,topic,an adventure set in outer space,stage 1 (dense+lexical+quality),0.2,0.1635413866202963,11,0
-openai-3-small,topic,an adventure set in outer space,stage 1 + cross rerank,0.2,0.15139734109601002,11,1586
-openai-3-small,topic,an adventure set in outer space,stage 1 + llm rerank,0.2,0.30523488393970116,11,2760
+openai-3-small,topic,an adventure set in outer space,stage 1 + attributes,0.2,0.1635413866202963,11,0
+openai-3-small,topic,an adventure set in outer space,stage 1 + cross rerank,0.2,0.15139734109601002,11,1286
+openai-3-small,topic,an adventure set in outer space,stage 1 + attributes + cross rerank,0.2,0.15139734109601002,11,1331
+openai-3-small,topic,an adventure set in outer space,stage 1 + llm rerank,0.2,0.30523488393970116,11,0
+openai-3-small,topic,an adventure set in outer space,stage 1 + attributes + llm rerank,0.2,0.30523488393970116,11,0
 openai-3-small,topic,aliens come to earth,dense only,0.1,0.06625422345438903,12,0
 openai-3-small,topic,aliens come to earth,stage 1 (dense+lexical+quality),0.2,0.1731866333482261,12,0
-openai-3-small,topic,aliens come to earth,stage 1 + cross rerank,0.2,0.33013764944712026,12,1311
-openai-3-small,topic,aliens come to earth,stage 1 + llm rerank,0.2,0.16421958630632802,12,2271
+openai-3-small,topic,aliens come to earth,stage 1 + attributes,0.2,0.1731866333482261,12,0
+openai-3-small,topic,aliens come to earth,stage 1 + cross rerank,0.2,0.33013764944712026,12,1304
+openai-3-small,topic,aliens come to earth,stage 1 + attributes + cross rerank,0.2,0.33013764944712026,12,1203
+openai-3-small,topic,aliens come to earth,stage 1 + llm rerank,0.2,0.16421958630632802,12,0
+openai-3-small,topic,aliens come to earth,stage 1 + attributes + llm rerank,0.2,0.16421958630632802,12,0
 openai-3-small,topic,a mob family and organized crime,dense only,0.3,0.4440973278132557,11,0
 openai-3-small,topic,a mob family and organized crime,stage 1 (dense+lexical+quality),0.5,0.6325414799409711,11,0
-openai-3-small,topic,a mob family and organized crime,stage 1 + cross rerank,0.7,0.6067216003536936,11,1488
-openai-3-small,topic,a mob family and organized crime,stage 1 + llm rerank,0.6,0.7273298443105218,11,2349
+openai-3-small,topic,a mob family and organized crime,stage 1 + attributes,0.5,0.6325414799409711,11,0
+openai-3-small,topic,a mob family and organized crime,stage 1 + cross rerank,0.7,0.6067216003536936,11,1380
+openai-3-small,topic,a mob family and organized crime,stage 1 + attributes + cross rerank,0.7,0.6067216003536936,11,1388
+openai-3-small,topic,a mob family and organized crime,stage 1 + llm rerank,0.6,0.7273298443105218,11,0
+openai-3-small,topic,a mob family and organized crime,stage 1 + attributes + llm rerank,0.6,0.7273298443105218,11,0
 openai-3-small,topic,a superhero with special powers fights a villain,dense only,0.3,0.24966402870278917,12,0
 openai-3-small,topic,a superhero with special powers fights a villain,stage 1 (dense+lexical+quality),0.2,0.15176219107803537,12,0
-openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + cross rerank,0.1,0.09478836436955078,12,1523
-openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + llm rerank,0.2,0.16421958630632802,12,2442
+openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + attributes,0.2,0.15176219107803537,12,0
+openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + cross rerank,0.1,0.09478836436955078,12,1392
+openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + attributes + cross rerank,0.1,0.09478836436955078,12,1383
+openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + llm rerank,0.2,0.16421958630632802,12,0
+openai-3-small,topic,a superhero with special powers fights a villain,stage 1 + attributes + llm rerank,0.2,0.16421958630632802,12,0
 openai-3-small,topic,a character struggling with mental illness,dense only,0.0,0.0,13,0
 openai-3-small,topic,a character struggling with mental illness,stage 1 (dense+lexical+quality),0.2,0.2863459897524692,13,0
-openai-3-small,topic,a character struggling with mental illness,stage 1 + cross rerank,0.2,0.28371255449703187,13,1456
-openai-3-small,topic,a character struggling with mental illness,stage 1 + llm rerank,0.3,0.3932783996463063,13,2701
+openai-3-small,topic,a character struggling with mental illness,stage 1 + attributes,0.2,0.2863459897524692,13,0
+openai-3-small,topic,a character struggling with mental illness,stage 1 + cross rerank,0.2,0.28371255449703187,13,1220
+openai-3-small,topic,a character struggling with mental illness,stage 1 + attributes + cross rerank,0.2,0.28371255449703187,13,1232
+openai-3-small,topic,a character struggling with mental illness,stage 1 + llm rerank,0.3,0.3932783996463063,13,0
+openai-3-small,topic,a character struggling with mental illness,stage 1 + attributes + llm rerank,0.3,0.3932783996463063,13,0
 openai-3-small,topic,teenagers dealing with life in high school,dense only,0.4,0.31691619230948354,14,0
 openai-3-small,topic,teenagers dealing with life in high school,stage 1 (dense+lexical+quality),0.3,0.2578753740644927,14,0
-openai-3-small,topic,teenagers dealing with life in high school,stage 1 + cross rerank,0.2,0.13568544539116628,14,1411
-openai-3-small,topic,teenagers dealing with life in high school,stage 1 + llm rerank,0.4,0.4288398090337664,14,3041
+openai-3-small,topic,teenagers dealing with life in high school,stage 1 + attributes,0.3,0.2578753740644927,14,0
+openai-3-small,topic,teenagers dealing with life in high school,stage 1 + cross rerank,0.2,0.13568544539116628,14,1262
+openai-3-small,topic,teenagers dealing with life in high school,stage 1 + attributes + cross rerank,0.2,0.13568544539116628,14,1255
+openai-3-small,topic,teenagers dealing with life in high school,stage 1 + llm rerank,0.4,0.4288398090337664,14,0
+openai-3-small,topic,teenagers dealing with life in high school,stage 1 + attributes + llm rerank,0.4,0.4288398090337664,14,0
 openai-3-small,topic,"a story about faith, god and religion",dense only,0.2,0.1478294909154526,14,0
 openai-3-small,topic,"a story about faith, god and religion",stage 1 (dense+lexical+quality),0.3,0.22082856303278728,14,0
-openai-3-small,topic,"a story about faith, god and religion",stage 1 + cross rerank,0.3,0.21819512777734998,14,1531
-openai-3-small,topic,"a story about faith, god and religion",stage 1 + llm rerank,0.3,0.29727159644205703,14,3678
+openai-3-small,topic,"a story about faith, god and religion",stage 1 + attributes,0.3,0.22082856303278728,14,0
+openai-3-small,topic,"a story about faith, god and religion",stage 1 + cross rerank,0.3,0.21819512777734998,14,1203
+openai-3-small,topic,"a story about faith, god and religion",stage 1 + attributes + cross rerank,0.3,0.21819512777734998,14,1212
+openai-3-small,topic,"a story about faith, god and religion",stage 1 + llm rerank,0.3,0.29727159644205703,14,0
+openai-3-small,topic,"a story about faith, god and religion",stage 1 + attributes + llm rerank,0.3,0.29727159644205703,14,0
 openai-3-small,topic,"political intrigue, elections and government",dense only,0.2,0.2984900352767555,15,0
 openai-3-small,topic,"political intrigue, elections and government",stage 1 (dense+lexical+quality),0.2,0.22400556151517553,15,0
-openai-3-small,topic,"political intrigue, elections and government",stage 1 + cross rerank,0.2,0.17993148201117176,15,1436
-openai-3-small,topic,"political intrigue, elections and government",stage 1 + llm rerank,0.3,0.2426178552850034,15,3135
+openai-3-small,topic,"political intrigue, elections and government",stage 1 + attributes,0.2,0.22400556151517553,15,0
+openai-3-small,topic,"political intrigue, elections and government",stage 1 + cross rerank,0.2,0.17993148201117176,15,1250
+openai-3-small,topic,"political intrigue, elections and government",stage 1 + attributes + cross rerank,0.2,0.17993148201117176,15,1239
+openai-3-small,topic,"political intrigue, elections and government",stage 1 + llm rerank,0.3,0.2426178552850034,15,0
+openai-3-small,topic,"political intrigue, elections and government",stage 1 + attributes + llm rerank,0.3,0.2426178552850034,15,0
 openai-3-small,topic,reporters investigating a story for a newspaper,dense only,0.3,0.4440973278132557,11,0
 openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 (dense+lexical+quality),0.3,0.4690000933206748,11,0
-openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + cross rerank,0.4,0.38589303732090635,11,1388
-openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + llm rerank,0.5,0.6168295842361274,11,2199
+openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes,0.3,0.4690000933206748,11,0
+openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + cross rerank,0.4,0.38589303732090635,11,1286
+openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes + cross rerank,0.4,0.38589303732090635,11,1268
+openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + llm rerank,0.5,0.6168295842361274,11,0
+openai-3-small,topic,reporters investigating a story for a newspaper,stage 1 + attributes + llm rerank,0.5,0.6168295842361274,11,0
 openai-3-small,topic,a boxer training for the big fight,dense only,0.5,0.4983273986856962,9,0
 openai-3-small,topic,a boxer training for the big fight,stage 1 (dense+lexical+quality),0.3,0.4362932381209216,9,0
-openai-3-small,topic,a boxer training for the big fight,stage 1 + cross rerank,0.6,0.7217913362056995,9,1415
-openai-3-small,topic,a boxer training for the big fight,stage 1 + llm rerank,0.5,0.6538479352874087,9,2193
+openai-3-small,topic,a boxer training for the big fight,stage 1 + attributes,0.3,0.4362932381209216,9,0
+openai-3-small,topic,a boxer training for the big fight,stage 1 + cross rerank,0.6,0.7217913362056995,9,1194
+openai-3-small,topic,a boxer training for the big fight,stage 1 + attributes + cross rerank,0.6,0.7217913362056995,9,1263
+openai-3-small,topic,a boxer training for the big fight,stage 1 + llm rerank,0.5,0.6538479352874087,9,0
+openai-3-small,topic,a boxer training for the big fight,stage 1 + attributes + llm rerank,0.5,0.6538479352874087,9,0
 openai-3-small,topic,soldiers in the Vietnam war,dense only,0.1,0.07075576072108063,9,0
 openai-3-small,topic,soldiers in the Vietnam war,stage 1 (dense+lexical+quality),0.1,0.09092803061897885,9,0
-openai-3-small,topic,soldiers in the Vietnam war,stage 1 + cross rerank,0.1,0.08372491399919348,9,1479
-openai-3-small,topic,soldiers in the Vietnam war,stage 1 + llm rerank,0.2,0.24952583878244933,9,2496
+openai-3-small,topic,soldiers in the Vietnam war,stage 1 + attributes,0.1,0.09092803061897885,9,0
+openai-3-small,topic,soldiers in the Vietnam war,stage 1 + cross rerank,0.1,0.08372491399919348,9,1199
+openai-3-small,topic,soldiers in the Vietnam war,stage 1 + attributes + cross rerank,0.1,0.08372491399919348,9,1270
+openai-3-small,topic,soldiers in the Vietnam war,stage 1 + llm rerank,0.2,0.24952583878244933,9,0
+openai-3-small,topic,soldiers in the Vietnam war,stage 1 + attributes + llm rerank,0.2,0.24952583878244933,9,0
 openai-3-small,topic,a courtroom trial drama,dense only,0.3,0.23622204575576317,9,0
 openai-3-small,topic,a courtroom trial drama,stage 1 (dense+lexical+quality),0.3,0.36704861348969203,9,0
-openai-3-small,topic,a courtroom trial drama,stage 1 + cross rerank,0.2,0.3833427799846345,9,1644
-openai-3-small,topic,a courtroom trial drama,stage 1 + llm rerank,0.3,0.4742708106036134,9,2572
+openai-3-small,topic,a courtroom trial drama,stage 1 + attributes,0.3,0.36704861348969203,9,0
+openai-3-small,topic,a courtroom trial drama,stage 1 + cross rerank,0.2,0.3833427799846345,9,1236
+openai-3-small,topic,a courtroom trial drama,stage 1 + attributes + cross rerank,0.2,0.3833427799846345,9,1252
+openai-3-small,topic,a courtroom trial drama,stage 1 + llm rerank,0.3,0.4742708106036134,9,0
+openai-3-small,topic,a courtroom trial drama,stage 1 + attributes + llm rerank,0.3,0.4742708106036134,9,0
 openai-3-small,topic,a Stephen King adaptation,dense only,0.1,0.11004588314904008,11,0
 openai-3-small,topic,a Stephen King adaptation,stage 1 (dense+lexical+quality),0.1,0.11004588314904008,11,0
-openai-3-small,topic,a Stephen King adaptation,stage 1 + cross rerank,0.1,0.07336392209936005,11,1235
-openai-3-small,topic,a Stephen King adaptation,stage 1 + llm rerank,0.2,0.31488013066763093,11,2257
+openai-3-small,topic,a Stephen King adaptation,stage 1 + attributes,0.1,0.11004588314904008,11,0
+openai-3-small,topic,a Stephen King adaptation,stage 1 + cross rerank,0.1,0.07336392209936005,11,1266
+openai-3-small,topic,a Stephen King adaptation,stage 1 + attributes + cross rerank,0.1,0.07336392209936005,11,1211
+openai-3-small,topic,a Stephen King adaptation,stage 1 + llm rerank,0.2,0.31488013066763093,11,0
+openai-3-small,topic,a Stephen King adaptation,stage 1 + attributes + llm rerank,0.2,0.31488013066763093,11,0
 openai-3-small,topic,robots and artificial intelligence,dense only,0.2,0.2918104499436024,7,0
 openai-3-small,topic,robots and artificial intelligence,stage 1 (dense+lexical+quality),0.3,0.40249126775014854,7,0
-openai-3-small,topic,robots and artificial intelligence,stage 1 + cross rerank,0.3,0.5546406709327603,7,1216
-openai-3-small,topic,robots and artificial intelligence,stage 1 + llm rerank,0.6,0.6861979535631136,7,2117
+openai-3-small,topic,robots and artificial intelligence,stage 1 + attributes,0.3,0.40249126775014854,7,0
+openai-3-small,topic,robots and artificial intelligence,stage 1 + cross rerank,0.3,0.5546406709327603,7,1278
+openai-3-small,topic,robots and artificial intelligence,stage 1 + attributes + cross rerank,0.3,0.5546406709327603,7,1219
+openai-3-small,topic,robots and artificial intelligence,stage 1 + llm rerank,0.6,0.6861979535631136,7,0
+openai-3-small,topic,robots and artificial intelligence,stage 1 + attributes + llm rerank,0.6,0.6861979535631136,7,0
 openai-3-small,topic,a movie set at Christmas,dense only,0.1,0.07614334071738352,8,0
 openai-3-small,topic,a movie set at Christmas,stage 1 (dense+lexical+quality),0.1,0.12647135138382856,8,0
-openai-3-small,topic,a movie set at Christmas,stage 1 + cross rerank,0.2,0.1698945472148159,8,1366
-openai-3-small,topic,a movie set at Christmas,stage 1 + llm rerank,0.2,0.24968908577726404,8,2440
+openai-3-small,topic,a movie set at Christmas,stage 1 + attributes,0.1,0.12647135138382856,8,0
+openai-3-small,topic,a movie set at Christmas,stage 1 + cross rerank,0.2,0.1698945472148159,8,1351
+openai-3-small,topic,a movie set at Christmas,stage 1 + attributes + cross rerank,0.2,0.1698945472148159,8,1312
+openai-3-small,topic,a movie set at Christmas,stage 1 + llm rerank,0.2,0.24968908577726404,8,0
+openai-3-small,topic,a movie set at Christmas,stage 1 + attributes + llm rerank,0.2,0.24968908577726404,8,0
 openai-3-small,topic,an adaptation of a Shakespeare play,dense only,0.2,0.18216582889104613,8,0
 openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 (dense+lexical+quality),0.2,0.1776461331976086,8,0
-openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + cross rerank,0.1,0.12647135138382856,8,1883
-openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + llm rerank,0.4,0.39873718892724236,8,2056
+openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes,0.2,0.1776461331976086,8,0
+openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + cross rerank,0.1,0.12647135138382856,8,1573
+openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes + cross rerank,0.1,0.12647135138382856,8,1611
+openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + llm rerank,0.4,0.39873718892724236,8,0
+openai-3-small,topic,an adaptation of a Shakespeare play,stage 1 + attributes + llm rerank,0.4,0.39873718892724236,8,0
 openai-3-small,topic,a film about racism and prejudice,dense only,0.1,0.11838279295536293,7,0
 openai-3-small,topic,a film about racism and prejudice,stage 1 (dense+lexical+quality),0.3,0.46067009337728815,7,0
-openai-3-small,topic,a film about racism and prejudice,stage 1 + cross rerank,0.3,0.3897233752935702,7,1921
-openai-3-small,topic,a film about racism and prejudice,stage 1 + llm rerank,0.4,0.559430033796541,7,1908
+openai-3-small,topic,a film about racism and prejudice,stage 1 + attributes,0.3,0.46067009337728815,7,0
+openai-3-small,topic,a film about racism and prejudice,stage 1 + cross rerank,0.3,0.3897233752935702,7,1269
+openai-3-small,topic,a film about racism and prejudice,stage 1 + attributes + cross rerank,0.3,0.3897233752935702,7,1281
+openai-3-small,topic,a film about racism and prejudice,stage 1 + llm rerank,0.4,0.559430033796541,7,0
+openai-3-small,topic,a film about racism and prejudice,stage 1 + attributes + llm rerank,0.4,0.559430033796541,7,0
 openai-3-small,tone,a thriller with a shocking twist ending,dense only,0.0,0.0,13,0
 openai-3-small,tone,a thriller with a shocking twist ending,stage 1 (dense+lexical+quality),0.0,0.0,13,0
-openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + cross rerank,0.0,0.0,13,1367
-openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + llm rerank,0.2,0.2984900352767555,13,3223
+openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + attributes,0.2,0.2863459897524692,13,0
+openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + cross rerank,0.0,0.0,13,1224
+openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + attributes + cross rerank,0.1,0.06362078819895171,13,1329
+openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + llm rerank,0.2,0.2984900352767555,13,0
+openai-3-small,tone,a thriller with a shocking twist ending,stage 1 + attributes + llm rerank,0.3,0.3436966913921454,13,14234
 openai-3-small,tone,a pitch-black dark comedy,dense only,0.0,0.0,16,0
 openai-3-small,tone,a pitch-black dark comedy,stage 1 (dense+lexical+quality),0.0,0.0,16,0
-openai-3-small,tone,a pitch-black dark comedy,stage 1 + cross rerank,0.0,0.0,16,1347
-openai-3-small,tone,a pitch-black dark comedy,stage 1 + llm rerank,0.0,0.0,16,1986
+openai-3-small,tone,a pitch-black dark comedy,stage 1 + attributes,0.0,0.0,16,0
+openai-3-small,tone,a pitch-black dark comedy,stage 1 + cross rerank,0.0,0.0,16,1370
+openai-3-small,tone,a pitch-black dark comedy,stage 1 + attributes + cross rerank,0.0,0.0,16,1214
+openai-3-small,tone,a pitch-black dark comedy,stage 1 + llm rerank,0.0,0.0,16,0
+openai-3-small,tone,a pitch-black dark comedy,stage 1 + attributes + llm rerank,0.1,0.08514311764162098,16,2094
 openai-3-small,tone,"a surreal, dreamlike film",dense only,0.1,0.11004588314904008,15,0
 openai-3-small,tone,"a surreal, dreamlike film",stage 1 (dense+lexical+quality),0.1,0.13886244387355454,15,0
-openai-3-small,tone,"a surreal, dreamlike film",stage 1 + cross rerank,0.1,0.13886244387355454,15,1129
-openai-3-small,tone,"a surreal, dreamlike film",stage 1 + llm rerank,0.2,0.1584091525685025,15,2670
+openai-3-small,tone,"a surreal, dreamlike film",stage 1 + attributes,0.0,0.0,15,0
+openai-3-small,tone,"a surreal, dreamlike film",stage 1 + cross rerank,0.1,0.13886244387355454,15,1224
+openai-3-small,tone,"a surreal, dreamlike film",stage 1 + attributes + cross rerank,0.0,0.0,15,1308
+openai-3-small,tone,"a surreal, dreamlike film",stage 1 + llm rerank,0.2,0.1584091525685025,15,0
+openai-3-small,tone,"a surreal, dreamlike film",stage 1 + attributes + llm rerank,0.1,0.07839826897867533,15,2106
 openai-3-small,tone,"a moody, atmospheric film",dense only,0.0,0.0,20,0
 openai-3-small,tone,"a moody, atmospheric film",stage 1 (dense+lexical+quality),0.0,0.0,20,0
-openai-3-small,tone,"a moody, atmospheric film",stage 1 + cross rerank,0.0,0.0,20,1265
-openai-3-small,tone,"a moody, atmospheric film",stage 1 + llm rerank,0.0,0.0,20,2277
+openai-3-small,tone,"a moody, atmospheric film",stage 1 + attributes,0.2,0.15139734109601002,20,0
+openai-3-small,tone,"a moody, atmospheric film",stage 1 + cross rerank,0.0,0.0,20,1184
+openai-3-small,tone,"a moody, atmospheric film",stage 1 + attributes + cross rerank,0.1,0.07839826897867533,20,1280
+openai-3-small,tone,"a moody, atmospheric film",stage 1 + llm rerank,0.0,0.0,20,0
+openai-3-small,tone,"a moody, atmospheric film",stage 1 + attributes + llm rerank,0.2,0.33013764944712026,20,2196
 openai-3-small,tone,a really funny movie that makes you laugh out loud,dense only,0.0,0.0,11,0
 openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 (dense+lexical+quality),0.0,0.0,11,0
-openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + cross rerank,0.0,0.0,11,1539
-openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + llm rerank,0.1,0.06625422345438903,11,2209
+openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes,0.0,0.0,11,0
+openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + cross rerank,0.0,0.0,11,1408
+openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes + cross rerank,0.0,0.0,11,1565
+openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + llm rerank,0.1,0.06625422345438903,11,0
+openai-3-small,tone,a really funny movie that makes you laugh out loud,stage 1 + attributes + llm rerank,0.1,0.09478836436955078,11,2758
 openai-3-small,tone,"a quirky, offbeat movie",dense only,0.0,0.0,13,0
 openai-3-small,tone,"a quirky, offbeat movie",stage 1 (dense+lexical+quality),0.0,0.0,13,0
-openai-3-small,tone,"a quirky, offbeat movie",stage 1 + cross rerank,0.0,0.0,13,1505
-openai-3-small,tone,"a quirky, offbeat movie",stage 1 + llm rerank,0.0,0.0,13,2370
+openai-3-small,tone,"a quirky, offbeat movie",stage 1 + attributes,0.0,0.0,13,0
+openai-3-small,tone,"a quirky, offbeat movie",stage 1 + cross rerank,0.0,0.0,13,1450
+openai-3-small,tone,"a quirky, offbeat movie",stage 1 + attributes + cross rerank,0.0,0.0,13,1305
+openai-3-small,tone,"a quirky, offbeat movie",stage 1 + llm rerank,0.0,0.0,13,0
+openai-3-small,tone,"a quirky, offbeat movie",stage 1 + attributes + llm rerank,0.0,0.0,13,2316
 openai-3-small,tone,a thought-provoking film that makes you think,dense only,0.0,0.0,19,0
 openai-3-small,tone,a thought-provoking film that makes you think,stage 1 (dense+lexical+quality),0.0,0.0,19,0
-openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + cross rerank,0.0,0.0,19,1946
-openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + llm rerank,0.1,0.11004588314904008,19,1918
+openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + attributes,0.0,0.0,19,0
+openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + cross rerank,0.0,0.0,19,1257
+openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + attributes + cross rerank,0.2,0.13961814555374907,19,1233
+openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + llm rerank,0.1,0.11004588314904008,19,0
+openai-3-small,tone,a thought-provoking film that makes you think,stage 1 + attributes + llm rerank,0.2,0.23365080824310533,19,1975
 openai-3-small,tone,"a tense, suspenseful film",dense only,0.0,0.0,13,0
 openai-3-small,tone,"a tense, suspenseful film",stage 1 (dense+lexical+quality),0.0,0.0,13,0
-openai-3-small,tone,"a tense, suspenseful film",stage 1 + cross rerank,0.0,0.0,13,1361
-openai-3-small,tone,"a tense, suspenseful film",stage 1 + llm rerank,0.1,0.11004588314904008,13,2133
+openai-3-small,tone,"a tense, suspenseful film",stage 1 + attributes,0.0,0.0,13,0
+openai-3-small,tone,"a tense, suspenseful film",stage 1 + cross rerank,0.0,0.0,13,1247
+openai-3-small,tone,"a tense, suspenseful film",stage 1 + attributes + cross rerank,0.0,0.0,13,1332
+openai-3-small,tone,"a tense, suspenseful film",stage 1 + llm rerank,0.1,0.11004588314904008,13,0
+openai-3-small,tone,"a tense, suspenseful film",stage 1 + attributes + llm rerank,0.1,0.07839826897867533,13,2289
 openai-3-small,tone,a deeply emotional tearjerker,dense only,0.0,0.0,8,0
 openai-3-small,tone,a deeply emotional tearjerker,stage 1 (dense+lexical+quality),0.1,0.08431423425588572,8,0
-openai-3-small,tone,a deeply emotional tearjerker,stage 1 + cross rerank,0.1,0.12647135138382856,8,1628
-openai-3-small,tone,a deeply emotional tearjerker,stage 1 + llm rerank,0.1,0.0901000086523677,8,1964
+openai-3-small,tone,a deeply emotional tearjerker,stage 1 + attributes,0.1,0.09785159463516042,8,0
+openai-3-small,tone,a deeply emotional tearjerker,stage 1 + cross rerank,0.1,0.12647135138382856,8,1266
+openai-3-small,tone,a deeply emotional tearjerker,stage 1 + attributes + cross rerank,0.1,0.12647135138382856,8,1360
+openai-3-small,tone,a deeply emotional tearjerker,stage 1 + llm rerank,0.1,0.0901000086523677,8,0
+openai-3-small,tone,a deeply emotional tearjerker,stage 1 + attributes + llm rerank,0.1,0.09785159463516042,8,2226
 openai-3-small,tone,"a disturbing, unsettling film",dense only,0.0,0.0,8,0
 openai-3-small,tone,"a disturbing, unsettling film",stage 1 (dense+lexical+quality),0.0,0.0,8,0
-openai-3-small,tone,"a disturbing, unsettling film",stage 1 + cross rerank,0.0,0.0,8,2092
-openai-3-small,tone,"a disturbing, unsettling film",stage 1 + llm rerank,0.1,0.1089364926177559,8,1943
+openai-3-small,tone,"a disturbing, unsettling film",stage 1 + attributes,0.0,0.0,8,0
+openai-3-small,tone,"a disturbing, unsettling film",stage 1 + cross rerank,0.0,0.0,8,1186
+openai-3-small,tone,"a disturbing, unsettling film",stage 1 + attributes + cross rerank,0.0,0.0,8,1493
+openai-3-small,tone,"a disturbing, unsettling film",stage 1 + llm rerank,0.1,0.1089364926177559,8,0
+openai-3-small,tone,"a disturbing, unsettling film",stage 1 + attributes + llm rerank,0.0,0.0,8,2277
 openai-3-small,tone,a mind-bending psychological movie that messes with your head,dense only,0.0,0.0,14,0
 openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 (dense+lexical+quality),0.1,0.08514311764162098,14,0
-openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + cross rerank,0.0,0.0,14,1672
-openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + llm rerank,0.4,0.4448530294934502,14,2778
+openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes,0.2,0.1731866333482261,14,0
+openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + cross rerank,0.0,0.0,14,1832
+openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes + cross rerank,0.1,0.06362078819895171,14,2166
+openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + llm rerank,0.4,0.4448530294934502,14,0
+openai-3-small,tone,a mind-bending psychological movie that messes with your head,stage 1 + attributes + llm rerank,0.3,0.30701473034246535,14,2339
 openai-3-small,tone,a satire that mocks society,dense only,0.0,0.0,14,0
 openai-3-small,tone,a satire that mocks society,stage 1 (dense+lexical+quality),0.0,0.0,14,0
-openai-3-small,tone,a satire that mocks society,stage 1 + cross rerank,0.0,0.0,14,1945
-openai-3-small,tone,a satire that mocks society,stage 1 + llm rerank,0.0,0.0,14,2025
+openai-3-small,tone,a satire that mocks society,stage 1 + attributes,0.0,0.0,14,0
+openai-3-small,tone,a satire that mocks society,stage 1 + cross rerank,0.0,0.0,14,1394
+openai-3-small,tone,a satire that mocks society,stage 1 + attributes + cross rerank,0.0,0.0,14,1383
+openai-3-small,tone,a satire that mocks society,stage 1 + llm rerank,0.0,0.0,14,0
+openai-3-small,tone,a satire that mocks society,stage 1 + attributes + llm rerank,0.1,0.11004588314904008,14,1952

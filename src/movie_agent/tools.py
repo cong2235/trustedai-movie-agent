@@ -19,6 +19,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from . import config
+from .attributes import MOODS, MovieAttributes
 from .cf import CFModel
 from .content import ContentIndex, _chunks
 from .data import MovieData
@@ -86,6 +87,7 @@ class MovieTools:
     trace: list[dict] = field(default_factory=list)
     reranker: object = field(default_factory=get_reranker)
     memory: MemoryStore = field(default_factory=default_store)
+    attributes: MovieAttributes | None = None      # offline tone attributes; None when not extracted
 
     @classmethod
     def build(cls, weights: dict | None = None) -> "MovieTools":
@@ -106,7 +108,7 @@ class MovieTools:
                 rec.weights = res["tuned_weights"]
                 if res.get("use_segment_weights"):
                     rec.segment_weights = res["segment_weights"]
-        return cls(data=data, cf=cf, content=content, rec=rec)
+        return cls(data=data, cf=cf, content=content, rec=rec, attributes=MovieAttributes.load(data))
 
     # ------------------------------------------------------------ helpers
     def _user(self, user_id: int | None) -> int:
@@ -163,6 +165,24 @@ class MovieTools:
     def memory_context(self) -> str:
         uid = self.session.user_id
         return self.memory.summary(uid, self.data.label) if uid is not None else ""
+
+    def _attribute_request(self, moods, twist_ending, max_violence) -> tuple[np.ndarray | None, np.ndarray]:
+        """(match score per movie or None, violence mask). Attributes are optional data: without the file, a request
+        for them is an error the model can report, not a silent no-op."""
+        n = len(self.cf.movie_ids)
+        if not (moods or twist_ending or max_violence is not None):
+            return None, np.ones(n, dtype=bool)
+        if self.attributes is None:
+            raise ToolError("Movie attributes are not available (run scripts/extract_attributes.py); "
+                            "use mood_or_description / query text instead.")
+        try:
+            match = self.attributes.match(moods, bool(twist_ending)) if (moods or twist_ending) else None
+        except ValueError as e:
+            raise ToolError(str(e))
+        return match, self.attributes.violence_ok(None if max_violence is None else int(max_violence))
+
+    def _attribute_card(self, movie_id: int) -> dict | None:
+        return self.attributes.card(self.cf.m_index[movie_id]) if self.attributes is not None else None
 
     def _memory_excluded(self, uid: int) -> list[int]:
         return sorted(self.memory.excluded_movie_ids(uid))
@@ -295,6 +315,8 @@ class MovieTools:
                          max_year: int | None = None, min_ratings: int = 3,
                          more_like: list[str] | None = None, exclude_titles: list[str] | None = None,
                          mood_or_description: str | None = None,
+                         moods: list[str] | None = None, twist_ending: bool = False,
+                         max_violence: int | None = None,
                          allow_repeats: bool = False,   # internal only: not in the LLM schema (see TOOL_SCHEMAS)
                          user_id: int | None = None) -> dict:
         uid = self._user(user_id)
@@ -307,17 +329,25 @@ class MovieTools:
         excluded += self._memory_excluded(uid)             # seen / dismissed / disliked in earlier sessions
         exclude_genres, avoided = self._with_avoided_genres(uid, include_genres, exclude_genres)
         rel = self.content.relevance(mood_or_description) if (mood_or_description and self.content) else None
+        attr_match, violence_ok = self._attribute_request(moods, twist_ending, max_violence)
+        excluded += [int(m) for m in self.cf.movie_ids[~violence_ok]]
         recs = self.rec.recommend(uid, n=max(1, min(int(n), 10)), include_genres=include_genres,
                                   exclude_genres=exclude_genres, min_year=min_year, max_year=max_year,
                                   min_ratings=min_ratings, exclude_movie_ids=excluded,
                                   anchor_movie_ids=anchors or None, query_relevance=rel,
+                                  attribute_relevance=attr_match,
                                   rerank_query=mood_or_description, reranker=self.reranker)
+        for r in recs:
+            if (card := self._attribute_card(r["movie_id"])) is not None:
+                r["attributes"] = card
         self.session.suggested += [r["movie_id"] for r in recs]
         return {"user_id": uid,
                 "applied_constraints": {k: v for k, v in dict(include_genres=include_genres, exclude_genres=exclude_genres,
                                                                min_year=min_year, max_year=max_year, min_ratings=min_ratings,
                                                                more_like=[self.data.label(a) for a in anchors] or None,
                                                                mood_or_description=mood_or_description,
+                                                               moods=moods, twist_ending=twist_ending or None,
+                                                               max_violence=max_violence,
                                                                genres_avoided_from_memory=avoided).items() if v},
                 "excluded_already_suggested": 0 if allow_repeats else len(self.session.suggested) - len(recs),
                 "recommendations": recs,
@@ -326,7 +356,9 @@ class MovieTools:
 
     def search_movies(self, query: str, n: int = 8, include_genres: list[str] | None = None,
                       exclude_genres: list[str] | None = None, min_year: int | None = None,
-                      max_year: int | None = None, min_ratings: int = 3, personalize: bool = True) -> dict:
+                      max_year: int | None = None, min_ratings: int = 3, personalize: bool = True,
+                      moods: list[str] | None = None, twist_ending: bool = False,
+                      max_violence: int | None = None) -> dict:
         """Free-text search over plots/tags, re-ranked by quality (and the user's taste if known)."""
         if self.content is None:
             raise ToolError("Content index not built; run scripts/build_index.py.")
@@ -335,6 +367,9 @@ class MovieTools:
         all_mask = np.ones(len(rel), dtype=bool)
         quality = _z(stats["bayes"].to_numpy(), all_mask)
         score = rel + 0.35 * quality
+        attr_match, violence_ok = self._attribute_request(moods, twist_ending, max_violence)
+        if attr_match is not None:
+            score = score + config.ATTRIBUTE_WEIGHT * _z(attr_match, all_mask)
         uid = self.session.user_id if personalize else None
         seen = np.zeros(len(rel), dtype=bool)
         if uid is not None:
@@ -344,7 +379,8 @@ class MovieTools:
                 seen[self.cf.m_index[m]] = True
             taste = _z(self.rec.taste_vector_scores(uid), ~seen)
             score = score + 0.3 * taste
-        mask = self.rec._constraint_mask(include_genres, exclude_genres, min_year, max_year, min_ratings, None) & ~seen
+        mask = (self.rec._constraint_mask(include_genres, exclude_genres, min_year, max_year, min_ratings, None)
+                & ~seen & violence_ok)
         n = max(1, min(int(n), 15))
         # stage 1: recall-oriented pool; stage 2: re-rank the pool for fit, including tone and structure
         pool = [i for i in np.argsort(-np.where(mask, score, -np.inf))[: max(config.RERANK_POOL, n)] if mask[i]]
@@ -359,6 +395,8 @@ class MovieTools:
             if mid in rr.scores:
                 card["rerank_fit_0_10"] = rr.scores[mid]
             card["matching_plot_excerpt"] = self._best_chunk(i, q_vec)
+            if (attrs := self._attribute_card(mid)) is not None:
+                card["attributes"] = attrs
             if uid is not None:     # per-user evidence, so the answer can say why it suits *this* user
                 ev = self.rec.explain(uid, mid)
                 card["for_you"] = {k: ev[k] for k in ("because_you_rated", "similar_users_who_rated_it",
@@ -508,6 +546,14 @@ def _json_default(o):
 _GENRES = ("Action, Adventure, Animation, Children, Comedy, Crime, Documentary, Drama, Fantasy, Film-Noir, "
            "Horror, IMAX, Musical, Mystery, Romance, Sci-Fi, Thriller, War, Western")
 _movie = {"type": "string", "description": "Movie title (fuzzy matched; add the year to disambiguate remakes) or numeric movie_id."}
+_attribute_args = {
+    "moods": {"type": "array", "items": {"type": "string", "enum": list(MOODS)},
+              "description": "Tone the user asked for, matched against pre-computed movie attributes (plot text alone "
+                             "misses tone). 'light and funny' -> ['light-hearted', 'funny']; 'dark comedy' -> "
+                             "['dark-comedy']. Keep the words in the free-text query as well."},
+    "twist_ending": {"type": "boolean", "description": "true when the user wants a twist / surprise ending."},
+    "max_violence": {"type": "integer", "description": "0-3. 'nothing violent' -> 1, 'not too violent' -> 2. "
+                                                       "Movies above this level are removed."}}
 _genre_list = {"type": "array", "items": {"type": "string"}, "description": f"Genres from: {_GENRES}."}
 _user = {"type": "integer", "description": "Defaults to the current session user; only set to inspect someone else."}
 
@@ -548,6 +594,7 @@ TOOL_SCHEMAS = [
                                       "alone just return the user's generic favourites)."},
          "exclude_titles": {"type": "array", "items": {"type": "string"}},
          "mood_or_description": {"type": "string", "description": "Free-text vibe, e.g. 'feel-good heist comedy'."},
+         **_attribute_args,
          "user_id": _user}}},
     {"name": "search_movies",
      "description": "Search the catalogue by description/theme over full plot summaries and user tags (semantic + "
@@ -559,7 +606,8 @@ TOOL_SCHEMAS = [
          "min_year": {"type": "integer", "description": "Inclusive. 'after 2000' -> 2001; 'from 2000 on' -> 2000."},
          "max_year": {"type": "integer", "description": "Inclusive. 'before 1970' -> 1969; 'up to 1970' -> 1970."},
          "min_ratings": {"type": "integer", "description": "Default 3."},
-         "personalize": {"type": "boolean", "description": "Blend in the user's taste and hide movies they rated. Default true."}},
+         "personalize": {"type": "boolean", "description": "Blend in the user's taste and hide movies they rated. Default true."},
+         **_attribute_args},
          "required": ["query"]}},
     {"name": "find_similar_users",
      "description": "The users whose ratings correlate most with the current user's, with overlap size, average rating "

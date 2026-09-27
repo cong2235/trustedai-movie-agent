@@ -9,6 +9,12 @@ Two query sets, because the earlier failure analysis showed they behave differen
   TOPIC  what the movie is about (time travel, boxing, the mafia)
   TONE   how it feels or is built (a twist, dark comedy, surreal, funny)
 
+Attribute variants add the offline movie attributes (scripts/extract_attributes.py) to stage 1. Each tone query is
+mapped by hand to the attribute arguments the agent is meant to pass (TONE_ATTRS): this measures how informative the
+attributes are given a correct mapping. Whether the agent actually maps requests that way is measured separately, in
+the held-out conversation set. Topic queries request no attributes, so their attribute variants equal stage 1.
+Re-rank calls are cached (logs/rerank_cache.json); latency medians count uncached calls only.
+
     python scripts/evaluate_search.py                       # all available backends, rerankers none/cross/llm
     python scripts/evaluate_search.py --rerankers none cross
 """
@@ -28,6 +34,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from movie_agent import config  # noqa: E402
+from movie_agent.attributes import MovieAttributes  # noqa: E402
 from movie_agent.content import ContentIndex  # noqa: E402
 from movie_agent.data import MovieData  # noqa: E402
 from movie_agent.embedders import BACKENDS, artifact_dir  # noqa: E402
@@ -68,6 +75,21 @@ TONE = {
     "a mind-bending psychological movie that messes with your head": {"mindfuck", "psychological"},
     "a satire that mocks society": {"satire", "spoof"},
 }
+# the attribute arguments an agent should pass for each tone query (see the tool schema for moods / twist_ending)
+TONE_ATTRS = {
+    "a thriller with a shocking twist ending": {"moods": ["tense"], "twist_ending": True},
+    "a pitch-black dark comedy": {"moods": ["dark-comedy"]},
+    "a surreal, dreamlike film": {"moods": ["surreal"]},
+    "a moody, atmospheric film": {"moods": ["atmospheric"]},
+    "a really funny movie that makes you laugh out loud": {"moods": ["funny"]},
+    "a quirky, offbeat movie": {"moods": ["quirky"]},
+    "a thought-provoking film that makes you think": {"moods": ["thought-provoking"]},
+    "a tense, suspenseful film": {"moods": ["tense"]},
+    "a deeply emotional tearjerker": {"moods": ["emotional"]},
+    "a disturbing, unsettling film": {"moods": ["disturbing"]},
+    "a mind-bending psychological movie that messes with your head": {"moods": ["mind-bending"]},
+    "a satire that mocks society": {"moods": ["satirical"]},
+}
 K = 10
 
 
@@ -88,6 +110,7 @@ def main():
     ids = data.movies.index.to_numpy()
     qz = data.movie_stats["bayes"].to_numpy()
     qz = (qz - qz.mean()) / qz.std()
+    attrs = MovieAttributes.load(data)
     rerankers = {}
     for name in args.rerankers:
         r = get_reranker(name)
@@ -106,18 +129,31 @@ def main():
                 variants = {"dense only": [int(ids[i]) for i in np.argsort(-idx.relevance(query, "dense"))[:K]],
                             "stage 1 (dense+lexical+quality)": pool_ids[:K]}
                 timings = {}
+                pools = {"stage 1": (pool_rows, first)}
+                if attrs is not None:
+                    wanted = TONE_ATTRS.get(query)
+                    if wanted:
+                        m = attrs.match(wanted.get("moods"), wanted.get("twist_ending", False))
+                        with_attrs = first + config.ATTRIBUTE_WEIGHT * (m - m.mean()) / (m.std() + 1e-9)
+                        a_rows = np.argsort(-with_attrs)[:config.RERANK_POOL]
+                        pools["stage 1 + attributes"] = (a_rows, with_attrs)
+                    else:
+                        pools["stage 1 + attributes"] = (pool_rows, first)      # nothing requested: same pipeline
+                    variants["stage 1 + attributes"] = [int(ids[i]) for i in pools["stage 1 + attributes"][0][:K]]
                 for name, rr in rerankers.items():
                     if name == "none":
                         continue
-                    res = rr.rerank(query, pool_ids, [float(first[i]) for i in pool_rows], data)
-                    variants[f"stage 1 + {name} rerank"] = res.order[:K]
-                    timings[f"stage 1 + {name} rerank"] = res.ms
+                    for base, (rows_, sc) in pools.items():
+                        res = rr.rerank(query, [int(ids[i]) for i in rows_], [float(sc[i]) for i in rows_], data)
+                        variants[f"{base} + {name} rerank"] = res.order[:K]
+                        if not res.kind.endswith("cache"):
+                            timings[f"{base} + {name} rerank"] = res.ms
                 for method, top in variants.items():
                     hits = [m in rel for m in top]
                     rows.append({"backend": backend, "set": qset, "query": query, "method": method,
                                  f"P@{K}": float(np.mean(hits)), f"NDCG@{K}": ndcg(hits, len(rel)),
                                  "n_labelled": len(rel), "ms": timings.get(method, 0)})
-                    if backend == args.backends[-1] and method == list(variants)[-1] and qset == "tone":
+                    if backend == args.backends[-1] and method == "stage 1 + llm rerank" and qset == "tone":
                         examples[query] = [("✓ " if h else "  ") + data.label(m) for m, h in zip(top[:5], hits[:5])]
                     if backend == args.backends[-1] and method == "stage 1 (dense+lexical+quality)" and qset == "tone":
                         examples.setdefault("__before__" + query, [("✓ " if h else "  ") + data.label(m)
@@ -126,7 +162,8 @@ def main():
     df = pd.DataFrame(rows)
     summary = df.pivot_table(index=["backend", "method"], columns="set", values=[f"P@{K}", f"NDCG@{K}"], aggfunc="mean")
     summary.columns = [f"{m} {s}" for m, s in summary.columns]
-    order = ["dense only", "stage 1 (dense+lexical+quality)"] + [f"stage 1 + {r} rerank" for r in args.rerankers if r != "none"]
+    order = (["dense only", "stage 1 (dense+lexical+quality)"] + [f"stage 1 + {r} rerank" for r in args.rerankers if r != "none"]
+             + ["stage 1 + attributes"] + [f"stage 1 + attributes + {r} rerank" for r in args.rerankers if r != "none"])
     summary = summary.reindex([(b, m) for b in args.backends for m in order if (b, m) in summary.index])
     latency = df[df["ms"] > 0].groupby("method")["ms"].median()
 

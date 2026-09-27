@@ -33,6 +33,30 @@
       "P@10 topic": 0.3222
     },
     {
+      "backend": "bge-small",
+      "method": "stage 1 + attributes",
+      "NDCG@10 tone": 0.0306,
+      "NDCG@10 topic": 0.232,
+      "P@10 tone": 0.0333,
+      "P@10 topic": 0.2167
+    },
+    {
+      "backend": "bge-small",
+      "method": "stage 1 + attributes + cross rerank",
+      "NDCG@10 tone": 0.0061,
+      "NDCG@10 topic": 0.2822,
+      "P@10 tone": 0.0083,
+      "P@10 topic": 0.2444
+    },
+    {
+      "backend": "bge-small",
+      "method": "stage 1 + attributes + llm rerank",
+      "NDCG@10 tone": 0.1131,
+      "NDCG@10 topic": 0.3724,
+      "P@10 tone": 0.1083,
+      "P@10 topic": 0.3222
+    },
+    {
       "backend": "openai-3-small",
       "method": "dense only",
       "NDCG@10 tone": 0.0092,
@@ -63,10 +87,35 @@
       "NDCG@10 topic": 0.4226,
       "P@10 tone": 0.1083,
       "P@10 topic": 0.3556
+    },
+    {
+      "backend": "openai-3-small",
+      "method": "stage 1 + attributes",
+      "NDCG@10 tone": 0.0591,
+      "NDCG@10 topic": 0.2823,
+      "P@10 tone": 0.0583,
+      "P@10 topic": 0.25
+    },
+    {
+      "backend": "openai-3-small",
+      "method": "stage 1 + attributes + cross rerank",
+      "NDCG@10 tone": 0.0393,
+      "NDCG@10 topic": 0.2893,
+      "P@10 tone": 0.05,
+      "P@10 topic": 0.2611
+    },
+    {
+      "backend": "openai-3-small",
+      "method": "stage 1 + attributes + llm rerank",
+      "NDCG@10 tone": 0.1466,
+      "NDCG@10 topic": 0.4226,
+      "P@10 tone": 0.1333,
+      "P@10 topic": 0.3556
     }
   ],
   "latency_ms": {
-    "stage 1 + cross rerank": 1441.5,
-    "stage 1 + llm rerank": 2284.0
+    "stage 1 + attributes + cross rerank": 1317.0,
+    "stage 1 + attributes + llm rerank": 2234.0,
+    "stage 1 + cross rerank": 1286.0
   }
 }

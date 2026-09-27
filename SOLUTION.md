@@ -67,9 +67,12 @@ Configuration (environment or `.env`):
 ```bash
 python scripts/evaluate_offline.py     # recommender + rating predictor (temporal split, tuned on validation)
 python scripts/evaluate_search.py      # embeddings × re-rankers on topic and tone queries
+python scripts/extract_attributes.py   # one-off: LLM tone attributes per movie -> data/derived/ (committed, ~$0.5)
+python scripts/evaluate_attributes.py  # attributes vs user tags (recall / lift)
 python scripts/evaluate_graph.py       # RP3beta / knowledge-graph experiment
 python scripts/run_scenarios.py --mode scripted            # conversation suite, no LLM
 python scripts/run_scenarios.py --mode llm --judge         # real agent + checks + LLM judge (also fills telemetry)
+python scripts/run_scenarios.py --mode llm --suite heldout # held-out set (fixed before its first run)
 python scripts/run_scenarios.py --mode llm --only u15_toy_story_no_animation --repeat 5   # variance of one case
 ```
 

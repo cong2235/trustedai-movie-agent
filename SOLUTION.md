@@ -38,7 +38,7 @@ python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
 python scripts/build_index.py --backend bge-small        # optional local fallback, ~29 min CPU
 pip install -r requirements-dev.txt       # pytest, coverage, ruff, pre-commit
-python -m pytest -q                        # 108 tests, offline (no API calls)
+python -m pytest -q                        # 113 tests, offline (no API calls)
 ruff check . && ruff format --check .      # the same checks CI runs
 ```
 
@@ -72,10 +72,12 @@ python scripts/evaluate_offline.py     # recommender + rating predictor (tempora
 python scripts/evaluate_search.py      # embeddings × re-rankers on topic and tone queries
 python scripts/extract_attributes.py   # one-off: LLM tone attributes per movie -> data/derived/ (committed, ~$0.5)
 python scripts/evaluate_attributes.py  # attributes vs user tags (recall / lift)
+python scripts/evaluate_quality_floor.py  # ranking cost of the default quality floor
 python scripts/evaluate_graph.py       # RP3beta / knowledge-graph experiment
 python scripts/run_scenarios.py --mode scripted            # conversation suite, no LLM
 python scripts/run_scenarios.py --mode llm --judge         # real agent + checks + LLM judge (also fills telemetry)
-python scripts/run_scenarios.py --mode llm --suite heldout # held-out set (fixed before its first run)
+python scripts/run_scenarios.py --mode llm --suite heldout # held-out set v1 (fixed before its first run)
+python scripts/run_scenarios.py --mode llm --suite heldout2 # held-out set v2
 python scripts/run_scenarios.py --mode llm --only u15_toy_story_no_animation --repeat 5   # variance of one case
 ```
 
@@ -111,9 +113,9 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 | `scripts/` | index build, offline / search / graph eval, scenario runner, monitor CLI |
 | `eval/scenarios.py` | 14 conversations / 19 turns with automatic checks and reference tool plans |
 | `eval/memory_scenarios.py` | 10 conversations / 31 turns targeting short- and long-term memory |
-| `eval/heldout_scenarios.py` | 18 conversations / 20 turns, held out: committed before its only run |
+| `eval/heldout_scenarios.py`, `eval/heldout_v2_scenarios.py` | held-out sets (18 / 20 and 16 / 19 conversations / turns), each committed before its first run |
 | `data/derived/` | LLM-extracted movie attributes (committed, so nobody pays for them twice) |
-| `tests/` | 108 tests (incl. 29 memory, 6 attribute and 7 search tests on a synthetic index): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
+| `tests/` | 113 tests (incl. 29 memory, 6 attribute and 12 search tests on a synthetic index): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
 | `outputs/eval/` | all metrics |
 | `outputs/transcripts_*` | full conversations with every tool call and output |
 | `outputs/failure_cases/` | saved evidence for failures discussed in the report |

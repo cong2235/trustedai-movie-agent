@@ -52,7 +52,7 @@ The key split is between **reasoning** and **computation**:
 ```
 
 - **Deterministic tools** do everything numeric: similarity, prediction, ranking, filtering. They are
-  unit-tested (100 tests) and evaluated offline without an LLM. Each tool returns *evidence* (which of your ratings,
+  unit-tested (113 tests, run in CI) and evaluated offline without an LLM. Each tool returns *evidence* (which of your ratings,
   which users, what plot excerpt, how confident), not prose.
 - **The LLM** chooses and chains tools. "What do people like me think of Inception?" becomes resolve title →
   item-specific neighbourhood → weighted opinion → compare to everyone → your predicted rating. The LLM turns the
@@ -76,6 +76,7 @@ The key split is between **reasoning** and **computation**:
 | Blending | Linear blend of z-scored signals (item-kNN, user-kNN, plot-taste, popularity, + a small PureSVD term), weights grid-tuned on a validation split | Every weight is inspectable. The latent term raised NDCG@10 in every user segment. Explanations still cite only kNN/content evidence (see Reflection). |
 | Request handling | Two-stage: retrieve 40 candidates by the explicit request (anchor = co-rating + plot + genre overlap, description relevance, requested attributes), then re-rank by percentiles, 0.7 request / 0.3 taste | Found through failure analysis (Toy Story, below). Adding z-scores did not work because CF z-scores are heavy-tailed. |
 | Diversity | MMR on plot embeddings (λ = 0.8) | Stops a list from being three sequels of one franchise. |
+| Quality floor | Movies with ≥ 3 ratings need a raw mean ≥ 2.75 (default, relaxed visibly if it alone leaves nothing) | Bayesian shrinkage lifted a 1.83★ film to 3.1, so it passed every filter. The floor costs 0.0000 NDCG on personal ranking (`outputs/eval/quality_floor.md`) and only bites on request-driven results. |
 | Memory | Short-term: last 2 turns verbatim, older turns compacted to (question, answer). Long-term: per-user SQLite (seen / dismissed / liked / disliked / avoid_genre / preference), *enforced by the tools* | "I've seen it" must survive the session, and a remembered dislike must not depend on the model paying attention. |
 | Agent | 12 tools, manual tool-use loop, parallel calls. OpenAI `gpt-4o-mini` for development and every reported run; a Claude backend exists but has not been evaluated | A manual loop gives the full trace needed for evaluation. The deterministic tools make the model swappable. |
 
@@ -99,7 +100,7 @@ The key split is between **reasoning** and **computation**:
 
 | Decision | Alternative considered | Why I chose this |
 |---|---|---|
-| **LLM plans and explains; all numbers come from deterministic, tested tools that return evidence JSON** | LLM reasons over retrieved data (RAG), or recommends from its own knowledge | Correctness becomes testable without the LLM (100 tests, offline metrics). The LLM cannot invent a rating it was never given, and every title and number it writes is checked against the tool outputs. |
+| **LLM plans and explains; all numbers come from deterministic, tested tools that return evidence JSON** | LLM reasons over retrieved data (RAG), or recommends from its own knowledge | Correctness becomes testable without the LLM (113 tests, offline metrics). The LLM cannot invent a rating it was never given, and every title and number it writes is checked against the tool outputs. |
 | **Neighbourhood CF as the backbone, with a small latent-factor term** | Pure matrix factorisation, or pure kNN | kNN evidence falls straight out as explanations ("because you rated Aliens 5★"). Alone, PureSVD ≈ item-kNN (0.109 vs 0.108 NDCG@10); blended, the latent term added +0.015, significant and better in every segment. |
 | **Temporal per-user split + validation-only tuning + segments + bootstrap CIs** | Random split, one headline number | Random splits leak future taste. A single average hides exactly where the system fails (sparse users, long tail). CIs stop me from claiming a win that is noise. |
 | **Tone as offline attributes *and* an LLM re-ranker, not either alone** | Re-ranker only (the previous design), or attributes only | Attributes alone recover part of the tone gain at no latency; together with the re-ranker they give the best tone NDCG (0.147 vs 0.116). The gain is not yet significant on 12 queries, so both stay, and the attributes also add a violence filter the re-ranker could not provide. |
@@ -204,50 +205,62 @@ tools attach. The tool requires ≥ 10 neighbours before summarising an opinion.
 ### 4. Conversation, development suites (`outputs/eval/scenarios_llm_*.json`, `outputs/transcripts_*`)
 
 The real agent with the full stack (gpt-4o-mini, temperature 0.2, OpenAI embeddings, attributes, LLM re-ranking,
-compaction, long-term memory, online guardrail), each scenario run 3× on the final code:
+compaction, long-term memory, online guardrail), each scenario run 3×. These runs predate the last two edge-case
+fixes (absent titles in `exclude_titles`, relaxing the quality floor), which touch paths these suites do not
+exercise; both held-out sets were re-run after them.
 
 | Per turn | Main suite (57 turns) | Memory suite (93 turns) |
 |---|---|---|
-| Scenario runs passed · turns passed | 41/42 · 56/57 | 30/30 · 93/93 |
+| Scenario runs passed · turns passed | 42/42 · 57/57 | 29/30 · 92/93 (a checker false alarm, below) |
 | Required tools called · argument values correct | 100% · 100% | 100% · 100% |
 | Golden-set hit (main) / memory state correct after every turn (memory) | 100% | 100% |
 | Constraint violations (seen, remembered, genre, era, repeats) | 0 | 0 |
 | Titles not in the dataset · titles no tool returned | 0 · 0 | 0 · 0 |
-| Decimal numbers ungrounded · misattributed | 0 · 1 of 227 (a checker false alarm, below) | 0 · 0 of 407 |
-| "You rated X N★" claims contradicting the data | 0 of 98 | 0 of 184 |
-| Latency p50 / p95 · first token p50 | 3.8 s / 8.0 s · 1.9 s | 4.3 s / 15.7 s · 1.9 s |
-| LLM judge 1-5: grounded / personalised / explains / honest / helpful | 4.63 / 4.32 / 4.37 / 4.61 / 4.65 | - |
+| Decimal numbers ungrounded · misattributed | 0 · 0 of 255 | 0 · 3 of 408 flagged, all correct on inspection |
+| "You rated X N★" claims contradicting the data | 0 of 89 | 0 of 188 |
+| Latency p50 / p95 | 3.9 s / 14.3 s | 4.4 s / 13.9 s |
+| LLM judge 1-5: grounded / personalised / explains / honest / helpful | 4.70 / 4.30 / 4.33 / 4.63 / 4.65 | - |
 
-The one failed turn is a false alarm: "*Forrest Gump*, which has an average rating of 4.16" is correct, but the checker
-only recognises titles written as "Title (Year)", so it attributed 4.16 to the *Shawshank Redemption (1994)* named just
-before. These suites were used to find and fix problems over many runs (a stricter version once failed 16 of 42 runs;
+The one failed memory turn is a false alarm: "**The Usual Suspects (1995)** … You rated **The Shawshank Redemption
+(1994)** highly … averaging 4.24" is correct, but the model bolded the evidence title too, and the checker's subject rule
+took it for the movie the number is about. An earlier run had a similar false alarm with a title written without its
+year. These suites were used to find and fix problems over many runs (a stricter version once failed 16 of 42 runs;
 history in the [APPENDIX](APPENDIX.md#hardening-round-memory-stricter-verification-latency)), so a clean result here is a
 regression result, not proof the agent is flawless. The judge is gpt-4o-mini grading gpt-4o-mini and was caught wrong
 in both directions, so it is used for triage only, never for pass/fail.
 
-### 5. Conversation, held-out set (`eval/heldout_scenarios.py`, `outputs/transcripts_llm_gpt-4o-mini_heldout/`)
+### 5. Conversation, held-out sets (`eval/heldout_scenarios.py`, `eval/heldout_v2_scenarios.py`)
 
-Written after development stopped, committed before it ran, run once, and not used to change anything. Users 7, 50,
-68, 88, 105, 212, 250, 414, 474 and 599 (25 to 1,907 ratings), new request types, two requests in Vietnamese.
+Each set was written after development stopped, committed to git before its first run, and scored on that first run.
+v1: users 7, 50, 68, 88, 105, 212, 250, 414, 474, 599 (25 to 1,907 ratings). v2, written after the fixes v1 prompted:
+twelve more new users, a third of the turns probing the fixed areas in new phrasings (including two "already watched"
+movies that are not in the dataset), a quality bar on tone requests. Both include two requests in Vietnamese.
 
-**Result: 17 of 18 conversations and 19 of 20 turns passed the mechanical checks**; 0 hallucinated titles, 0 of 100
-decimals and 0 of 31 rating claims wrong; latency p50 4.4 s / p95 16.0 s. What passed and is worth noting: the
-ambiguous "Titanic" (1953 and 1997 both exist) was resolved to 1997 and named; "The Force Awakens" (2015, after the
-dataset ends) was reported as absent; "remember that I never want horror" in Vietnamese was stored and enforced in the
-next session; a one-off request in Vietnamese ("tối nay") was correctly *not* stored, so the English-only regex
-backstop was not needed.
+| First run (the estimate) | Conversations | Turns | Hallucinated titles · wrong numbers · wrong rating claims |
+|---|---|---|---|
+| v1 | **17/18** | 19/20 | 0 · 0 of 100 · 0 of 31 |
+| v2 | **14/16** | 17/19 | 0 · 0 of 93 · 0 of 29 |
 
-What failed or was weak, including problems the checks cannot see (my reading of all 20 transcripts):
-- **Failed:** "I've already watched Heat and Casino, so don't suggest them again" → the agent excluded them *for this
-  request* but never called `remember`, so a later session could suggest them again.
-- **Tone not mapped:** "a mind-bending sci-fi film that isn't too violent" → the agent passed `max_violence` but not
-  `moods=["mind-bending"]`, and *Back to the Future* came back as "mind-bending".
-- **Quality:** "vài phim hài nhẹ nhàng" (light comedies) → *Maid to Order*, average 1.83★, presented as worth a try.
-- **Leaky wording:** *Twelve Monkeys*, whose plot is flagged unreliable, was described from general knowledge, and the
-  answer said "although the plot is noted as unreliable" to the user.
+What held up: the ambiguous "Titanic" (1953 and 1997) was resolved and named; titles after 2014 (*The Force Awakens*,
+*Avengers: Endgame*) were reported as absent; "never horror" and "no musicals" were stored and enforced next session;
+one-off requests ("tối nay", "just this time") were not stored, so the English-only regex backstop was not needed.
 
-So the honest estimate on unseen requests is "correct and grounded almost always; the misses are in *completeness*
-(remembering, mapping tone) and *quality floor*, not in hallucination".
+What failed, what the checks could not see (from reading every transcript), and what happened next:
+
+| Finding | Set | Status |
+|---|---|---|
+| "I've already watched Heat and Casino" excluded for one request, never remembered | v1 | **Fixed**: `already_seen` excludes *and* stores in one call |
+| *Maid to Order* (1.83★) offered as a light comedy | v1 | **Fixed**: default quality floor on the raw mean |
+| An absent title ("Interstellar") in `exclude_titles` failed the whole call; the model then listed movies the user had already rated | v2 | **Fixed** (a bug in the v1 fix): unresolvable titles are reported, the request goes on |
+| The floor removed the only candidate ("war film before 1960", user 474), so the answer was "none" | v1 re-run | **Fixed**: the floor is relaxed and the answer says the pick is below the usual bar |
+| "A slow, atmospheric horror film" → no `include_genres=Horror`; the mood pulled in Stalker, The Seventh Seal | v2 | **Open** |
+| "Mind-bending sci-fi" → `moods` not passed; *Back to the Future* called mind-bending | v1 | **Open** |
+| *Twelve Monkeys* (plot flagged unreliable) described from general knowledge, flag wording leaked to the user | v1 | **Open** |
+
+After the fixes, v1 passes 18/18 and v2 15/16 (the atmospheric-horror case). Both sets have now informed fixes, so
+these are regression results, not estimates. The honest estimate is the first-run row: correct and grounded almost
+always; the misses are in *completeness* (remembering, mapping a tone or genre onto the right argument) and in a quality
+floor that did not exist, not in hallucination.
 
 ### Qualitative check on the three suggested users (`outputs/transcripts_scripted/`)
 
@@ -281,9 +294,10 @@ So the honest estimate on unseen requests is "correct and grounded almost always
 - *Fix, in two steps:* an LLM re-ranker that judges fit including tone (tone NDCG 0.026 → 0.116), then offline tone
   attributes with a violence filter (→ 0.147, not yet significant). The request now returns Monty Python's The Meaning
   of Life, Better Off Dead, Clueless, White Christmas.
-- *Still weak:* the re-ranker judges fit, not quality, so poorly rated films still slip in (Calendar Girls, 2.6★; *Maid
-  to Order*, 1.83★, in the held-out set). The agent does not always map tone words onto the attribute arguments
-  (held-out "mind-bending"). Rare moods have low attribute recall.
+- *Then a quality floor:* the re-ranker judges fit, not quality, so poorly rated films slipped in (Calendar Girls,
+  2.6★; *Maid to Order*, 1.83★, held-out v1). A raw-mean floor now removes them at no measurable ranking cost.
+- *Still weak:* the agent does not always map tone words onto the attribute arguments (held-out "mind-bending"), and a
+  mood can outweigh the genre asked for ("atmospheric horror" → Stalker). Rare moods have low attribute recall.
 
 **Failure 3: sparse users get a generic blockbuster list** *(partly addressed by long-term memory)*
 - *Asked:* user 30 (18 ratings), "What should I watch tonight?". *Got:* Forrest Gump, Pulp Fiction, Saving Private Ryan,
@@ -292,15 +306,16 @@ So the honest estimate on unseen requests is "correct and grounded almost always
   Forrest Gump. 18 ratings is how much they logged, not how much they watched. Offline this segment is the weakest
   (HR@10 0.34) and PureSVD beats the hybrid there.
 - *What was done:* "seen" is a real, remembered state that the tools enforce in every later session (3/3 in the
-  two-session scenario). *Still open:* the system waits for the user to volunteer it, and the held-out set shows the
-  agent sometimes does not store it even when told (Heat / Casino). Proactive elicitation ("seen these three?") and a
+  two-session scenario). Held-out v1 showed the agent sometimes did not store it even when told (Heat / Casino);
+  `already_seen` on the recommendation tools now stores it in the same call. *Still open:* the system waits for the
+  user to volunteer it. Proactive elicitation ("seen these three?") and a
   larger latent-factor weight for sparse users are the next steps.
 
 ## Reflection
 
 **What works well**
-- *Grounded by construction.* The LLM never computes. Across 170 final-run turns, 0 hallucinated titles, 0 wrong claims
-  about the user's ratings, and one flagged number that turned out to be correct.
+- *Grounded by construction.* The LLM never computes. Across the 228 turns of the final runs (main, memory, both held-out
+  sets), 0 hallucinated titles, 0 wrong claims about the user's ratings, and 3 flagged numbers that were all correct.
 - *Measured, not assumed.* Several first versions looked fine in demos and were wrong when measured: the kNN predictor
   (worse than baseline), lexical-heavy search, additive anchors, a latency optimisation that cost 30% re-rank quality,
   and my own guardrail's false alarms.
@@ -311,22 +326,21 @@ So the honest estimate on unseen requests is "correct and grounded almost always
 **What doesn't work well, and why**
 - *Sparse users and the long tail* (Failure 3; tail recall ≈ 0 for every model, graph ones included). The data cannot
   show what people watched but did not rate.
-- *Completeness of tool use on new phrasings*: the held-out misses are the model not calling `remember` or not passing
-  `moods`. Tool-enforced rules only help once the tool is called.
-- *Quality floor on tone requests*: fit is judged, quality is not.
+- *Completeness of tool use on new phrasings*: most held-out misses were the model not passing an argument
+  (`remember`, `moods`, `include_genres`). Moving facts into the arguments the model already sends (`already_seen`)
+  fixed one class; tone-to-argument mapping is still open.
 - *Explanation faithfulness is partial.* The PureSVD term influences rank but is never cited. I chose accuracy
   (+0.015 NDCG, significant) over full faithfulness.
-- *Small, weak labels*: 30 search queries with sparse tag labels, 5-19 tagged movies per attribute, 20 held-out turns.
+- *Small, weak labels*: 30 search queries with sparse tag labels, 5-19 tagged movies per attribute, 39 held-out turns.
   Good for spotting regressions and large effects, not for fine comparisons.
 - *Only one model evaluated.* Every reported run uses gpt-4o-mini. The Claude backend is implemented but untested.
 - *Data quality*: 198 movies carry another movie's plot; they are masked, which removes content signal for some
   important titles (Twelve Monkeys, Seven).
 
 **With more time or resources**
-1. Close the held-out gaps in the tool contract: when `exclude_titles` comes from "I've seen X", have
-   `recommend_movies` return a hint (or store it) so memory does not depend on a second call; map tone words to
-   `moods` server-side from the free-text query as a fallback. Then write a *new* held-out set, since this one is spent.
-2. A quality floor for tone requests (a minimum Bayesian average unless the user asks for obscure films).
+1. Map request words onto arguments server-side as a fallback (genre names → `include_genres`, tone words →
+   `moods`), and cap the attribute weight when a genre is named. Then a third held-out set: both current ones are spent.
+2. Fix the checker's subject rule for bolded evidence titles (the source of every remaining false alarm).
 3. Proactive elicitation on top of long-term memory ("seen it? / loved it?"), fed back into CF as ratings, evaluated
    with simulated users drawn from held-out ratings.
 4. An implicit-feedback model that treats "rated" as "watched" (EASE or weighted ALS), and a global-time split.
@@ -349,6 +363,9 @@ So the honest estimate on unseen requests is "correct and grounded almost always
   "2001: A Space Odyssey" as 2001, a literal backspace in a regex, a label leak in the search eval. Every flag was read
   by hand before it counted, and each checker bug has a regression test built from the sentence that triggered it.
   [Details](APPENDIX.md#bugs-in-the-evaluation-tooling-and-why-the-llm-judge-is-not-trusted).
+- **Engineering.** ruff lint and format, a pre-commit hook, and GitHub Actions running the 113 offline tests on
+  Python 3.10 and 3.12 (77% line coverage; the search path is covered through a synthetic genre-vector index). The LLM
+  suites are run by hand and their outputs committed; the held-out sets are committed before they run.
 - **Cost.** Agent turns cost about $0.0015 each (a full 3× main-suite run is about $0.1), the attribute extraction about $0.5 once, the
   embedding index $0.08 once. Everything except the LLM transcripts and LLM re-rank rows is deterministic and runs on a
   laptop CPU without an API key.

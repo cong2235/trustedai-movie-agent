@@ -23,8 +23,8 @@ user ─► chat (Streamlit / CLI) ─► LLM agent ──► 12 tools, JSON evi
 | Ranking, 583 users, temporal split | NDCG@10 **0.129** vs 0.109 PureSVD, 0.108 item-kNN (both gains significant) | [REPORT §1](REPORT.md#1-ranking-test-set-583-users-outputsevaloffline_metricsmd) |
 | "What do people like me think of X?" | RMSE 0.871 vs 0.890 bias baseline, better in every evidence bucket | [REPORT §2](REPORT.md#2-what-do-people-like-me-think-of-x-predictor-accuracy) |
 | Search, tone queries | NDCG@10 0.026 → **0.147** with LLM re-rank + tone attributes | [REPORT §3](REPORT.md#3-content-search-outputsevalsearch_evalmd-and-tone-attributes-outputsevalattributes_evalmd) |
-| Held-out conversations (never used in development) | **17/18** passed; 0 hallucinated titles, 0 wrong numbers | [REPORT §5](REPORT.md#5-conversation-held-out-set-evalheldout_scenariospy-outputstranscripts_llm_gpt-4o-mini_heldout) |
-| Where it fails | Sparse users, the long tail, tone requests without a quality floor | [Failure analysis](REPORT.md#failure-analysis) |
+| Held-out conversations (committed before their first run) | v1 **17/18**, v2 **14/16** on first run; 0 hallucinated titles, 0 wrong numbers | [REPORT §5](REPORT.md#5-conversation-held-out-sets-evalheldout_scenariospy-evalheldout_v2_scenariospy) |
+| Where it fails | Sparse users, the long tail, mapping tone words onto the right arguments | [Failure analysis](REPORT.md#failure-analysis) |
 
 ## Quickstart
 
@@ -40,7 +40,7 @@ python -m movie_agent.cli --user 15                       # terminal chat
 python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
 ```
 
-Development: `pip install -r requirements-dev.txt`, then `pytest` (108 offline tests, no API key) and `ruff check .`.
+Development: `pip install -r requirements-dev.txt`, then `pytest` (113 offline tests, no API key) and `ruff check .`.
 CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same checks locally.
 
 ## Documentation

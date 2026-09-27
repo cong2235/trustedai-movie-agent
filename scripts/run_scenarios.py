@@ -13,7 +13,8 @@ Checks per turn (a turn passes only if all apply and hold):
                list arguments contain the expected genre/title, numeric bounds are respected
   grounding    (shared with the online guardrail) hallucinated titles, titles no tool returned, numbers no tool
                returned, numbers attached to the wrong movie, wrong claims about the user's own ratings
-  constraints  recommended movies are unseen / in-genre / in-era / not repeated / not remembered as seen
+  constraints  recommended movies are unseen / in-genre / in-era / not repeated / not remembered as seen /
+               above a quality bar (min_mean_rating: raw mean of movies with >= 3 ratings)
   golden       at least one recommended movie from a hand-made list of good answers (where one exists)
   text         required statements ("not in the dataset", "you rated it 3")
   memory       long-term memory *after this turn*: memory_has / memory_lacks; forbid_tools (e.g. no remember for a
@@ -222,6 +223,9 @@ def check_turn(
             viol.append(f"{label}: too old")
         if ch.get("no_repeats") and m in earlier_recs:
             viol.append(f"{label}: repeated")
+        st = tools.data.movie_stats.loc[m]
+        if ch.get("min_mean_rating") and st["count"] >= 3 and st["mean"] < ch["min_mean_rating"]:
+            viol.append(f"{label}: average {st['mean']:.2f} from {int(st['count'])} ratings is below the quality bar")
     golden = None
     if turn.get("golden_any"):
         gold = {_resolve(tools, t) for t in turn["golden_any"]}
@@ -437,7 +441,7 @@ def main():
     ap.add_argument("--only", help="run a single scenario id")
     ap.add_argument("--repeat", type=int, default=1, help="run each scenario N times (LLM variance)")
     ap.add_argument("--suffix", default="", help="suffix for the output json/dir, e.g. _before_fix")
-    ap.add_argument("--suite", choices=["main", "memory", "heldout"], default="main")
+    ap.add_argument("--suite", choices=["main", "memory", "heldout", "heldout2"], default="main")
     args = ap.parse_args()
     scenarios = SCENARIOS
     if args.suite == "memory":
@@ -452,6 +456,13 @@ def main():
 
         scenarios = HELDOUT_SCENARIOS
         args.suffix = "_heldout" + args.suffix
+    if args.suite == "heldout2":
+        if args.mode != "llm":
+            sys.exit("The held-out suites have no reference plans: run them with --mode llm.")
+        from eval.heldout_v2_scenarios import HELDOUT_V2_SCENARIOS
+
+        scenarios = HELDOUT_V2_SCENARIOS
+        args.suffix = "_heldout_v2" + args.suffix
 
     tools = MovieTools.build()
     tag = args.mode

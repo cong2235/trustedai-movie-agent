@@ -29,7 +29,7 @@ latency and cost. The full write-up is in [REPORT.md](REPORT.md), with supportin
 
 ## Setup
 
-Requires Python 3.10+ (developed on 3.14, Windows, CPU only).
+Requires Python 3.10+ (developed on 3.14, Windows, CPU only; CI tests 3.10 and 3.12 on Linux).
 
 ```bash
 pip install -r requirements.txt && pip install -e . --no-deps   # exact versions used: requirements-lock.txt
@@ -37,7 +37,9 @@ cp .env.example .env                       # add OPENAI_API_KEY (and/or ANTHROPI
 python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
 python scripts/build_index.py --backend bge-small        # optional local fallback, ~29 min CPU
-python -m pytest -q tests                  # 100 tests, offline (no API calls)
+pip install -r requirements-dev.txt       # pytest, coverage, ruff, pre-commit
+python -m pytest -q                        # 108 tests, offline (no API calls)
+ruff check . && ruff format --check .      # the same checks CI runs
 ```
 
 ## Run it
@@ -111,7 +113,7 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 | `eval/memory_scenarios.py` | 10 conversations / 31 turns targeting short- and long-term memory |
 | `eval/heldout_scenarios.py` | 18 conversations / 20 turns, held out: committed before its only run |
 | `data/derived/` | LLM-extracted movie attributes (committed, so nobody pays for them twice) |
-| `tests/` | 100 tests (incl. 28 memory and 6 attribute tests): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
+| `tests/` | 108 tests (incl. 29 memory, 6 attribute and 7 search tests on a synthetic index): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
 | `outputs/eval/` | all metrics |
 | `outputs/transcripts_*` | full conversations with every tool call and output |
 | `outputs/failure_cases/` | saved evidence for failures discussed in the report |

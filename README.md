@@ -1,108 +1,67 @@
-# TrustedAI - AI Engineer Test
+# Movie Discovery Agent
 
-## The Problem
+[![CI](https://github.com/cong2235/trustedai-movie-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/cong2235/trustedai-movie-agent/actions/workflows/ci.yml)
 
-You have a dataset of movies with plot summaries, user ratings, and tags. Your task:
+A conversational assistant that investigates the MovieLens data on the user's behalf. An LLM plans which analyses to
+run and explains the answer; every number and title comes from deterministic, tested Python tools (collaborative
+filtering, plot search, taste profiles, neighbour opinions, long-term memory). Built for the TrustedAI AI Engineer test
+([ASSIGNMENT.md](ASSIGNMENT.md)).
 
-**Build an AI assistant that helps users discover movies by investigating the dataset on their behalf.**
+```
+user ─► chat (Streamlit / CLI) ─► LLM agent ──► 12 tools, JSON evidence out ─► grounding check on every answer
+                                     │            ├─ hybrid recommender: item/user kNN + plot taste + PureSVD, tuned
+                                     │            ├─ search: plot embeddings + TF-IDF + tone attributes → LLM re-rank
+                                     │            ├─ "people like me": residual kNN prediction with reliability labels
+                                     │            └─ memory: seen / dismissed / avoided genres, enforced by the tools
+                                     └─ telemetry (SQLite + JSONL) → monitoring dashboard with SLO alerts
+```
 
-This is not a search engine — the assistant should reason about what to look up, combine multiple data signals, and explain its thinking. When a user asks "why would I like that?", the assistant should be able to dig into their rating history, find patterns, and give a grounded answer.
+## Results at a glance
 
-### Requirements
+| What | Result | Details |
+|---|---|---|
+| Ranking, 583 users, temporal split | NDCG@10 **0.129** vs 0.109 PureSVD, 0.108 item-kNN (both gains significant) | [REPORT §1](REPORT.md#1-ranking-test-set-583-users-outputsevaloffline_metricsmd) |
+| "What do people like me think of X?" | RMSE 0.871 vs 0.890 bias baseline, better in every evidence bucket | [REPORT §2](REPORT.md#2-what-do-people-like-me-think-of-x-predictor-accuracy) |
+| Search, tone queries | NDCG@10 0.026 → **0.147** with LLM re-rank + tone attributes | [REPORT §3](REPORT.md#3-content-search-outputsevalsearch_evalmd-and-tone-attributes-outputsevalattributes_evalmd) |
+| Held-out conversations (never used in development) | **17/18** passed; 0 hallucinated titles, 0 wrong numbers | [REPORT §5](REPORT.md#5-conversation-held-out-set-evalheldout_scenariospy-outputstranscripts_llm_gpt-4o-mini_heldout) |
+| Where it fails | Sparse users, the long tail, tone requests without a quality floor | [Failure analysis](REPORT.md#failure-analysis) |
 
-1. The user identifies themselves (e.g., by user ID), and the assistant uses their rating history to personalize recommendations
-2. The assistant can answer questions that require combining multiple pieces of information — e.g., "what do people with similar taste to mine think of Inception?" requires finding similar users, checking their Inception ratings, and synthesizing
-3. The assistant explains its reasoning using historical data — not just LLM knowledge
-4. Evaluate your system's recommendation quality with evidence — show where it works and where it fails (you might use metrics, qualitative examples, or both — explain why you chose what you chose)
+## Quickstart
 
-How you get there is up to you.
+Python 3.10+. The dataset and the LLM-extracted movie attributes are in the repo; plot embeddings are built once.
 
-## Dataset
+```bash
+pip install -r requirements.txt && pip install -e . --no-deps
+cp .env.example .env                                      # add OPENAI_API_KEY (or ANTHROPIC_API_KEY)
+python scripts/build_index.py --backend openai-3-small    # ~2 min, ~$0.08 (or --backend bge-small: local, ~29 min)
 
-Located in `data/ml-latest-small-filtered/`:
+python app/serve.py                                       # web UI: chat + monitor at http://localhost:8501
+python -m movie_agent.cli --user 15                       # terminal chat
+python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
+```
 
-| File | Size | Description |
-|------|------|-------------|
-| `movies_with_plots.csv` | 16MB | 5,135 movies — `movieId`, `title`, `year`, `genres`, `plot` (100–5,000+ chars, avg ~3,200) |
-| `ratings.csv` | 1.7MB | 74,064 ratings from 610 users — `userId`, `movieId`, `rating` (0.5–5.0), `timestamp` |
-| `tags.csv` | 74KB | 2,440 user-generated tags — sparse, most movies have none |
-| `links.csv` | 98KB | External links (IMDb, TMDB) |
-| `movies.csv` | 228KB | Basic movie info without plots |
+Development: `pip install -r requirements-dev.txt`, then `pytest` (108 offline tests, no API key) and `ruff check .`.
+CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same checks locally.
 
-**Data notes:**
-- Movies span 1903–2014. This is a filtered subset of MovieLens — some well-known movies (e.g., The Matrix, Ocean's Eleven) may be absent due to missing plot data in the source.
-- ~51% of movies have fewer than 5 ratings.
-- Tags are very sparse (2,440 tags across 5,135 movies). Don't build your approach around tags alone.
-- Users have ~121 ratings on average — relatively dense on the user side. The sparsity is on the movie side.
+## Documentation
 
-### What's in the data
+| Document | For |
+|---|---|
+| [REPORT.md](REPORT.md) | The write-up: problem analysis, approach, evaluation, failure analysis, reflection |
+| [SOLUTION.md](SOLUTION.md) | Setup, configuration, code tour, how to reproduce every evaluation |
+| [APPENDIX.md](APPENDIX.md) | Engineering history: experiments, bugs found and how they were fixed |
+| [ASSIGNMENT.md](ASSIGNMENT.md) | The original problem statement and dataset description |
 
-The dataset gives you several signals to work with:
+## Layout
 
-- **Rating patterns:** 610 users × 5,135 movies. Users who rate similar movies similarly have similar taste — this is the basis of collaborative filtering. You can find "users like me" and see what they enjoyed.
-- **Plot summaries:** Full text descriptions (avg ~3,200 chars). Useful for content-based search — finding movies that match a description like "dark thriller with a twist."
-- **Genres:** 19 genres per movie (pipe-separated). Useful for filtering, profiling user preferences, and finding blind spots.
-- **Tags:** User-generated labels like "twist ending", "atmospheric", "dark comedy". Sparse but high-signal where they exist.
+```
+src/movie_agent/   the system: data → CF / content / attributes → tools → agent → guardrails, telemetry
+app/               Streamlit UI (chat + monitoring)
+scripts/           index build, attribute extraction, offline / search / graph evaluation, scenario runner, monitor
+eval/              conversation suites: main, memory, held-out
+tests/             offline unit and integration tests
+outputs/           every metric, transcript and failure case referenced in the report
+data/              MovieLens subset (as provided) and derived/movie_attributes.jsonl
+```
 
-### Suggested users for testing
-
-These users have different profiles — useful for testing personalization:
-
-| User ID | Ratings | Avg | Profile |
-|---------|---------|-----|---------|
-| 1 | 190 | 4.33 | Action/comedy fan — likes Terminator, Blues Brothers, Full Metal Jacket |
-| 15 | 85 | 3.55 | Sci-fi oriented — likes Aliens, Star Wars, Back to the Future |
-| 30 | 18 | 4.61 | Sparse history — likes Braveheart, Inception, Shawshank Redemption |
-
-### Sample Queries
-
-Use these to sanity-check your system during development:
-
-- "What should I watch tonight?" *(requires knowing the user's taste)*
-- "I want a dark psychological thriller with a twist" *(content search + quality filter)*
-- "What do people with similar taste to mine think about Pulp Fiction?" *(find similar users + aggregate their ratings)*
-- "Why do you think I'd like that?" *(explain using user's history + movie data)*
-- "I liked Toy Story but I'm tired of animated movies — what else?" *(use history + apply constraints)*
-- "What's my blind spot? What genres am I missing?" *(analyze user's rating patterns)*
-
-## Deliverables
-
-### 1. Code
-- Working implementation with setup instructions
-- Include reproducible output: sample conversations, evaluation results, or screenshots that demonstrate the system working
-- If your solution uses external APIs (e.g., OpenAI), document this and include example outputs so we can evaluate without running it
-
-### 2. Report
-Follow the template in `REPORT_TEMPLATE.md`. **This is as important as the code.**
-
-We weight the report equally with the code. A mediocre system with excellent analysis beats a good system with a shallow report.
-
-### 3. Interview
-You will:
-- Demo your system live
-- Walk us through your report
-- Discuss your decisions and tradeoffs
-
-## Time
-
-3-4 hours. Rough guide: ~2 hours building, ~1 hour on the report and evaluation, ~30 min cleanup.
-
-Tip: keep notes on your decisions as you go — it makes the report much easier to write.
-
-AI tools are welcome — be ready to discuss your work in depth.
-
-## What We Care About
-
-- How you break down the problem
-- Why you made your choices
-- Honest assessment of your solution — especially where it fails
-- Code someone else can read
-
-## What We Don't Care About
-
-- State-of-the-art performance
-- Complex infrastructure
-- Perfect solutions
-- Exhaustive hyperparameter tuning
-
-We're more interested in your thinking than your metrics.
+Author: Võ Trần Công.

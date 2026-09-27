@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Conversational movie-discovery agent over MovieLens: LLM planning over deterministic CF / content tools"
 authors = [{ name = "Võ Trần Công" }]
 requires-python = ">=3.10"
-readme = "SOLUTION.md"
+readme = "README.md"
 dynamic = ["dependencies"]
 
 [tool.setuptools.dynamic]

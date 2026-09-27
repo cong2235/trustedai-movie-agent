@@ -5,6 +5,7 @@
     python scripts/run_scenarios.py --mode llm --repeat 3        # each scenario 3x: pass *rates*, not anecdotes
     python scripts/run_scenarios.py --mode llm --only u1_terminator_2 --repeat 5
     python scripts/run_scenarios.py --mode llm --suite memory --repeat 3   # hard short/long-term memory suite
+    python scripts/run_scenarios.py --mode llm --suite heldout             # held-out set: run once, report as is
 
 Checks per turn (a turn passes only if all apply and hold):
   tools        required tools were called (alternatives separated by '|')
@@ -332,13 +333,19 @@ def main():
     ap.add_argument("--only", help="run a single scenario id")
     ap.add_argument("--repeat", type=int, default=1, help="run each scenario N times (LLM variance)")
     ap.add_argument("--suffix", default="", help="suffix for the output json/dir, e.g. _before_fix")
-    ap.add_argument("--suite", choices=["main", "memory"], default="main")
+    ap.add_argument("--suite", choices=["main", "memory", "heldout"], default="main")
     args = ap.parse_args()
     scenarios = SCENARIOS
     if args.suite == "memory":
         from eval.memory_scenarios import MEMORY_SCENARIOS
         scenarios = MEMORY_SCENARIOS
         args.suffix = "_memory" + args.suffix
+    if args.suite == "heldout":
+        if args.mode != "llm":
+            sys.exit("The held-out suite has no reference plans: run it with --mode llm.")
+        from eval.heldout_scenarios import HELDOUT_SCENARIOS
+        scenarios = HELDOUT_SCENARIOS
+        args.suffix = "_heldout" + args.suffix
 
     tools = MovieTools.build()
     tag = args.mode

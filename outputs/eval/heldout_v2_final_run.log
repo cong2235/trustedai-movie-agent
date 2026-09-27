@@ -1,0 +1,61 @@
+PASS v2_u19_watched_mob_classics ['ok']
+PASS v2_u21_seen_romance_two_sessions ['ok', 'ok']
+PASS v2_u57_vi_seen_scifi ['ok']
+PASS v2_u111_family_evening ['ok']
+FAIL v2_u177_atmospheric_horror [{'constraint_violations': ['Stalker (1979): missing required genre', 'Picnic at Hanging Rock (1975): missing required genre', 'The Seventh Seal (1957): missing required genre', 'Donnie Darko (2001): missing required genre']}]
+PASS v2_u232_fight_club_neighbours ['ok']
+PASS v2_u288_70s_cult ['ok']
+PASS v2_u380_above_crowd ['ok']
+PASS v2_u448_old_comedies_then_why ['ok', 'ok']
+PASS v2_u480_blade_runner ['ok']
+PASS v2_u561_twist_seen_two ['ok']
+PASS v2_u606_vi_dark_not_violent ['ok']
+PASS v2_u19_outside_usual ['ok']
+PASS v2_u21_no_musicals ['ok', 'ok']
+PASS v2_u57_no_scifi_this_time ['ok']
+PASS v2_u232_absent_recent ['ok']
+{
+  "mode": "llm",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "repeat": 1,
+  "n_scenario_runs": 16,
+  "n_turns": 19,
+  "turn_pass_rate": 0.947,
+  "scenario_pass_rate": 0.938,
+  "tool_recall": 1.0,
+  "args_ok": 1.0,
+  "turns_with_constraint_violation": 1,
+  "golden_hit_rate": null,
+  "text_checks_passed": 1.0,
+  "hallucinated_titles": 0,
+  "ungrounded_titles": 0,
+  "ungrounded_numbers": 0,
+  "misattributed_numbers": 0,
+  "wrong_user_ratings": 0,
+  "decimal_claims_checked": 78,
+  "rating_claims_checked": 29,
+  "tool_errors": 2,
+  "online_guardrail_revisions": 1,
+  "per_scenario_pass": {
+    "v2_u19_watched_mob_classics": "1/1",
+    "v2_u21_seen_romance_two_sessions": "1/1",
+    "v2_u57_vi_seen_scifi": "1/1",
+    "v2_u111_family_evening": "1/1",
+    "v2_u177_atmospheric_horror": "0/1",
+    "v2_u232_fight_club_neighbours": "1/1",
+    "v2_u288_70s_cult": "1/1",
+    "v2_u380_above_crowd": "1/1",
+    "v2_u448_old_comedies_then_why": "1/1",
+    "v2_u480_blade_runner": "1/1",
+    "v2_u561_twist_seen_two": "1/1",
+    "v2_u606_vi_dark_not_violent": "1/1",
+    "v2_u19_outside_usual": "1/1",
+    "v2_u21_no_musicals": "1/1",
+    "v2_u57_no_scifi_this_time": "1/1",
+    "v2_u232_absent_recent": "1/1"
+  },
+  "latency_p50_s": 4.7,
+  "latency_p95_s": 15.8,
+  "ttft_p50_s": 2.44
+}

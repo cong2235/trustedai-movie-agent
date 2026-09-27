@@ -12,6 +12,8 @@ Numbers in this appendix describe the run they were measured in. The final numbe
 - [What running the real LLM found](#what-running-the-real-llm-found)
 - [Bugs in the evaluation tooling, and why the LLM judge is not trusted](#bugs-in-the-evaluation-tooling-and-why-the-llm-judge-is-not-trusted)
 - [Reproducibility and cost](#reproducibility-and-cost)
+- [Live-use review: three Vietnamese questions (user 23)](#live-use-review-three-vietnamese-questions-user-23)
+- [Latency root cause: DNS on every new connection](#latency-root-cause-dns-on-every-new-connection)
 
 ## Should this use a knowledge graph? (tested, not assumed)
 
@@ -174,9 +176,10 @@ request path: embeddings and re-ranking are API calls, and CF is numpy/scipy. Wh
 | Perceived wait | answer appeared all at once | token streaming in the UI | first token p50 2.0 s |
 | **Remaining tail** | ~4% of gpt-4o-mini calls take **12-15 s** before the first byte vs 0.9 s normally. Not retries (SDK logs: 0), not the network (DNS 0.1 s, TCP 0.03 s, TLS 0.05 s) | tried **request hedging** (duplicate a call with no first chunk after 2.5-4 s) | **no gain** (80 interleaved real calls): the duplicate stalls too. Disabled by default, kept behind `MOVIE_AGENT_HEDGE_AFTER_S` |
 
-The remaining p95 is dominated by that provider-side stall. Options that address it are operational, not code: a
-provisioned-throughput deployment (e.g. Azure OpenAI PTU), a different region or provider, or fewer sequential LLM
-calls per turn (e.g. a router that answers simple lookups with a single call).
+**Correction (later):** this conclusion was wrong. The stall was not on the provider's side and the network
+measurement above timed a warm, cached lookup. The cause was DNS on new connections, which is also why the
+hedged duplicate (a separate pool, so another new connection) stalled too. See
+[Latency root cause](#latency-root-cause-dns-on-every-new-connection).
 
 ## Memory under stress: a dedicated test suite
 
@@ -298,7 +301,7 @@ movie was repeated. What was wrong, and what changed:
 | Everyone's average presented as the similar users' | field-by-field "whose number" rule | prompt |
 | Kick-Ass / Django (predicted 3.5) presented like the 4-star picks | new `expected_fit` field ("uncertain match: say so") next to `evidence_strength`, which counts evidence rather than judging it | tool |
 | "After 2010" for `min_year=2010` | "describe filters exactly as applied" | prompt |
-| 14.6 s turn | 10.5 s before the provider's first chunk: the known gpt-4o-mini stall, not the code | - |
+| 14.6 s turn | 10.5 s before the first chunk; diagnosed afterwards as a DNS stall on a new connection (next section) | connection pool |
 
 Replaying after the fixes: Vietnamese answers, memory untouched, numbers attributed correctly. gpt-4o-mini still
 sometimes ignores `expected_fit` and once read "newer" as `max_year=2014`, so the prompt rules are not a complete fix.
@@ -310,3 +313,34 @@ The regression runs exposed two more guardrail false alarms, both fixed with tes
 naming an absent title with its year ("I couldn't find The Matrix (1999)") after a tool had reported it absent, and
 numbers in a block without a bold subject when the answer is about a single recommended movie. Main suite after all
 changes: 14/14 conversations, 19/19 turns, 0 guardrail revisions; memory suite 10/10.
+
+## Latency root cause: DNS on every new connection
+
+The review above led to a proper look at the latency tail. Telemetry over 882 turns: 89% of turn time is LLM calls
+(tools 4%); time to first chunk had p50 0.9 s but p95 12 s, and 8.7% of calls stalled for a near-constant ~12 s.
+
+| Step | Evidence | Script |
+|---|---|---|
+| Server or client? | A slow call waited 16.8 s for headers while the server reported 633 ms of processing (`openai-processing-ms`) | `scripts/probe_llm_latency.py` |
+| Which phase? | Every slow request spent 11.1 s in `connect_tcp` (normally 0.03 s); TLS, send and server time were normal | `scripts/probe_connection_phases.py` |
+| Why connect? | `connect_tcp` includes the DNS lookup. On this machine a VMware adapter (VMnet8) lists a DNS server, 192.168.218.4, that never answers; Windows sometimes asks it first and falls back to 8.8.8.8 after the timeout. api.openai.com has a 10-36 s TTL, so almost every new connection needs a fresh lookup | `Resolve-DnsName` per server |
+| Why a new connection? | The SDK pool drops idle connections after 5 s; each client (agent, embedder, re-ranker, every session) had its own pool; and over HTTP/1.1 the SDK closes a streamed response right after `[DONE]`, before the chunked body ends, so a streamed call's connection is never reusable | pool trace |
+
+Fix (`src/movie_agent/http.py`): one shared pool for every OpenAI client, idle keep-alive 300 s
+(`MOVIE_AGENT_HTTP_KEEPALIVE_S`), and HTTP/2 (`httpx[http2]`), where closing a stream early does not close the
+connection.
+
+| Measurement | Before | After |
+|---|---|---|
+| Interleaved A/B, 40 requests per pool, 20 s idle between each pool's requests: new connections | 40/40 | 1/40 |
+| Same: requests stalling > 5 s | 14/40 (35%) | 0/40 |
+| Same: time to headers p50 / p95 | 0.93 s / 12.1 s | 0.71 s / 0.88 s |
+| 3 conversations x 3 turns, 20 s idle between turns: turn latency p50 / max | 6.1 s / 16.6 s | 5.7 s / 7.4 s (one connection throughout) |
+| Main suite, 19 turns: turn latency p50 / p95 | 4.8 s / 14.9 s | 4.6 s / 7.2 s |
+
+What is left: the first call after more than 5 minutes idle (or after the server drops the connection) still opens a
+connection and can hit the slow resolver. That part is a property of this machine, not of the app: removing the dead
+DNS server from the VMnet8 adapter (or raising that adapter's interface metric) fixes it for every program. In a
+normal server or container deployment the resolver would not have this problem, and the pool fix still saves the
+TCP + TLS handshake (~80 ms) on most calls. The hedging code in `agent.py` is now known to have targeted the wrong
+cause; it stays disabled.

@@ -1,0 +1,665 @@
+{
+ "pause_s": 10.0,
+ "summary": {
+  "sdk_default_keepalive_5s": {
+   "n": 40,
+   "errors": 0,
+   "new_connections": 40,
+   "stalls_over_5s": 14,
+   "headers_p50_s": 0.931,
+   "headers_p95_s": 12.111,
+   "headers_max_s": 12.651
+  },
+  "shared_pool_keepalive_300s": {
+   "n": 40,
+   "errors": 0,
+   "new_connections": 1,
+   "stalls_over_5s": 0,
+   "headers_p50_s": 0.712,
+   "headers_p95_s": 0.879,
+   "headers_max_s": 1.964
+  }
+ },
+ "rows": [
+  {
+   "i": 0,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.996,
+   "server_ms": 319,
+   "new_connection": true,
+   "connect_tcp_s": 0.101
+  },
+  {
+   "i": 1,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.729,
+   "server_ms": 331,
+   "new_connection": true,
+   "connect_tcp_s": 0.033
+  },
+  {
+   "i": 2,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.819,
+   "server_ms": 380,
+   "new_connection": true,
+   "connect_tcp_s": 0.033
+  },
+  {
+   "i": 3,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.819,
+   "server_ms": 406,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 4,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.853,
+   "server_ms": 337,
+   "new_connection": true,
+   "connect_tcp_s": 0.033
+  },
+  {
+   "i": 5,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.75,
+   "server_ms": 324,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 6,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 1.063,
+   "server_ms": 359,
+   "new_connection": true,
+   "connect_tcp_s": 0.06
+  },
+  {
+   "i": 7,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.712,
+   "server_ms": 364,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 8,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.712,
+   "server_ms": 370,
+   "new_connection": true,
+   "connect_tcp_s": 0.046
+  },
+  {
+   "i": 9,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.744,
+   "server_ms": 364,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 10,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.724,
+   "server_ms": 318,
+   "new_connection": true,
+   "connect_tcp_s": 0.033
+  },
+  {
+   "i": 11,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.837,
+   "server_ms": 471,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 12,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.121,
+   "server_ms": 300,
+   "new_connection": true,
+   "connect_tcp_s": 11.134
+  },
+  {
+   "i": 13,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.75,
+   "server_ms": 383,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 14,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.82,
+   "server_ms": 315,
+   "new_connection": true,
+   "connect_tcp_s": 11.11
+  },
+  {
+   "i": 15,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.613,
+   "server_ms": 318,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 16,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.069,
+   "server_ms": 412,
+   "new_connection": true,
+   "connect_tcp_s": 11.102
+  },
+  {
+   "i": 17,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.701,
+   "server_ms": 349,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 18,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.652,
+   "server_ms": 318,
+   "new_connection": true,
+   "connect_tcp_s": 0.033
+  },
+  {
+   "i": 19,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.64,
+   "server_ms": 349,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 20,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.787,
+   "server_ms": 348,
+   "new_connection": true,
+   "connect_tcp_s": 0.031
+  },
+  {
+   "i": 21,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 1.964,
+   "server_ms": 1506,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 22,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.016,
+   "server_ms": 370,
+   "new_connection": true,
+   "connect_tcp_s": 11.116
+  },
+  {
+   "i": 23,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.633,
+   "server_ms": 337,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 24,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.692,
+   "server_ms": 347,
+   "new_connection": true,
+   "connect_tcp_s": 0.064
+  },
+  {
+   "i": 25,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.733,
+   "server_ms": 312,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 26,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.755,
+   "server_ms": 327,
+   "new_connection": true,
+   "connect_tcp_s": 0.057
+  },
+  {
+   "i": 27,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.663,
+   "server_ms": 360,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 28,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.898,
+   "server_ms": 326,
+   "new_connection": true,
+   "connect_tcp_s": 0.058
+  },
+  {
+   "i": 29,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.638,
+   "server_ms": 369,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 30,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.787,
+   "server_ms": 338,
+   "new_connection": true,
+   "connect_tcp_s": 0.031
+  },
+  {
+   "i": 31,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.711,
+   "server_ms": 349,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 32,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.743,
+   "server_ms": 366,
+   "new_connection": true,
+   "connect_tcp_s": 0.031
+  },
+  {
+   "i": 33,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.851,
+   "server_ms": 365,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 34,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.11,
+   "server_ms": 343,
+   "new_connection": true,
+   "connect_tcp_s": 11.126
+  },
+  {
+   "i": 35,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.852,
+   "server_ms": 342,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 36,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.818,
+   "server_ms": 384,
+   "new_connection": true,
+   "connect_tcp_s": 0.032
+  },
+  {
+   "i": 37,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.723,
+   "server_ms": 329,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 38,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.661,
+   "server_ms": 323,
+   "new_connection": true,
+   "connect_tcp_s": 0.032
+  },
+  {
+   "i": 39,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.665,
+   "server_ms": 318,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 40,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 1.06,
+   "server_ms": 338,
+   "new_connection": true,
+   "connect_tcp_s": 0.085
+  },
+  {
+   "i": 41,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.721,
+   "server_ms": 382,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 42,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.014,
+   "server_ms": 328,
+   "new_connection": true,
+   "connect_tcp_s": 11.107
+  },
+  {
+   "i": 43,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.751,
+   "server_ms": 336,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 44,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.754,
+   "server_ms": 367,
+   "new_connection": true,
+   "connect_tcp_s": 0.034
+  },
+  {
+   "i": 45,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.654,
+   "server_ms": 344,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 46,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.802,
+   "server_ms": 342,
+   "new_connection": true,
+   "connect_tcp_s": 11.093
+  },
+  {
+   "i": 47,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.648,
+   "server_ms": 367,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 48,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 12.651,
+   "server_ms": 444,
+   "new_connection": true,
+   "connect_tcp_s": 11.1
+  },
+  {
+   "i": 49,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.597,
+   "server_ms": 312,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 50,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.836,
+   "server_ms": 380,
+   "new_connection": true,
+   "connect_tcp_s": 11.129
+  },
+  {
+   "i": 51,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 1.067,
+   "server_ms": 791,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 52,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.779,
+   "server_ms": 390,
+   "new_connection": true,
+   "connect_tcp_s": 0.031
+  },
+  {
+   "i": 53,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.691,
+   "server_ms": 326,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 54,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.753,
+   "server_ms": 326,
+   "new_connection": true,
+   "connect_tcp_s": 0.054
+  },
+  {
+   "i": 55,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.785,
+   "server_ms": 335,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 56,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.964,
+   "server_ms": 392,
+   "new_connection": true,
+   "connect_tcp_s": 11.106
+  },
+  {
+   "i": 57,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.634,
+   "server_ms": 368,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 58,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 1.283,
+   "server_ms": 457,
+   "new_connection": true,
+   "connect_tcp_s": 0.06
+  },
+  {
+   "i": 59,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.725,
+   "server_ms": 345,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 60,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 1.053,
+   "server_ms": 325,
+   "new_connection": true,
+   "connect_tcp_s": 0.03
+  },
+  {
+   "i": 61,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.65,
+   "server_ms": 315,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 62,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.912,
+   "server_ms": 346,
+   "new_connection": true,
+   "connect_tcp_s": 11.097
+  },
+  {
+   "i": 63,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.853,
+   "server_ms": 300,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 64,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.731,
+   "server_ms": 331,
+   "new_connection": true,
+   "connect_tcp_s": 0.07
+  },
+  {
+   "i": 65,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.748,
+   "server_ms": 371,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 66,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.732,
+   "server_ms": 326,
+   "new_connection": true,
+   "connect_tcp_s": 11.103
+  },
+  {
+   "i": 67,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.696,
+   "server_ms": 350,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 68,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.773,
+   "server_ms": 348,
+   "new_connection": true,
+   "connect_tcp_s": 11.091
+  },
+  {
+   "i": 69,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.69,
+   "server_ms": 343,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 70,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.916,
+   "server_ms": 307,
+   "new_connection": true,
+   "connect_tcp_s": 0.047
+  },
+  {
+   "i": 71,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.654,
+   "server_ms": 336,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 72,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.947,
+   "server_ms": 310,
+   "new_connection": true,
+   "connect_tcp_s": 0.077
+  },
+  {
+   "i": 73,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.648,
+   "server_ms": 348,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 74,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.851,
+   "server_ms": 326,
+   "new_connection": true,
+   "connect_tcp_s": 0.032
+  },
+  {
+   "i": 75,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.629,
+   "server_ms": 320,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 76,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 11.711,
+   "server_ms": 308,
+   "new_connection": true,
+   "connect_tcp_s": 11.096
+  },
+  {
+   "i": 77,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.651,
+   "server_ms": 396,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  },
+  {
+   "i": 78,
+   "pool": "sdk_default_keepalive_5s",
+   "headers_s": 0.718,
+   "server_ms": 380,
+   "new_connection": true,
+   "connect_tcp_s": 0.032
+  },
+  {
+   "i": 79,
+   "pool": "shared_pool_keepalive_300s",
+   "headers_s": 0.869,
+   "server_ms": 447,
+   "new_connection": false,
+   "connect_tcp_s": 0.0
+  }
+ ]
+}

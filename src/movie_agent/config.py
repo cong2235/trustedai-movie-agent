@@ -85,6 +85,11 @@ RERANK_TIMEOUT_S = 8.0  # past this, fall back to the stage-1 order (logged as a
 # Set a priori equal to the weight of query relevance (1.0), not tuned on the tag labels used to evaluate it.
 ATTRIBUTE_WEIGHT = 1.0
 
+# --- HTTP ---------------------------------------------------------------------
+# Idle keep-alive of the shared OpenAI connection pool (movie_agent/http.py). The SDK default is 5 s, so almost every
+# call opened a new connection and paid a DNS lookup; see scripts/probe_connection_phases.py.
+HTTP_KEEPALIVE_S = float(os.environ.get("MOVIE_AGENT_HTTP_KEEPALIVE_S", "300"))
+
 # --- Telemetry ---------------------------------------------------------------
 LOG_DIR = REPO_ROOT / "logs"
 TELEMETRY_DB = LOG_DIR / "telemetry.db"

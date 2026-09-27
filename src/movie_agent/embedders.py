@@ -47,9 +47,10 @@ class OpenAIEmbedder:
 
     @cached_property
     def client(self):
-        import openai
 
-        return openai.OpenAI(timeout=60.0, max_retries=0)  # retries are handled in _embed
+        from .http import openai_client
+
+        return openai_client(timeout=60.0, max_retries=0)  # retries are handled in _embed
 
     def _embed(self, batch: list[str], timeout: float = 60.0, attempts: int = 5) -> np.ndarray:
         for attempt in range(attempts):

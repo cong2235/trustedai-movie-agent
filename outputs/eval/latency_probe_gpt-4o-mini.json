@@ -1,0 +1,384 @@
+{
+  "summary": {
+    "model": "gpt-4o-mini",
+    "n": 40,
+    "errors": 0,
+    "first_chunk_p50_s": 0.8285,
+    "first_chunk_p95_s": 1.6287999999999927,
+    "share_over_5s": 0.025,
+    "slow_calls": [
+      {
+        "headers_s": 16.835,
+        "first_chunk_s": 16.855,
+        "total_s": 16.923,
+        "server_processing_ms": 633,
+        "request_id": "req_b4472258778046c5b2c0e3eafb74429c",
+        "cached_tokens": 0,
+        "with_tools": true
+      }
+    ],
+    "fast_server_ms_p50": 393.0
+  },
+  "calls": [
+    {
+      "headers_s": 16.835,
+      "first_chunk_s": 16.855,
+      "total_s": 16.923,
+      "server_processing_ms": 633,
+      "request_id": "req_b4472258778046c5b2c0e3eafb74429c",
+      "cached_tokens": 0,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.945,
+      "first_chunk_s": 0.945,
+      "total_s": 1.115,
+      "server_processing_ms": 325,
+      "request_id": "req_f3b32a5b2bdb4381b43e40601bb93682",
+      "cached_tokens": 0,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.883,
+      "first_chunk_s": 0.883,
+      "total_s": 1.059,
+      "server_processing_ms": 512,
+      "request_id": "req_de29015eeac84619bc587f64baeeeaa6",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.819,
+      "first_chunk_s": 0.82,
+      "total_s": 2.573,
+      "server_processing_ms": 391,
+      "request_id": "req_f02e81253d20420590692b8aac1fb297",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.315,
+      "first_chunk_s": 1.316,
+      "total_s": 1.318,
+      "server_processing_ms": 531,
+      "request_id": "req_efcf77c6826a4ff38a08736ffaa2e076",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 1.497,
+      "first_chunk_s": 1.497,
+      "total_s": 1.681,
+      "server_processing_ms": 393,
+      "request_id": "req_6e8eb5726d1b4fa4bafb1f353e0dfb41",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.08,
+      "first_chunk_s": 1.095,
+      "total_s": 1.176,
+      "server_processing_ms": 475,
+      "request_id": "req_24852c93fc664231a2aef4f1648e016a",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.922,
+      "first_chunk_s": 0.923,
+      "total_s": 1.085,
+      "server_processing_ms": 323,
+      "request_id": "req_5427643b916c4dd1870ab24e3f0b004f",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.769,
+      "first_chunk_s": 0.834,
+      "total_s": 0.919,
+      "server_processing_ms": 401,
+      "request_id": "req_7c37841a79a7446dbf9f9ada28b996a1",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.768,
+      "first_chunk_s": 0.768,
+      "total_s": 2.439,
+      "server_processing_ms": 339,
+      "request_id": "req_6ecf4dea3af34f0488580c5a538bf91c",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.144,
+      "first_chunk_s": 1.153,
+      "total_s": 1.193,
+      "server_processing_ms": 489,
+      "request_id": "req_680b80c11a7d4d6d8dad505fbdcf6cea",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.822,
+      "first_chunk_s": 0.823,
+      "total_s": 1.081,
+      "server_processing_ms": 384,
+      "request_id": "req_ba49157cc40149e4bf5be7c7afeda73d",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.275,
+      "first_chunk_s": 1.276,
+      "total_s": 1.338,
+      "server_processing_ms": 529,
+      "request_id": "req_6779a2a0ea4c46d38992c0f72eb4486c",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.732,
+      "first_chunk_s": 0.733,
+      "total_s": 0.921,
+      "server_processing_ms": 346,
+      "request_id": "req_e7099fa566d84269b1c99222eb6fae24",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.861,
+      "first_chunk_s": 0.861,
+      "total_s": 0.925,
+      "server_processing_ms": 495,
+      "request_id": "req_1acc65b8d6fb408abba756696003af1d",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.755,
+      "first_chunk_s": 0.756,
+      "total_s": 2.461,
+      "server_processing_ms": 368,
+      "request_id": "req_6368caae5410462ea112568399051f42",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 4.132,
+      "first_chunk_s": 4.133,
+      "total_s": 4.164,
+      "server_processing_ms": 465,
+      "request_id": "req_4d878d164b4244a0ab574b85d90e908d",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.682,
+      "first_chunk_s": 0.683,
+      "total_s": 0.891,
+      "server_processing_ms": 318,
+      "request_id": "req_013c40ec2da64ad99d7ddf6c09540f0e",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.023,
+      "first_chunk_s": 1.024,
+      "total_s": 1.032,
+      "server_processing_ms": 584,
+      "request_id": "req_f7d40bfda1d242b99349127c8493c4bb",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.723,
+      "first_chunk_s": 0.724,
+      "total_s": 0.912,
+      "server_processing_ms": 358,
+      "request_id": "req_8297d4f120bc40ae85f922dd81eb074e",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.775,
+      "first_chunk_s": 0.776,
+      "total_s": 0.928,
+      "server_processing_ms": 414,
+      "request_id": "req_6f42120abdd74f5790f125d8284a35b3",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.694,
+      "first_chunk_s": 0.695,
+      "total_s": 2.371,
+      "server_processing_ms": 325,
+      "request_id": "req_78cf8cd8669849daa6e4a60879c4f340",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.901,
+      "first_chunk_s": 0.901,
+      "total_s": 0.905,
+      "server_processing_ms": 460,
+      "request_id": "req_f5bbb56c86eb4efb90eaf0cb7756c26c",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.684,
+      "first_chunk_s": 0.685,
+      "total_s": 2.257,
+      "server_processing_ms": 331,
+      "request_id": "req_451a7d8a1fc8468b8add7da4749c4e4a",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.862,
+      "first_chunk_s": 0.874,
+      "total_s": 0.936,
+      "server_processing_ms": 471,
+      "request_id": "req_f66b220e26de4bc48244ba9000e99760",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.791,
+      "first_chunk_s": 0.791,
+      "total_s": 0.934,
+      "server_processing_ms": 363,
+      "request_id": "req_d7fd99c0948a4388b5daeea55f0448e2",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.872,
+      "first_chunk_s": 0.915,
+      "total_s": 1.097,
+      "server_processing_ms": 478,
+      "request_id": "req_ab1bcd6005a0494fb327fd99db016ffb",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.735,
+      "first_chunk_s": 0.735,
+      "total_s": 2.971,
+      "server_processing_ms": 342,
+      "request_id": "req_9a35bdaa362a430ea5c3f1118bf85c2e",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.014,
+      "first_chunk_s": 1.014,
+      "total_s": 1.016,
+      "server_processing_ms": 512,
+      "request_id": "req_7f708b98d84e4e76ad01a37f622d5c58",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.699,
+      "first_chunk_s": 0.7,
+      "total_s": 2.752,
+      "server_processing_ms": 312,
+      "request_id": "req_175f84f8d455479d8d189d3138b30d73",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.883,
+      "first_chunk_s": 0.898,
+      "total_s": 0.958,
+      "server_processing_ms": 469,
+      "request_id": "req_5d754c2bfbfd48fdb6579f6f64c5efe2",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.793,
+      "first_chunk_s": 0.794,
+      "total_s": 0.894,
+      "server_processing_ms": 341,
+      "request_id": "req_b157712ebcd44548be8a8c0f549bff64",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.821,
+      "first_chunk_s": 0.822,
+      "total_s": 0.976,
+      "server_processing_ms": 399,
+      "request_id": "req_bfba8401dd194287aa8cafaac5738722",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.682,
+      "first_chunk_s": 0.682,
+      "total_s": 2.46,
+      "server_processing_ms": 329,
+      "request_id": "req_9b0ed4ce20e2407b88fd28c24466c723",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.82,
+      "first_chunk_s": 0.823,
+      "total_s": 0.909,
+      "server_processing_ms": 428,
+      "request_id": "req_b73b0bcf48cc41eea4881b1d830f7fde",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.78,
+      "first_chunk_s": 0.781,
+      "total_s": 0.97,
+      "server_processing_ms": 356,
+      "request_id": "req_6d2473780d744d289b105eeaa99ee768",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 1.242,
+      "first_chunk_s": 1.242,
+      "total_s": 1.288,
+      "server_processing_ms": 759,
+      "request_id": "req_a4731bc7f5244dffa09dc1f7893a406d",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.736,
+      "first_chunk_s": 0.736,
+      "total_s": 0.986,
+      "server_processing_ms": 321,
+      "request_id": "req_22264afb704845be861ee990acf58303",
+      "cached_tokens": 1024,
+      "with_tools": false
+    },
+    {
+      "headers_s": 0.912,
+      "first_chunk_s": 0.912,
+      "total_s": 1.121,
+      "server_processing_ms": 489,
+      "request_id": "req_06a8d86c72644c06b48b7e9f10060542",
+      "cached_tokens": 3328,
+      "with_tools": true
+    },
+    {
+      "headers_s": 0.695,
+      "first_chunk_s": 0.695,
+      "total_s": 2.425,
+      "server_processing_ms": 334,
+      "request_id": "req_c8bf2012c83941b399a9b758c4a79418",
+      "cached_tokens": 1024,
+      "with_tools": false
+    }
+  ]
+}

@@ -451,3 +451,23 @@ def test_absent_title_looked_up_with_its_year(titles):
     outputs = [{"error": "'The Matrix (1999)' is ambiguous or not in this dataset (5,135 movies, 1903-2014)."}]
     rep = check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', outputs, titles)
     assert rep["hallucinated_titles"] == []
+
+
+def test_all_openai_clients_share_one_warm_pool(monkeypatch):
+    """Agent, embedder and re-ranker reuse one connection pool with a long keep-alive; the SDK default (5 s idle,
+    one pool per client) opened a new connection - and a DNS lookup - on almost every call."""
+    from movie_agent import config, http
+    from movie_agent.agent import OpenAIBackend
+    from movie_agent.embedders import get_embedder
+    from movie_agent.rerank import _CLIENT, _openai_client
+
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    _CLIENT.clear()
+    pool = http.shared_http_client()
+    agent_client = OpenAIBackend("gpt-4o-mini").client
+    rerank_client = _openai_client()
+    embed_client = get_embedder("openai-3-small").client
+    for c in (agent_client, rerank_client, embed_client):
+        assert c._client is pool
+    assert pool._transport._pool._keepalive_expiry == config.HTTP_KEEPALIVE_S
+    assert pool._transport._pool._http2  # streamed calls only reuse a connection over HTTP/2

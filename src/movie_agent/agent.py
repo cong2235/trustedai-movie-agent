@@ -175,7 +175,11 @@ class OpenAIBackend:
     def __init__(self, model: str):
         import openai
 
-        self.client = openai.OpenAI(timeout=30.0, max_retries=2)  # bound the tail; SDK default is 10 min
+        from .http import openai_client
+
+        self.client = openai_client(
+            timeout=30.0, max_retries=2
+        )  # shared warm pool; bound the tail (SDK default 10 min)
         self._hedge_client = openai.OpenAI(timeout=30.0, max_retries=0)
         self.model = model
         self.tools = [

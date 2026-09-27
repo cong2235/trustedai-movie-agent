@@ -11,3 +11,5 @@ sentence-transformers==6.1.0
 streamlit==1.64.0
 tabulate==0.10.0
 torch==2.14.0
+h2==4.4.1
+httpx==0.28.1

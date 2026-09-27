@@ -1,0 +1,100 @@
+0 sdk_default_keepalive_5s 0.996 NEW 0.101 
+1 shared_pool_keepalive_300s 0.729 NEW 0.033 
+2 sdk_default_keepalive_5s 0.819 NEW 0.033 
+3 shared_pool_keepalive_300s 0.819 reused 0.0 
+4 sdk_default_keepalive_5s 0.853 NEW 0.033 
+5 shared_pool_keepalive_300s 0.75 reused 0.0 
+6 sdk_default_keepalive_5s 1.063 NEW 0.06 
+7 shared_pool_keepalive_300s 0.712 reused 0.0 
+8 sdk_default_keepalive_5s 0.712 NEW 0.046 
+9 shared_pool_keepalive_300s 0.744 reused 0.0 
+10 sdk_default_keepalive_5s 0.724 NEW 0.033 
+11 shared_pool_keepalive_300s 0.837 reused 0.0 
+12 sdk_default_keepalive_5s 12.121 NEW 11.134 
+13 shared_pool_keepalive_300s 0.75 reused 0.0 
+14 sdk_default_keepalive_5s 11.82 NEW 11.11 
+15 shared_pool_keepalive_300s 0.613 reused 0.0 
+16 sdk_default_keepalive_5s 12.069 NEW 11.102 
+17 shared_pool_keepalive_300s 0.701 reused 0.0 
+18 sdk_default_keepalive_5s 0.652 NEW 0.033 
+19 shared_pool_keepalive_300s 0.64 reused 0.0 
+20 sdk_default_keepalive_5s 0.787 NEW 0.031 
+21 shared_pool_keepalive_300s 1.964 reused 0.0 
+22 sdk_default_keepalive_5s 12.016 NEW 11.116 
+23 shared_pool_keepalive_300s 0.633 reused 0.0 
+24 sdk_default_keepalive_5s 0.692 NEW 0.064 
+25 shared_pool_keepalive_300s 0.733 reused 0.0 
+26 sdk_default_keepalive_5s 0.755 NEW 0.057 
+27 shared_pool_keepalive_300s 0.663 reused 0.0 
+28 sdk_default_keepalive_5s 0.898 NEW 0.058 
+29 shared_pool_keepalive_300s 0.638 reused 0.0 
+30 sdk_default_keepalive_5s 0.787 NEW 0.031 
+31 shared_pool_keepalive_300s 0.711 reused 0.0 
+32 sdk_default_keepalive_5s 0.743 NEW 0.031 
+33 shared_pool_keepalive_300s 0.851 reused 0.0 
+34 sdk_default_keepalive_5s 12.11 NEW 11.126 
+35 shared_pool_keepalive_300s 0.852 reused 0.0 
+36 sdk_default_keepalive_5s 0.818 NEW 0.032 
+37 shared_pool_keepalive_300s 0.723 reused 0.0 
+38 sdk_default_keepalive_5s 0.661 NEW 0.032 
+39 shared_pool_keepalive_300s 0.665 reused 0.0 
+40 sdk_default_keepalive_5s 1.06 NEW 0.085 
+41 shared_pool_keepalive_300s 0.721 reused 0.0 
+42 sdk_default_keepalive_5s 12.014 NEW 11.107 
+43 shared_pool_keepalive_300s 0.751 reused 0.0 
+44 sdk_default_keepalive_5s 0.754 NEW 0.034 
+45 shared_pool_keepalive_300s 0.654 reused 0.0 
+46 sdk_default_keepalive_5s 11.802 NEW 11.093 
+47 shared_pool_keepalive_300s 0.648 reused 0.0 
+48 sdk_default_keepalive_5s 12.651 NEW 11.1 
+49 shared_pool_keepalive_300s 0.597 reused 0.0 
+50 sdk_default_keepalive_5s 11.836 NEW 11.129 
+51 shared_pool_keepalive_300s 1.067 reused 0.0 
+52 sdk_default_keepalive_5s 0.779 NEW 0.031 
+53 shared_pool_keepalive_300s 0.691 reused 0.0 
+54 sdk_default_keepalive_5s 0.753 NEW 0.054 
+55 shared_pool_keepalive_300s 0.785 reused 0.0 
+56 sdk_default_keepalive_5s 11.964 NEW 11.106 
+57 shared_pool_keepalive_300s 0.634 reused 0.0 
+58 sdk_default_keepalive_5s 1.283 NEW 0.06 
+59 shared_pool_keepalive_300s 0.725 reused 0.0 
+60 sdk_default_keepalive_5s 1.053 NEW 0.03 
+61 shared_pool_keepalive_300s 0.65 reused 0.0 
+62 sdk_default_keepalive_5s 11.912 NEW 11.097 
+63 shared_pool_keepalive_300s 0.853 reused 0.0 
+64 sdk_default_keepalive_5s 0.731 NEW 0.07 
+65 shared_pool_keepalive_300s 0.748 reused 0.0 
+66 sdk_default_keepalive_5s 11.732 NEW 11.103 
+67 shared_pool_keepalive_300s 0.696 reused 0.0 
+68 sdk_default_keepalive_5s 11.773 NEW 11.091 
+69 shared_pool_keepalive_300s 0.69 reused 0.0 
+70 sdk_default_keepalive_5s 0.916 NEW 0.047 
+71 shared_pool_keepalive_300s 0.654 reused 0.0 
+72 sdk_default_keepalive_5s 0.947 NEW 0.077 
+73 shared_pool_keepalive_300s 0.648 reused 0.0 
+74 sdk_default_keepalive_5s 0.851 NEW 0.032 
+75 shared_pool_keepalive_300s 0.629 reused 0.0 
+76 sdk_default_keepalive_5s 11.711 NEW 11.096 
+77 shared_pool_keepalive_300s 0.651 reused 0.0 
+78 sdk_default_keepalive_5s 0.718 NEW 0.032 
+79 shared_pool_keepalive_300s 0.869 reused 0.0 
+{
+ "sdk_default_keepalive_5s": {
+  "n": 40,
+  "errors": 0,
+  "new_connections": 40,
+  "stalls_over_5s": 14,
+  "headers_p50_s": 0.931,
+  "headers_p95_s": 12.111,
+  "headers_max_s": 12.651
+ },
+ "shared_pool_keepalive_300s": {
+  "n": 40,
+  "errors": 0,
+  "new_connections": 1,
+  "stalls_over_5s": 0,
+  "headers_p50_s": 0.712,
+  "headers_p95_s": 0.879,
+  "headers_max_s": 1.964
+ }
+}

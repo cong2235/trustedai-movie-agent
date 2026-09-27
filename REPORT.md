@@ -366,6 +366,10 @@ floor that did not exist, not in hallucination.
 - **Engineering.** ruff lint and format, a pre-commit hook, and GitHub Actions running the 113 offline tests on
   Python 3.10 and 3.12 (77% line coverage; the search path is covered through a synthetic genre-vector index). The LLM
   suites are run by hand and their outputs committed; the held-out sets are committed before they run.
+- **Latency.** The tail (p95 ~15 s) was diagnosed as DNS on new connections, not the provider: a dead resolver
+  on this machine plus an SDK pool that reconnected on nearly every call (5 s keep-alive; streamed responses
+  never reusable over HTTP/1.1). One shared HTTP/2 pool took main-suite p95 from 14.9 s to 7.2 s and stalls from
+  35% to 0 of requests in an interleaved A/B. [Details](APPENDIX.md#latency-root-cause-dns-on-every-new-connection).
 - **Cost.** Agent turns cost about $0.0015 each (a full 3× main-suite run is about $0.1), the attribute extraction about $0.5 once, the
   embedding index $0.08 once. Everything except the LLM transcripts and LLM re-rank rows is deterministic and runs on a
   laptop CPU without an API key.

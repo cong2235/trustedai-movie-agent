@@ -161,9 +161,9 @@ def _openai_client():
     """One shared client (keeps the TLS connection warm). A hard timeout bounds the worst case: API latency
     spikes of 19-27 s were observed in testing; past 8 s the request falls back to the stage-1 order."""
     if "c" not in _CLIENT:
-        import openai
+        from .http import openai_client
 
-        _CLIENT["c"] = openai.OpenAI(timeout=config.RERANK_TIMEOUT_S, max_retries=1)
+        _CLIENT["c"] = openai_client(timeout=config.RERANK_TIMEOUT_S, max_retries=1)
     return _CLIENT["c"]
 
 

@@ -23,11 +23,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from movie_agent.data import MovieData  # noqa: E402
 from movie_agent.guardrails import TitleIndex, wrong_user_ratings  # noqa: E402
 
-AVG = re.compile(r"(?:average(?: rating)?(?: of)?|avg\.?|rated)\s*(?:of\s*)?\**(\d\.\d{1,2})\**|\**(\d\.\d{1,2})\**\s*(?:★\s*)?(?:average|avg)", re.I)
-COUNT = re.compile(r"(?<![\d.])(\d{1,4})\s+(?:user\s+)?ratings?\b", re.I)   # not the "0" of "5.0 rating"
+AVG = re.compile(
+    r"(?:average(?: rating)?(?: of)?|avg\.?|rated)\s*(?:of\s*)?\**(\d\.\d{1,2})\**|\**(\d\.\d{1,2})\**\s*(?:★\s*)?(?:average|avg)",
+    re.I,
+)
+COUNT = re.compile(r"(?<![\d.])(\d{1,4})\s+(?:user\s+)?ratings?\b", re.I)  # not the "0" of "5.0 rating"
 # the user's own numbers: genre averages ("you have an average of 4.2") and ratings ("rated 5.0 by you")
-OWN_AVG = re.compile(r"\byou(?:'ve| have)?\b[^.]{0,40}\baverage|\byour average|\bby you\b|\byou rated\b|"
-                     r"\byour (?:high )?(?:ratings?|love)\b", re.I)
+OWN_AVG = re.compile(
+    r"\byou(?:'ve| have)?\b[^.]{0,40}\baverage|\byour average|\bby you\b|\byou rated\b|"
+    r"\byour (?:high )?(?:ratings?|love)\b",
+    re.I,
+)
 NEIGHBOUR = re.compile(r"similar|like you|users with|neighbo|people who|taste", re.I)
 USER_Q = re.compile(r"\(user (\d+)\)")
 
@@ -57,10 +63,10 @@ def audit_file(path: Path, data: MovieData, titles: TitleIndex) -> list[dict]:
             # a bold title *opening* a list item / paragraph is its subject; a bold title mid-sentence is evidence
             # ("users who liked **The Shawshank Redemption** also appreciated this film")
             opens = sent.lstrip().startswith("**") or re.match(r"#+\s", sent.lstrip())
-            bold = [m for pos, m in s_found if "**" in sent[pos:pos + 10]] if opens else []
+            bold = [m for pos, m in s_found if "**" in sent[pos : pos + 10]] if opens else []
             bold = bold[:1]
             if bold:
-                subject = bold[0]                                 # a new list item / paragraph subject
+                subject = bold[0]  # a new list item / paragraph subject
             if not s_found and subject is None:
                 continue
             # "this film has an average of 3.7" or a sentence naming only evidence movies -> the block subject;
@@ -78,17 +84,27 @@ def audit_file(path: Path, data: MovieData, titles: TitleIndex) -> list[dict]:
                     x = float(m.group(1) or m.group(2))
                     n_checked += 1
                     true = stats.loc[mid, "mean"]
-                    if true != true or abs(true - x) > 0.051:       # NaN-safe
-                        issues.append({"file": path.name, "kind": "average differs from dataset",
-                                       "detail": f"{label}: says {x}, dataset mean {true:.2f} | {sent[:160]}"})
+                    if true != true or abs(true - x) > 0.051:  # NaN-safe
+                        issues.append(
+                            {
+                                "file": path.name,
+                                "kind": "average differs from dataset",
+                                "detail": f"{label}: says {x}, dataset mean {true:.2f} | {sent[:160]}",
+                            }
+                        )
             for m in COUNT.finditer(sent):
                 n = int(m.group(1))
                 n_checked += 1
-                if NEIGHBOUR.search(sent[max(0, m.start() - 60):m.end()]):
-                    continue                                      # "10 similar users" is a neighbourhood count
+                if NEIGHBOUR.search(sent[max(0, m.start() - 60) : m.end()]):
+                    continue  # "10 similar users" is a neighbourhood count
                 if n != int(stats.loc[mid, "count"]):
-                    issues.append({"file": path.name, "kind": "rating count differs from dataset",
-                                   "detail": f"{label}: says {n}, dataset {int(stats.loc[mid, 'count'])} | {sent[:160]}"})
+                    issues.append(
+                        {
+                            "file": path.name,
+                            "kind": "rating count differs from dataset",
+                            "detail": f"{label}: says {n}, dataset {int(stats.loc[mid, 'count'])} | {sent[:160]}",
+                        }
+                    )
         for w in wrong_user_ratings(answer, titles, uid):
             issues.append({"file": path.name, "kind": "user rating claim", "detail": w})
     return issues, n_checked

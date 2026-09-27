@@ -21,8 +21,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from evaluate_offline import (K, LONG_TAIL, build, evaluate_models, load_content,  # noqa: E402
-                              precompute_signals)
+from evaluate_offline import LONG_TAIL, K, build, evaluate_models, load_content, precompute_signals  # noqa: E402
+
 from movie_agent import config  # noqa: E402
 from movie_agent.data import MovieData  # noqa: E402
 from movie_agent.evaluation import relevant_items, temporal_split  # noqa: E402
@@ -66,7 +66,9 @@ def main():
             if best_kg is None or nd > best_kg[0]:
                 best_kg = (nd, alpha, beta)
         best[kg] = best_kg
-        print(f"kg_weight={kg}: best val NDCG {best_kg[0]:.4f} (alpha={best_kg[1]}, beta={best_kg[2]})  [{time.time() - t0:.0f}s]")
+        print(
+            f"kg_weight={kg}: best val NDCG {best_kg[0]:.4f} (alpha={best_kg[1]}, beta={best_kg[2]})  [{time.time() - t0:.0f}s]"
+        )
     pd.DataFrame(grid_rows).to_csv(OUT / "graph_tuning_validation.csv", index=False)
     kg_best = max((k for k in best if k > 0), key=lambda k: best[k][0])
 
@@ -87,7 +89,9 @@ def main():
     sig = precompute_signals(rec, list(rel))
     t_fit = time.time()
     add_graph_signal(rec, sig, "rp3", RP3Beta(rec.cf, alpha=best[0.0][1], beta=best[0.0][2]).fit())
-    add_graph_signal(rec, sig, "rp3_kg", RP3Beta(rec.cf, alpha=best[kg_best][1], beta=best[kg_best][2], kg_weight=kg_best).fit())
+    add_graph_signal(
+        rec, sig, "rp3_kg", RP3Beta(rec.cf, alpha=best[kg_best][1], beta=best[kg_best][2], kg_weight=kg_best).fit()
+    )
     fit_s = (time.time() - t_fit) / 2
     models = {
         "ItemKNN": {"item_knn": 1.0},
@@ -114,21 +118,47 @@ def main():
             continue
         diff = (per_user[per_user.model == m].set_index("user")[f"NDCG@{K}"].loc[base.index] - base).to_numpy()
         boots = [rng.choice(diff, len(diff)).mean() for _ in range(2000)]
-        cis[m] = {"mean_diff_vs_hybrid": round(float(diff.mean()), 4),
-                  "ci95": [round(float(np.percentile(boots, 2.5)), 4), round(float(np.percentile(boots, 97.5)), 4)]}
+        cis[m] = {
+            "mean_diff_vs_hybrid": round(float(diff.mean()), 4),
+            "ci95": [round(float(np.percentile(boots, 2.5)), 4), round(float(np.percentile(boots, 97.5)), 4)],
+        }
 
-    md = ["# Graph / knowledge-graph experiment", "",
-          f"Same temporal split as the main eval; RP3beta params tuned on validation. Long tail = < {LONG_TAIL} train ratings. "
-          f"Graph fit time ≈ {fit_s:.1f} s each.", "",
-          "Validation-tuned params: " + ", ".join(f"kg_weight={k}: alpha={v[1]}, beta={v[2]} (val NDCG {v[0]:.4f})" for k, v in best.items()), "",
-          "## Test results", "", table.round(4).to_markdown(), "",
-          "## Difference vs shipped hybrid (NDCG@10, paired bootstrap 95% CI)", "", pd.DataFrame(cis).T.to_markdown(), "",
-          "## NDCG@10 by user history", "", by_bucket.round(4).to_markdown(), ""]
+    md = [
+        "# Graph / knowledge-graph experiment",
+        "",
+        f"Same temporal split as the main eval; RP3beta params tuned on validation. Long tail = < {LONG_TAIL} train ratings. "
+        f"Graph fit time ≈ {fit_s:.1f} s each.",
+        "",
+        "Validation-tuned params: "
+        + ", ".join(f"kg_weight={k}: alpha={v[1]}, beta={v[2]} (val NDCG {v[0]:.4f})" for k, v in best.items()),
+        "",
+        "## Test results",
+        "",
+        table.round(4).to_markdown(),
+        "",
+        "## Difference vs shipped hybrid (NDCG@10, paired bootstrap 95% CI)",
+        "",
+        pd.DataFrame(cis).T.to_markdown(),
+        "",
+        "## NDCG@10 by user history",
+        "",
+        by_bucket.round(4).to_markdown(),
+        "",
+    ]
     (OUT / "graph_eval.md").write_text("\n".join(md), encoding="utf-8")
-    (OUT / "graph_eval.json").write_text(json.dumps({
-        "best_params": {str(k): v for k, v in best.items()}, "blend_weights": blend,
-        "test": table.round(4).reset_index().to_dict(orient="records"), "ci_vs_hybrid": cis,
-        "by_bucket": by_bucket.round(4).reset_index().to_dict(orient="records")}, indent=2), encoding="utf-8")
+    (OUT / "graph_eval.json").write_text(
+        json.dumps(
+            {
+                "best_params": {str(k): v for k, v in best.items()},
+                "blend_weights": blend,
+                "test": table.round(4).reset_index().to_dict(orient="records"),
+                "ci_vs_hybrid": cis,
+                "by_bucket": by_bucket.round(4).reset_index().to_dict(orient="records"),
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print("\n".join(md))
     print(f"total {time.time() - t0:.0f}s")
 

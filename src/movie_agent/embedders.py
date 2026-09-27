@@ -8,12 +8,15 @@ Artifacts are stored per backend (artifacts/<name>/) so both can coexist and be 
 
 from __future__ import annotations
 
+import logging
 import time
 from functools import cached_property
 
 import numpy as np
 
 from . import config
+
+log = logging.getLogger(__name__)
 
 BACKENDS = ("bge-small", "openai-3-small")
 
@@ -26,11 +29,13 @@ class LocalBGE:
     @cached_property
     def model(self):
         from sentence_transformers import SentenceTransformer  # heavy import, keep lazy
+
         return SentenceTransformer(self.model_id)
 
     def encode_docs(self, texts: list[str], batch_size: int = 64) -> np.ndarray:
-        return self.model.encode(texts, batch_size=batch_size, normalize_embeddings=True,
-                                 show_progress_bar=True, convert_to_numpy=True).astype(np.float32)
+        return self.model.encode(
+            texts, batch_size=batch_size, normalize_embeddings=True, show_progress_bar=True, convert_to_numpy=True
+        ).astype(np.float32)
 
     def encode_query(self, query: str) -> np.ndarray:
         return self.model.encode([self.query_prefix + query], normalize_embeddings=True)[0].astype(np.float32)
@@ -43,7 +48,8 @@ class OpenAIEmbedder:
     @cached_property
     def client(self):
         import openai
-        return openai.OpenAI(timeout=60.0, max_retries=0)   # retries are handled in _embed
+
+        return openai.OpenAI(timeout=60.0, max_retries=0)  # retries are handled in _embed
 
     def _embed(self, batch: list[str], timeout: float = 60.0, attempts: int = 5) -> np.ndarray:
         for attempt in range(attempts):
@@ -53,20 +59,20 @@ class OpenAIEmbedder:
             except Exception as e:  # rate limits / transient network errors: back off and retry
                 if attempt == attempts - 1:
                     raise
-                wait = 2 ** attempt
-                print(f"  embedding batch failed ({type(e).__name__}); retrying in {wait}s")
+                wait = 2**attempt
+                log.warning("embedding batch failed (%s); retrying in %ss", type(e).__name__, wait)
                 time.sleep(wait)
 
     def encode_docs(self, texts: list[str], batch_size: int = 256) -> np.ndarray:
         out = []
         for i in range(0, len(texts), batch_size):
-            out.append(self._embed([t or " " for t in texts[i:i + batch_size]]))
-            print(f"  embedded {min(i + batch_size, len(texts))}/{len(texts)} chunks", flush=True)
+            out.append(self._embed([t or " " for t in texts[i : i + batch_size]]))
+            log.info("embedded %d/%d chunks", min(i + batch_size, len(texts)), len(texts))
         vecs = np.vstack(out)
         return vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-9)
 
     def encode_query(self, query: str) -> np.ndarray:
-        v = self._embed([query], timeout=10.0, attempts=2)[0]   # interactive path: fail fast
+        v = self._embed([query], timeout=10.0, attempts=2)[0]  # interactive path: fail fast
         return v / (np.linalg.norm(v) + 1e-9)
 
 

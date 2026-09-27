@@ -19,20 +19,36 @@ from . import config
 from .data import MovieData
 
 ATTRIBUTES_PATH = config.REPO_ROOT / "data" / "derived" / "movie_attributes.jsonl"
-MOODS = ("funny", "light-hearted", "dark", "dark-comedy", "tense", "atmospheric", "emotional", "romantic",
-         "inspiring", "thought-provoking", "surreal", "quirky", "satirical", "disturbing", "mind-bending",
-         "action-packed", "family-friendly")
+MOODS = (
+    "funny",
+    "light-hearted",
+    "dark",
+    "dark-comedy",
+    "tense",
+    "atmospheric",
+    "emotional",
+    "romantic",
+    "inspiring",
+    "thought-provoking",
+    "surreal",
+    "quirky",
+    "satirical",
+    "disturbing",
+    "mind-bending",
+    "action-packed",
+    "family-friendly",
+)
 
 
 @dataclass
 class MovieAttributes:
-    moods: np.ndarray        # (n_movies, len(MOODS)) bool
-    twist: np.ndarray        # (n_movies,) 0-3: how far the ending overturns the story (0 also for unknown)
-    violence: np.ndarray     # (n_movies,) float, nan = unknown
-    known: np.ndarray        # (n_movies,) bool: the movie has attributes at all
+    moods: np.ndarray  # (n_movies, len(MOODS)) bool
+    twist: np.ndarray  # (n_movies,) 0-3: how far the ending overturns the story (0 also for unknown)
+    violence: np.ndarray  # (n_movies,) float, nan = unknown
+    known: np.ndarray  # (n_movies,) bool: the movie has attributes at all
 
     @classmethod
-    def load(cls, data: MovieData, path=ATTRIBUTES_PATH) -> "MovieAttributes | None":
+    def load(cls, data: MovieData, path=ATTRIBUTES_PATH) -> MovieAttributes | None:
         if not path.exists():
             return None
         row_of = {int(m): i for i, m in enumerate(data.movies.index)}
@@ -87,5 +103,8 @@ class MovieAttributes:
     def card(self, row: int) -> dict | None:
         if not self.known[row]:
             return None
-        return {"moods": [MOODS[j] for j in np.where(self.moods[row])[0]], "twist_0_3": int(self.twist[row]),
-                "violence_0_3": None if np.isnan(self.violence[row]) else int(self.violence[row])}
+        return {
+            "moods": [MOODS[j] for j in np.where(self.moods[row])[0]],
+            "twist_0_3": int(self.twist[row]),
+            "violence_0_3": None if np.isnan(self.violence[row]) else int(self.violence[row]),
+        }

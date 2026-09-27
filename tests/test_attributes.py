@@ -32,10 +32,12 @@ def cf(data):
 @pytest.fixture(scope="module")
 def attrs(data, tmp_path_factory):
     path = tmp_path_factory.mktemp("attrs") / "movie_attributes.jsonl"
-    rows = [{"movie_id": TOY_STORY, "moods": ["family-friendly", "funny"], "twist": 0, "violence": 0},
-            {"movie_id": HEAT, "moods": ["tense", "action-packed"], "twist": 1, "violence": 3},
-            {"movie_id": USUAL_SUSPECTS, "moods": ["tense", "dark"], "twist": 3, "violence": 2},
-            {"movie_id": 999999, "moods": ["funny"], "twist": 0, "violence": 0}]      # not in the catalogue: ignored
+    rows = [
+        {"movie_id": TOY_STORY, "moods": ["family-friendly", "funny"], "twist": 0, "violence": 0},
+        {"movie_id": HEAT, "moods": ["tense", "action-packed"], "twist": 1, "violence": 3},
+        {"movie_id": USUAL_SUSPECTS, "moods": ["tense", "dark"], "twist": 3, "violence": 2},
+        {"movie_id": 999999, "moods": ["funny"], "twist": 0, "violence": 0},  # not in the catalogue: ignored
+    ]
     path.write_text("\n".join(json.dumps(r) for r in rows), encoding="utf-8")
     return MovieAttributes.load(data, path)
 
@@ -44,16 +46,16 @@ def test_load_and_card(data, attrs):
     row = {int(m): i for i, m in enumerate(data.movies.index)}
     assert attrs.known.sum() == 3
     assert attrs.card(row[USUAL_SUSPECTS]) == {"moods": ["dark", "tense"], "twist_0_3": 3, "violence_0_3": 2}
-    assert attrs.card(row[2]) is None                          # unlabelled movie: unknown, not "no moods"
+    assert attrs.card(row[2]) is None  # unlabelled movie: unknown, not "no moods"
 
 
 def test_match_is_neutral_for_unknown_movies(data, attrs):
     row = {int(m): i for i, m in enumerate(data.movies.index)}
     m = attrs.match(["tense"], twist_ending=True)
-    assert m[row[USUAL_SUSPECTS]] == pytest.approx(1.0)        # tense + twist 3/3
+    assert m[row[USUAL_SUSPECTS]] == pytest.approx(1.0)  # tense + twist 3/3
     assert m[row[HEAT]] == pytest.approx((1 + 1 / 3) / 2)
     assert m[row[TOY_STORY]] == 0.0
-    assert m[row[2]] == pytest.approx(np.mean([1.0, (1 + 1 / 3) / 2, 0.0]))   # mean of the known movies
+    assert m[row[2]] == pytest.approx(np.mean([1.0, (1 + 1 / 3) / 2, 0.0]))  # mean of the known movies
 
 
 def test_unknown_mood_is_rejected(attrs):
@@ -66,13 +68,19 @@ def test_violence_filter_keeps_unknown(data, attrs):
     row = {int(m): i for i, m in enumerate(data.movies.index)}
     ok = attrs.violence_ok(1)
     assert not ok[row[HEAT]] and not ok[row[USUAL_SUSPECTS]] and ok[row[TOY_STORY]]
-    assert ok[row[2]]                                          # unknown violence is never filtered out
+    assert ok[row[2]]  # unknown violence is never filtered out
     assert attrs.violence_ok(None).all()
 
 
 def test_recommend_applies_violence_and_reports_attributes(data, cf, attrs):
-    tools = MovieTools(data=data, cf=cf, content=None, rec=Recommender(data, cf, None),
-                       memory=MemoryStore(":memory:"), attributes=attrs)
+    tools = MovieTools(
+        data=data,
+        cf=cf,
+        content=None,
+        rec=Recommender(data, cf, None),
+        memory=MemoryStore(":memory:"),
+        attributes=attrs,
+    )
     tools.set_user(15)
     out = tools.recommend_movies(n=10, moods=["tense"], max_violence=1)
     ids = [r["movie_id"] for r in out["recommendations"]]

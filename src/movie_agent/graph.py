@@ -33,29 +33,29 @@ class RP3Beta:
     alpha: float = 1.0
     beta: float = 0.5
     topk: int = 200
-    kg_weight: float = 0.0            # 0 = plain rating graph; >0 adds genre/tag knowledge nodes
-    min_rating: float = 0.5           # edges from ratings >= this (implicit feedback)
+    kg_weight: float = 0.0  # 0 = plain rating graph; >0 adds genre/tag knowledge nodes
+    min_rating: float = 0.5  # edges from ratings >= this (implicit feedback)
 
-    def fit(self) -> "RP3Beta":
+    def fit(self) -> RP3Beta:
         R = self.cf.R.copy()
         R.data = (R.data >= self.min_rating).astype(np.float32)
         R.eliminate_zeros()
         blocks = [R]
         if self.kg_weight > 0:
             blocks.append(self._knowledge_rows() * self.kg_weight)
-        G = sp.vstack(blocks).tocsr()                        # (users + knowledge nodes) x movies
-        Pui = _row_normalize(G)                              # node -> movie
-        Piu = _row_normalize(G.T.tocsr())                    # movie -> node
+        G = sp.vstack(blocks).tocsr()  # (users + knowledge nodes) x movies
+        Pui = _row_normalize(G)  # node -> movie
+        Piu = _row_normalize(G.T.tocsr())  # movie -> node
         if self.alpha != 1.0:
             Pui = Pui.power(self.alpha)
             Piu = Piu.power(self.alpha)
-        W = (Piu @ Pui).toarray().astype(np.float32)         # movie -> movie (2 hops through users / knowledge)
+        W = (Piu @ Pui).toarray().astype(np.float32)  # movie -> movie (2 hops through users / knowledge)
         pop = np.asarray(G.sum(0)).ravel()
         pop[pop == 0] = 1
         W /= np.power(pop, self.beta)[None, :]
         np.fill_diagonal(W, 0)
         if self.topk and self.topk < W.shape[1]:
-            cut = np.argpartition(-W, self.topk, axis=1)[:, self.topk:]
+            cut = np.argpartition(-W, self.topk, axis=1)[:, self.topk :]
             np.put_along_axis(W, cut, 0.0, axis=1)
         self.W = W
         self.Pui_users = _row_normalize(R)
@@ -73,15 +73,14 @@ class RP3Beta:
                     rows.append(node)
                     cols.append(m_index[int(mid)])
             node += 1
-        for tag, mids in data.tags.groupby("tag")["movieId"].apply(set).items():
-            if len(mids) < 2:          # a tag on one movie connects nothing
+        for _tag, mids in data.tags.groupby("tag")["movieId"].apply(set).items():
+            if len(mids) < 2:  # a tag on one movie connects nothing
                 continue
             for mid in mids:
                 rows.append(node)
                 cols.append(m_index[int(mid)])
             node += 1
-        return sp.csr_matrix((np.ones(len(rows), dtype=np.float32), (rows, cols)),
-                             shape=(node, len(self.cf.movie_ids)))
+        return sp.csr_matrix((np.ones(len(rows), dtype=np.float32), (rows, cols)), shape=(node, len(self.cf.movie_ids)))
 
     def scores(self, user_id: int) -> np.ndarray:
         u = self.cf.u_index[user_id]

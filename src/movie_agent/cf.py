@@ -55,8 +55,9 @@ class CFModel:
         r = self.data.ratings
         rows = r["userId"].map(self.u_index).to_numpy()
         cols = r["movieId"].map(self.m_index).to_numpy()
-        return sp.csr_matrix((r["rating"].to_numpy(np.float32), (rows, cols)),
-                             shape=(len(self.user_ids), len(self.movie_ids)))
+        return sp.csr_matrix(
+            (r["rating"].to_numpy(np.float32), (rows, cols)), shape=(len(self.user_ids), len(self.movie_ids))
+        )
 
     @cached_property
     def B(self) -> sp.csr_matrix:
@@ -95,7 +96,7 @@ class CFModel:
         Rc, B = self.Rc, self.B
         num = (Rc @ Rc.T).toarray()
         sq = Rc.multiply(Rc)
-        norm_uv = (sq @ B.T).toarray()                       # sum over co-rated of rc_u^2
+        norm_uv = (sq @ B.T).toarray()  # sum over co-rated of rc_u^2
         denom = np.sqrt(norm_uv * norm_uv.T) + 1e-9
         n = (B @ B.T).toarray()
         sim = num / denom
@@ -127,8 +128,16 @@ class CFModel:
         raters = raters[raters != u]
         sims = self.user_sim[u, raters]
         order = np.argsort(-sims)[:k]
-        return [(int(self.user_ids[raters[i]]), float(sims[i]), float(self.R[raters[i], m]),
-                 int(self.co_counts[u, raters[i]])) for i in order if sims[i] > 0]
+        return [
+            (
+                int(self.user_ids[raters[i]]),
+                float(sims[i]),
+                float(self.R[raters[i], m]),
+                int(self.co_counts[u, raters[i]]),
+            )
+            for i in order
+            if sims[i] > 0
+        ]
 
     # ------------------------------------------------------ rating baseline
     @cached_property
@@ -146,8 +155,9 @@ class CFModel:
         mu, b_u, b_i = self.biases
         return mu + b_u[u] + b_i[m]
 
-    def predict_rating(self, user_id: int, movie_id: int, k: int = 20, shrink: float = 1.0,
-                       method: str = "residual") -> dict:
+    def predict_rating(
+        self, user_id: int, movie_id: int, k: int = 20, shrink: float = 1.0, method: str = "residual"
+    ) -> dict:
         """kNN rating prediction with its evidence size.
 
         method="residual" (default): baseline + similarity-weighted neighbour residuals, shrunk toward the
@@ -166,8 +176,11 @@ class CFModel:
         else:
             dev = np.array([n[2] - self.baseline(v, m) for n, v in zip(neigh, vs)])
             pred = self.baseline(u, m) + float((s * dev).sum() / (np.abs(s).sum() + shrink))
-        return {"prediction": float(np.clip(pred, 0.5, 5.0)), "n_neighbors": len(neigh),
-                "baseline": float(np.clip(self.baseline(u, m), 0.5, 5))}
+        return {
+            "prediction": float(np.clip(pred, 0.5, 5.0)),
+            "n_neighbors": len(neigh),
+            "baseline": float(np.clip(self.baseline(u, m), 0.5, 5)),
+        }
 
     def user_knn_scores(self, user_id: int, k: int = config.NEIGHBORHOOD_K) -> np.ndarray:
         """Top-N ranking score for every movie: sum over the user's k neighbours of sim * preference.
@@ -199,13 +212,13 @@ class CFModel:
         u = self.u_index[user_id]
         rated = self.R[u].indices
         prefs = self.W[u].data
-        S = self.item_sim[:, rated]                                  # (n_movies, n_rated)
+        S = self.item_sim[:, rated]  # (n_movies, n_rated)
         if len(rated) > k:
             cut = np.argpartition(-S, k - 1, axis=1)[:, :k]
             mask = np.zeros_like(S, dtype=bool)
             np.put_along_axis(mask, cut, True, axis=1)
             S = np.where(mask, S, 0.0)
-        S = np.clip(S, 0.0, None)                                    # negative sims are too noisy here
+        S = np.clip(S, 0.0, None)  # negative sims are too noisy here
         return S @ prefs
 
     def item_contributions(self, user_id: int, movie_id: int, top: int = 5) -> list[tuple[int, float, float]]:
@@ -215,14 +228,14 @@ class CFModel:
         sims = self.item_sim[m, rated]
         contrib = sims * preference_weight(ratings)
         order = np.argsort(-contrib)[:top]
-        return [(int(self.movie_ids[rated[i]]), float(sims[i]), float(ratings[i]))
-                for i in order if contrib[i] > 0]
+        return [(int(self.movie_ids[rated[i]]), float(sims[i]), float(ratings[i])) for i in order if contrib[i] > 0]
 
     # ---------------------------------------------------------- baselines
     def pure_svd_scores(self, user_id: int, factors: int = 50) -> np.ndarray:
         """PureSVD (Cremonesi et al. 2010): strong top-N baseline, not explainable."""
         if not hasattr(self, "_svd_V"):
             from scipy.sparse.linalg import svds
+
             _, _, vt = svds(self.R.astype(np.float64), k=factors)
             self._svd_V = vt.T.astype(np.float32)
         u = self.u_index[user_id]

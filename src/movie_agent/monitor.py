@@ -50,7 +50,7 @@ def kpis(turns: pd.DataFrame, calls: pd.DataFrame) -> dict:
         return {"turns": 0}
     lat = turns["latency_ms"] / 1000
     rr_all = calls[calls["rerank_kind"].notna() & (calls["rerank_kind"] != "none")] if not calls.empty else calls
-    rr = rr_all[rr_all["rerank_kind"] != "llm-cache"] if len(rr_all) else rr_all     # live calls only
+    rr = rr_all[rr_all["rerank_kind"] != "llm-cache"] if len(rr_all) else rr_all  # live calls only
     fb = turns["feedback"].dropna()
     k = {
         "turns": int(len(turns)),
@@ -58,22 +58,30 @@ def kpis(turns: pd.DataFrame, calls: pd.DataFrame) -> dict:
         "users": int(turns["user_id"].nunique()),
         "latency_p50_s": round(float(lat.quantile(0.5)), 2),
         "latency_p95_s": round(float(lat.quantile(0.95)), 2),
-        "ttft_p50_s": (round(float(turns["ttft_ms"].dropna().quantile(0.5)) / 1000, 2)
-                       if "ttft_ms" in turns and turns["ttft_ms"].notna().any() else None),
+        "ttft_p50_s": (
+            round(float(turns["ttft_ms"].dropna().quantile(0.5)) / 1000, 2)
+            if "ttft_ms" in turns and turns["ttft_ms"].notna().any()
+            else None
+        ),
         "llm_calls_per_turn": round(float(turns["llm_calls"].mean()), 2),
         **_llm_call_stats(turns),
         "tool_calls_per_turn": round(float(turns["n_tool_calls"].mean()), 2),
         "tool_error_rate": round(float(calls["is_error"].mean()), 3) if not calls.empty else 0.0,
         "guardrail_trigger_rate": round(float(turns["guardrail_issues"].mean()), 3),
-        "revision_fix_rate": (round(float(1 - turns.loc[turns["revised"] == 1, "issues_after_revision"].mean()), 3)
-                              if (turns["revised"] == 1).any() else None),
+        "revision_fix_rate": (
+            round(float(1 - turns.loc[turns["revised"] == 1, "issues_after_revision"].mean()), 3)
+            if (turns["revised"] == 1).any()
+            else None
+        ),
         "unfixed_guardrail_rate": round(float((turns["issues_after_revision"] == 1).mean()), 3),
         "input_tokens_per_turn": int(turns["input_tokens"].mean()),
         "output_tokens_per_turn": int(turns["output_tokens"].mean()),
         "cost_per_turn_usd": round(float(turns["cost_usd"].mean()), 5),
         "total_cost_usd": round(float(turns["cost_usd"].sum()), 4),
         "rerank_calls": int(len(rr_all)),
-        "rerank_cache_hit_rate": round(float((rr_all["rerank_kind"] == "llm-cache").mean()), 3) if len(rr_all) else None,
+        "rerank_cache_hit_rate": round(float((rr_all["rerank_kind"] == "llm-cache").mean()), 3)
+        if len(rr_all)
+        else None,
         "rerank_p95_ms": int(rr["rerank_ms"].quantile(0.95)) if len(rr) else None,
         "rerank_error_rate": round(float(rr["rerank_error"].notna().mean()), 3) if len(rr) else 0.0,
         "errors": int(turns["error"].notna().sum()),
@@ -92,9 +100,12 @@ def _llm_call_stats(turns: pd.DataFrame) -> dict:
         return {}
     tot = pd.Series([c["total_s"] for c in calls])
     first = pd.Series([c["first_chunk_s"] for c in calls])
-    return {"llm_call_p50_s": round(float(tot.quantile(0.5)), 2), "llm_call_p95_s": round(float(tot.quantile(0.95)), 2),
-            "llm_first_chunk_p95_s": round(float(first.quantile(0.95)), 2),
-            "hedge_rate": round(sum(c["hedged"] for c in calls) / len(calls), 3)}
+    return {
+        "llm_call_p50_s": round(float(tot.quantile(0.5)), 2),
+        "llm_call_p95_s": round(float(tot.quantile(0.95)), 2),
+        "llm_first_chunk_p95_s": round(float(first.quantile(0.95)), 2),
+        "hedge_rate": round(sum(c["hedged"] for c in calls) / len(calls), 3),
+    }
 
 
 def alerts(k: dict) -> list[str]:
@@ -113,23 +124,29 @@ def per_tool(calls: pd.DataFrame) -> pd.DataFrame:
     if calls.empty:
         return calls
     g = calls.groupby("tool")
-    return pd.DataFrame({
-        "calls": g.size(), "error_rate": g["is_error"].mean().round(3),
-        "p50_ms": g["ms"].quantile(0.5).round(0), "p95_ms": g["ms"].quantile(0.95).round(0),
-        "avg_output_chars": g["output_chars"].mean().round(0),
-    }).sort_values("calls", ascending=False)
+    return pd.DataFrame(
+        {
+            "calls": g.size(),
+            "error_rate": g["is_error"].mean().round(3),
+            "p50_ms": g["ms"].quantile(0.5).round(0),
+            "p95_ms": g["ms"].quantile(0.95).round(0),
+            "avg_output_chars": g["output_chars"].mean().round(0),
+        }
+    ).sort_values("calls", ascending=False)
 
 
 def timeseries(turns: pd.DataFrame, freq: str = "1h") -> pd.DataFrame:
     if turns.empty:
         return turns
     t = turns.set_index("time").sort_index()
-    return pd.DataFrame({
-        "turns": t["turn_id"].resample(freq).count(),
-        "latency_p95_s": (t["latency_ms"] / 1000).resample(freq).quantile(0.95),
-        "cost_usd": t["cost_usd"].resample(freq).sum(),
-        "guardrail_rate": t["guardrail_issues"].resample(freq).mean(),
-    }).dropna(how="all")
+    return pd.DataFrame(
+        {
+            "turns": t["turn_id"].resample(freq).count(),
+            "latency_p95_s": (t["latency_ms"] / 1000).resample(freq).quantile(0.95),
+            "cost_usd": t["cost_usd"].resample(freq).sum(),
+            "guardrail_rate": t["guardrail_issues"].resample(freq).mean(),
+        }
+    ).dropna(how="all")
 
 
 def guardrail_events(turns: pd.DataFrame, limit: int = 20) -> pd.DataFrame:
@@ -138,9 +155,16 @@ def guardrail_events(turns: pd.DataFrame, limit: int = 20) -> pd.DataFrame:
     for _, r in g.iterrows():
         d = json.loads(r["guardrail_detail"] or "{}")
         first = d.get("first") or {}
-        rows.append({"time": r["time"], "question": r["question"][:80],
-                     "hallucinated": ", ".join(first.get("hallucinated_titles", [])),
-                     "ungrounded_titles": ", ".join(first.get("ungrounded_titles", [])),
-                     "ungrounded_numbers": ", ".join(first.get("ungrounded_numbers", [])),
-                     "fixed_by_revision": None if r["issues_after_revision"] is None else not bool(r["issues_after_revision"])})
+        rows.append(
+            {
+                "time": r["time"],
+                "question": r["question"][:80],
+                "hallucinated": ", ".join(first.get("hallucinated_titles", [])),
+                "ungrounded_titles": ", ".join(first.get("ungrounded_titles", [])),
+                "ungrounded_numbers": ", ".join(first.get("ungrounded_numbers", [])),
+                "fixed_by_revision": None
+                if r["issues_after_revision"] is None
+                else not bool(r["issues_after_revision"]),
+            }
+        )
     return pd.DataFrame(rows)

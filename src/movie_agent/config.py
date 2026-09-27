@@ -19,19 +19,31 @@ def load_dotenv(path: Path = REPO_ROOT / ".env") -> None:
 
 
 load_dotenv()
+
+
+def setup_logging(level: str | None = None) -> None:
+    """Configure logging for an entry point (library modules only create loggers). MOVIE_AGENT_LOG_LEVEL overrides."""
+    import logging
+
+    logging.basicConfig(
+        level=(level or os.environ.get("MOVIE_AGENT_LOG_LEVEL", "INFO")).upper(),
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+
+
 DATA_DIR = REPO_ROOT / "data" / "ml-latest-small-filtered"
 ARTIFACT_DIR = REPO_ROOT / "artifacts"
 OUTPUT_DIR = REPO_ROOT / "outputs"
 
 # --- Ratings ---------------------------------------------------------------
-LIKE_THRESHOLD = 4.0          # rating >= this counts as "liked" / relevant
-BAYES_PRIOR_COUNT = 10        # pseudo-ratings pulling small-sample means to the global mean
+LIKE_THRESHOLD = 4.0  # rating >= this counts as "liked" / relevant
+BAYES_PRIOR_COUNT = 10  # pseudo-ratings pulling small-sample means to the global mean
 
-TITLE_MATCH_CONFIDENT = 90   # fuzzy title score above which we accept the top hit
+TITLE_MATCH_CONFIDENT = 90  # fuzzy title score above which we accept the top hit
 
 # --- Collaborative filtering -----------------------------------------------
-MIN_CO_RATED = 3              # minimum overlap to compute a user-user similarity at all
-USER_SIM_SHRINK = 10          # sim *= n / (n + shrink): damp similarities built on few co-ratings
+MIN_CO_RATED = 3  # minimum overlap to compute a user-user similarity at all
+USER_SIM_SHRINK = 10  # sim *= n / (n + shrink): damp similarities built on few co-ratings
 ITEM_SIM_SHRINK = 10
 NEIGHBORHOOD_K = 30
 
@@ -40,11 +52,14 @@ NEIGHBORHOOD_K = 30
 # auto = OpenAI when a key and its index exist (better search: see outputs/eval/search_eval.md), else local bge-small
 _embed = os.environ.get("MOVIE_AGENT_EMBEDDINGS", "auto")
 if _embed == "auto":
-    _embed = ("openai-3-small" if os.environ.get("OPENAI_API_KEY")
-              and (ARTIFACT_DIR / "openai-3-small" / "movie_vecs.npy").exists() else "bge-small")
+    _embed = (
+        "openai-3-small"
+        if os.environ.get("OPENAI_API_KEY") and (ARTIFACT_DIR / "openai-3-small" / "movie_vecs.npy").exists()
+        else "bge-small"
+    )
 EMBED_BACKEND = _embed
-CHUNK_WORDS = 180             # plot chunk size (~240 tokens, well under the 512 limit)
-MAX_CHUNKS = 6                # cap per movie; the first chunks carry the premise
+CHUNK_WORDS = 180  # plot chunk size (~240 tokens, well under the 512 limit)
+MAX_CHUNKS = 6  # cap per movie; the first chunks carry the premise
 
 # Tags that describe the tagger, not the movie
 NOISE_TAGS = {"in netflix queue", "netflix queue", "seen more than once", "own", "dvd", "watched"}
@@ -54,8 +69,8 @@ NOISE_TAGS = {"in netflix queue", "netflix queue", "seen more than once", "own",
 RERANKER = os.environ.get("MOVIE_AGENT_RERANKER", "llm")
 CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 LLM_RERANK_MODEL = os.environ.get("MOVIE_AGENT_RERANK_MODEL", "gpt-4o-mini")
-RERANK_POOL = 30               # candidates sent to the re-ranker
-RERANK_TIMEOUT_S = 8.0         # past this, fall back to the stage-1 order (logged as a re-rank error)
+RERANK_POOL = 30  # candidates sent to the re-ranker
+RERANK_TIMEOUT_S = 8.0  # past this, fall back to the stage-1 order (logged as a re-rank error)
 
 # --- Offline movie attributes (data/derived/movie_attributes.jsonl) ----------------------------------------
 # Weight of the requested-attribute match (z-scored) in stage-1 search and in the request signal of recommend.
@@ -65,10 +80,10 @@ ATTRIBUTE_WEIGHT = 1.0
 # --- Telemetry ---------------------------------------------------------------
 LOG_DIR = REPO_ROOT / "logs"
 TELEMETRY_DB = LOG_DIR / "telemetry.db"
-MEMORY_DB = REPO_ROOT / "data_store" / "memory.db"   # user memories: product data, not logs
+MEMORY_DB = REPO_ROOT / "data_store" / "memory.db"  # user memories: product data, not logs
 
 # --- Conversation ------------------------------------------------------------
-KEEP_FULL_TURNS = 2            # older turns are compacted to (question, final answer) - tool outputs dropped
+KEEP_FULL_TURNS = 2  # older turns are compacted to (question, final answer) - tool outputs dropped
 
 # --- LLM -------------------------------------------------------------------
 DEFAULT_MODEL = "claude-opus-5"

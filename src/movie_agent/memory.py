@@ -28,7 +28,7 @@ from pathlib import Path
 from . import config
 
 KINDS = ("preference", "seen", "dismissed", "disliked", "liked", "avoid_genre")
-EXCLUDING = ("seen", "dismissed", "disliked", "liked")   # "liked" also means watched: don't re-suggest it
+EXCLUDING = ("seen", "dismissed", "disliked", "liked")  # "liked" also means watched: don't re-suggest it
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS memories (
@@ -58,7 +58,7 @@ class MemoryStore:
         self._lock = threading.Lock()
         with self._lock:
             self._conn.executescript(SCHEMA)
-            self._conn.executescript(DEDUPE_AND_INDEX)      # also migrates stores created by the first version
+            self._conn.executescript(DEDUPE_AND_INDEX)  # also migrates stores created by the first version
             self._conn.commit()
 
     def add(self, user_id: int, kind: str, movie_id: int | None = None, note: str | None = None) -> int:
@@ -69,12 +69,15 @@ class MemoryStore:
         with self._lock:
             cur = self._conn.execute(
                 "INSERT OR IGNORE INTO memories (user_id, kind, movie_id, note, created_ts) VALUES (?,?,?,?,?)",
-                (user_id, kind, movie_id, note, time.time()))
+                (user_id, kind, movie_id, note, time.time()),
+            )
             self._conn.commit()
             if cur.lastrowid and cur.rowcount:
                 return cur.lastrowid
-            row = self._conn.execute("SELECT memory_id FROM memories WHERE user_id=? AND kind=? AND movie_id IS ? "
-                                     "AND note IS ?", (user_id, kind, movie_id, note)).fetchone()
+            row = self._conn.execute(
+                "SELECT memory_id FROM memories WHERE user_id=? AND kind=? AND movie_id IS ? AND note IS ?",
+                (user_id, kind, movie_id, note),
+            ).fetchone()
             return row[0]
 
     def forget(self, user_id: int, memory_id: int) -> bool:
@@ -85,8 +88,10 @@ class MemoryStore:
 
     def list(self, user_id: int) -> list[dict]:
         with self._lock:
-            rows = self._conn.execute("SELECT memory_id, kind, movie_id, note, created_ts FROM memories "
-                                      "WHERE user_id=? ORDER BY created_ts", (user_id,)).fetchall()
+            rows = self._conn.execute(
+                "SELECT memory_id, kind, movie_id, note, created_ts FROM memories WHERE user_id=? ORDER BY created_ts",
+                (user_id,),
+            ).fetchall()
         return [{"memory_id": r[0], "kind": r[1], "movie_id": r[2], "note": r[3], "created_ts": r[4]} for r in rows]
 
     def excluded_movie_ids(self, user_id: int) -> set[int]:
@@ -132,4 +137,5 @@ class NullMemory(MemoryStore):
 
 def default_store() -> MemoryStore:
     import os
+
     return NullMemory() if os.environ.get("MOVIE_AGENT_MEMORY", "1") == "0" else MemoryStore()

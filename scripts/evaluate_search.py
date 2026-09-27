@@ -101,7 +101,9 @@ def ndcg(hits: list[bool], n_rel: int) -> float:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--backends", nargs="*", default=[b for b in BACKENDS if (artifact_dir(b) / "movie_vecs.npy").exists()])
+    ap.add_argument(
+        "--backends", nargs="*", default=[b for b in BACKENDS if (artifact_dir(b) / "movie_vecs.npy").exists()]
+    )
     ap.add_argument("--rerankers", nargs="*", default=["none", "cross", "llm"])
     args = ap.parse_args()
 
@@ -123,11 +125,13 @@ def main():
         for qset, queries in (("topic", TOPIC), ("tone", TONE)):
             for query, labels in queries.items():
                 rel = set().union(*(tagged.get(t, set()) for t in labels))
-                first = idx.relevance(query) + 0.35 * qz           # the shipped first stage (without taste)
-                pool_rows = np.argsort(-first)[:config.RERANK_POOL]
+                first = idx.relevance(query) + 0.35 * qz  # the shipped first stage (without taste)
+                pool_rows = np.argsort(-first)[: config.RERANK_POOL]
                 pool_ids = [int(ids[i]) for i in pool_rows]
-                variants = {"dense only": [int(ids[i]) for i in np.argsort(-idx.relevance(query, "dense"))[:K]],
-                            "stage 1 (dense+lexical+quality)": pool_ids[:K]}
+                variants = {
+                    "dense only": [int(ids[i]) for i in np.argsort(-idx.relevance(query, "dense"))[:K]],
+                    "stage 1 (dense+lexical+quality)": pool_ids[:K],
+                }
                 timings = {}
                 pools = {"stage 1": (pool_rows, first)}
                 if attrs is not None:
@@ -135,10 +139,10 @@ def main():
                     if wanted:
                         m = attrs.match(wanted.get("moods"), wanted.get("twist_ending", False))
                         with_attrs = first + config.ATTRIBUTE_WEIGHT * (m - m.mean()) / (m.std() + 1e-9)
-                        a_rows = np.argsort(-with_attrs)[:config.RERANK_POOL]
+                        a_rows = np.argsort(-with_attrs)[: config.RERANK_POOL]
                         pools["stage 1 + attributes"] = (a_rows, with_attrs)
                     else:
-                        pools["stage 1 + attributes"] = (pool_rows, first)      # nothing requested: same pipeline
+                        pools["stage 1 + attributes"] = (pool_rows, first)  # nothing requested: same pipeline
                     variants["stage 1 + attributes"] = [int(ids[i]) for i in pools["stage 1 + attributes"][0][:K]]
                 for name, rr in rerankers.items():
                     if name == "none":
@@ -150,41 +154,73 @@ def main():
                             timings[f"{base} + {name} rerank"] = res.ms
                 for method, top in variants.items():
                     hits = [m in rel for m in top]
-                    rows.append({"backend": backend, "set": qset, "query": query, "method": method,
-                                 f"P@{K}": float(np.mean(hits)), f"NDCG@{K}": ndcg(hits, len(rel)),
-                                 "n_labelled": len(rel), "ms": timings.get(method, 0)})
+                    rows.append(
+                        {
+                            "backend": backend,
+                            "set": qset,
+                            "query": query,
+                            "method": method,
+                            f"P@{K}": float(np.mean(hits)),
+                            f"NDCG@{K}": ndcg(hits, len(rel)),
+                            "n_labelled": len(rel),
+                            "ms": timings.get(method, 0),
+                        }
+                    )
                     if backend == args.backends[-1] and method == "stage 1 + llm rerank" and qset == "tone":
                         examples[query] = [("✓ " if h else "  ") + data.label(m) for m, h in zip(top[:5], hits[:5])]
                     if backend == args.backends[-1] and method == "stage 1 (dense+lexical+quality)" and qset == "tone":
-                        examples.setdefault("__before__" + query, [("✓ " if h else "  ") + data.label(m)
-                                                                   for m, h in zip(top[:5], hits[:5])])
+                        examples.setdefault(
+                            "__before__" + query,
+                            [("✓ " if h else "  ") + data.label(m) for m, h in zip(top[:5], hits[:5])],
+                        )
 
     df = pd.DataFrame(rows)
     summary = df.pivot_table(index=["backend", "method"], columns="set", values=[f"P@{K}", f"NDCG@{K}"], aggfunc="mean")
     summary.columns = [f"{m} {s}" for m, s in summary.columns]
-    order = (["dense only", "stage 1 (dense+lexical+quality)"] + [f"stage 1 + {r} rerank" for r in args.rerankers if r != "none"]
-             + ["stage 1 + attributes"] + [f"stage 1 + attributes + {r} rerank" for r in args.rerankers if r != "none"])
+    order = (
+        ["dense only", "stage 1 (dense+lexical+quality)"]
+        + [f"stage 1 + {r} rerank" for r in args.rerankers if r != "none"]
+        + ["stage 1 + attributes"]
+        + [f"stage 1 + attributes + {r} rerank" for r in args.rerankers if r != "none"]
+    )
     summary = summary.reindex([(b, m) for b in args.backends for m in order if (b, m) in summary.index])
     latency = df[df["ms"] > 0].groupby("method")["ms"].median()
 
     out = config.OUTPUT_DIR / "eval"
     out.mkdir(parents=True, exist_ok=True)
-    md = ["# Content search evaluation (tags as silver labels)", "",
-          f"{len(TOPIC)} topic + {len(TONE)} tone/structure queries. Tags hidden from the lexical index and re-rankers. "
-          "Precision is a lower bound (tags are sparse).", "",
-          summary.round(3).to_markdown(), "", "Median re-rank latency (ms): " + ", ".join(f"{k}: {v:.0f}" for k, v in latency.items()), "",
-          "## P@10 per tone query", "",
-          df[df.set == "tone"].pivot_table(index="query", columns=["backend", "method"], values=f"P@{K}").round(2).to_markdown(), "",
-          "## Tone queries: top-5 before / after re-ranking (last backend; ✓ = tagged)", ""]
+    md = [
+        "# Content search evaluation (tags as silver labels)",
+        "",
+        f"{len(TOPIC)} topic + {len(TONE)} tone/structure queries. Tags hidden from the lexical index and re-rankers. "
+        "Precision is a lower bound (tags are sparse).",
+        "",
+        summary.round(3).to_markdown(),
+        "",
+        "Median re-rank latency (ms): " + ", ".join(f"{k}: {v:.0f}" for k, v in latency.items()),
+        "",
+        "## P@10 per tone query",
+        "",
+        df[df.set == "tone"]
+        .pivot_table(index="query", columns=["backend", "method"], values=f"P@{K}")
+        .round(2)
+        .to_markdown(),
+        "",
+        "## Tone queries: top-5 before / after re-ranking (last backend; ✓ = tagged)",
+        "",
+    ]
     for q in TONE:
         if q in examples:
             md += [f"**{q}**", "", "| stage 1 | + re-rank |", "|---|---|"]
             md += [f"| {a} | {b} |" for a, b in zip(examples["__before__" + q], examples[q])] + [""]
     (out / "search_eval.md").write_text("\n".join(md), encoding="utf-8")
     df.to_csv(out / "search_eval_per_query.csv", index=False)
-    (out / "search_eval.json").write_text(json.dumps({
-        "summary": summary.round(4).reset_index().to_dict(orient="records"),
-        "latency_ms": latency.to_dict()}, indent=2), encoding="utf-8")
+    (out / "search_eval.json").write_text(
+        json.dumps(
+            {"summary": summary.round(4).reset_index().to_dict(orient="records"), "latency_ms": latency.to_dict()},
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print("\n".join(md[:8]))
 
 

@@ -18,6 +18,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 
+from . import config
 from .agent import detect_provider
 from .render import render
 from .tools import MovieTools
@@ -28,8 +29,10 @@ console = Console()
 def show_trace(calls: list[dict]) -> None:
     for c in calls:
         status = "[red]error[/red]" if c["is_error"] else "ok"
-        console.print(f"  [cyan]{c['tool']}[/cyan]({json.dumps(c['input'], ensure_ascii=False)}) -> {status}, "
-                      f"{c['output_chars']} chars, {c['ms']} ms")
+        console.print(
+            f"  [cyan]{c['tool']}[/cyan]({json.dumps(c['input'], ensure_ascii=False)}) -> {status}, "
+            f"{c['output_chars']} chars, {c['ms']} ms"
+        )
 
 
 NO_LLM_COMMANDS = {
@@ -48,6 +51,7 @@ def main() -> None:
     ap.add_argument("--user", type=int, required=True)
     ap.add_argument("--no-llm", action="store_true", help="use tools directly (no API key needed)")
     args = ap.parse_args()
+    config.setup_logging("WARNING")  # the chat UI owns the terminal; only warnings reach the log
 
     console.print("[dim]loading data, CF model and embeddings...[/dim]")
     tools = MovieTools.build()
@@ -58,14 +62,21 @@ def main() -> None:
     agent = None
     if llm:
         from .agent import MovieAgent
+
         agent = MovieAgent(tools=tools)
         info = agent.start(args.user)
     else:
         info = tools.set_user(args.user)
-    console.print(Panel(f"User {info['user_id']} · {info['n_ratings']} ratings ({info['history_size']} history) · "
-                        f"mode: {agent.provider + ' agent (' + agent.model + ')' if llm else 'tools only'}\n"
-                        + ("Ask anything, e.g. 'What should I watch tonight?'" if llm else
-                           "Commands: " + " ".join(NO_LLM_COMMANDS)), title="Movie discovery assistant"))
+    console.print(
+        Panel(
+            f"User {info['user_id']} · {info['n_ratings']} ratings ({info['history_size']} history) · "
+            f"mode: {agent.provider + ' agent (' + agent.model + ')' if llm else 'tools only'}\n"
+            + (
+                "Ask anything, e.g. 'What should I watch tonight?'" if llm else "Commands: " + " ".join(NO_LLM_COMMANDS)
+            ),
+            title="Movie discovery assistant",
+        )
+    )
     last_calls: list[dict] = []
     last_turn_id = None
     while True:
@@ -86,6 +97,7 @@ def main() -> None:
             continue
         if text == "/stats":
             from . import monitor
+
             k = monitor.kpis(*monitor.load())
             console.print(k)
             for a in monitor.alerts(k):
@@ -103,8 +115,10 @@ def main() -> None:
             show_trace(last_calls)
             console.print(Markdown(res.text))
             badge = "revised by grounding check" if res.revised else "grounding check passed"
-            console.print(f"[dim]{res.latency_s}s · {res.usage['input_tokens']} in / {res.usage['output_tokens']} out "
-                          f"tokens · {badge} · /good /bad to rate[/dim]")
+            console.print(
+                f"[dim]{res.latency_s}s · {res.usage['input_tokens']} in / {res.usage['output_tokens']} out "
+                f"tokens · {badge} · /good /bad to rate[/dim]"
+            )
         else:
             cmd, _, rest = text.partition(" ")
             if cmd not in NO_LLM_COMMANDS:

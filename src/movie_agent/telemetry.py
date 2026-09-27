@@ -85,23 +85,74 @@ class Telemetry:
         if not self.enabled:
             return
         turn = {**turn, "ts": turn.get("ts", time.time())}
-        self._jsonl({"event": "turn", **{k: v for k, v in turn.items() if k != "answer"},
-                     "answer_chars": len(turn.get("answer") or "")})
+        self._jsonl(
+            {
+                "event": "turn",
+                **{k: v for k, v in turn.items() if k != "answer"},
+                "answer_chars": len(turn.get("answer") or ""),
+            }
+        )
         rows = []
         for t in tool_calls:
             rr = t["output"].get("reranker", {}) if isinstance(t.get("output"), dict) else {}
-            rows.append((turn["turn_id"], turn["ts"], t["tool"], json.dumps(t["input"], ensure_ascii=False), t["ms"],
-                         int(t["is_error"]), t["output_chars"], rr.get("kind"), rr.get("ms"), rr.get("error")))
-            self._jsonl({"event": "tool_call", "turn_id": turn["turn_id"], "tool": t["tool"], "args": t["input"],
-                         "ms": t["ms"], "is_error": t["is_error"], "output_chars": t["output_chars"],
-                         **({"rerank": rr} if rr else {})})
-        cols = ["turn_id", "ts", "session_id", "user_id", "provider", "model", "question", "answer", "latency_ms",
-                "llm_calls", "input_tokens", "output_tokens", "cost_usd", "n_tool_calls", "n_tool_errors", "stop_reason",
-                "guardrail_issues", "guardrail_detail", "revised", "issues_after_revision", "feedback", "error",
-                "ttft_ms", "context_messages", "llm_call_detail"]
+            rows.append(
+                (
+                    turn["turn_id"],
+                    turn["ts"],
+                    t["tool"],
+                    json.dumps(t["input"], ensure_ascii=False),
+                    t["ms"],
+                    int(t["is_error"]),
+                    t["output_chars"],
+                    rr.get("kind"),
+                    rr.get("ms"),
+                    rr.get("error"),
+                )
+            )
+            self._jsonl(
+                {
+                    "event": "tool_call",
+                    "turn_id": turn["turn_id"],
+                    "tool": t["tool"],
+                    "args": t["input"],
+                    "ms": t["ms"],
+                    "is_error": t["is_error"],
+                    "output_chars": t["output_chars"],
+                    **({"rerank": rr} if rr else {}),
+                }
+            )
+        cols = [
+            "turn_id",
+            "ts",
+            "session_id",
+            "user_id",
+            "provider",
+            "model",
+            "question",
+            "answer",
+            "latency_ms",
+            "llm_calls",
+            "input_tokens",
+            "output_tokens",
+            "cost_usd",
+            "n_tool_calls",
+            "n_tool_errors",
+            "stop_reason",
+            "guardrail_issues",
+            "guardrail_detail",
+            "revised",
+            "issues_after_revision",
+            "feedback",
+            "error",
+            "ttft_ms",
+            "context_messages",
+            "llm_call_detail",
+        ]
         with self._lock, self._conn() as c:
-            c.execute(f"INSERT OR REPLACE INTO turns ({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
-                      [turn.get(k) for k in cols])
+            c.execute(
+                f"INSERT OR REPLACE INTO turns ({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
+                [turn.get(k) for k in cols],
+            )
             c.executemany("INSERT INTO tool_calls VALUES (?,?,?,?,?,?,?,?,?,?)", rows)
 
     def log_feedback(self, turn_id: str, score: int) -> None:

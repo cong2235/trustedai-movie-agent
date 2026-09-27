@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -38,9 +37,17 @@ def test_display_title():
     assert display_title("City of Lost Children, The (Cité des enfants perdus, La)") == "The City of Lost Children"
 
 
-@pytest.mark.parametrize("query,expected", [
-    ("the usual suspects", 50), ("Inception", 79132), ("pulp fiction", 296), ("Aliens", 1200),
-    ("alice in wonderland 2010", 74789), ("Alice in Wonderland 1951", 1032)])
+@pytest.mark.parametrize(
+    "query,expected",
+    [
+        ("the usual suspects", 50),
+        ("Inception", 79132),
+        ("pulp fiction", 296),
+        ("Aliens", 1200),
+        ("alice in wonderland 2010", 74789),
+        ("Alice in Wonderland 1951", 1032),
+    ],
+)
 def test_find_movie(data, query, expected):
     assert data.find_movie(query)[0]["movie_id"] == expected
 
@@ -116,24 +123,27 @@ def test_no_prediction_for_already_rated_movie(tools):
     assert "predicted_rating_for_you" not in tools.rec.explain(1, 296)
 
 
-@pytest.mark.parametrize("query,expected_title", [
-    ("Terminator 2", "Terminator 2: Judgment Day (1991)"),      # was: The Terminator (1984)
-    ("Godfather 2", "The Godfather: Part II (1974)"),           # was: The Godfather (1972)
-    ("Alien 3", "Alien³ (1992)"),                                # was: Alien (1979)
-    ("Ocean's 12", "Ocean's Twelve (2004)"),                     # was: Twelve Monkeys
-    ("Rocky 4", "Rocky IV (1985)"),
-    ("Back to the Future 2", "Back to the Future Part II (1989)"),
-    ("Toy Story", "Toy Story (1995)"),                           # no number -> not the sequel
-    ("The Godfather", "The Godfather (1972)"),
-    ("21", "21 (2008)"),                                         # numeric title beats "movie id 21"
-    ("2012", "2012 (2009)"),
-])
+@pytest.mark.parametrize(
+    "query,expected_title",
+    [
+        ("Terminator 2", "Terminator 2: Judgment Day (1991)"),  # was: The Terminator (1984)
+        ("Godfather 2", "The Godfather: Part II (1974)"),  # was: The Godfather (1972)
+        ("Alien 3", "Alien³ (1992)"),  # was: Alien (1979)
+        ("Ocean's 12", "Ocean's Twelve (2004)"),  # was: Twelve Monkeys
+        ("Rocky 4", "Rocky IV (1985)"),
+        ("Back to the Future 2", "Back to the Future Part II (1989)"),
+        ("Toy Story", "Toy Story (1995)"),  # no number -> not the sequel
+        ("The Godfather", "The Godfather (1972)"),
+        ("21", "21 (2008)"),  # numeric title beats "movie id 21"
+        ("2012", "2012 (2009)"),
+    ],
+)
 def test_sequels_and_numeric_titles_resolve_correctly(tools, data, query, expected_title):
     assert data.label(tools.resolve(query)) == expected_title
 
 
 def test_numeric_string_still_works_as_movie_id(tools):
-    assert tools.resolve("79132") == 79132      # Inception's id; no movie is titled "79132"
+    assert tools.resolve("79132") == 79132  # Inception's id; no movie is titled "79132"
 
 
 def test_absent_number_title_is_not_guessed(tools):
@@ -157,6 +167,7 @@ def test_every_golden_title_exists(tools):
     """A golden title that doesn't resolve would silently weaken the scenario checks."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from eval.scenarios import DARK_TWIST_GOLD, FAMILY_GOLD, OLD_SCIFI_GOLD
+
     for title in DARK_TWIST_GOLD + FAMILY_GOLD + OLD_SCIFI_GOLD:
         tools.resolve(title)
 
@@ -164,6 +175,7 @@ def test_every_golden_title_exists(tools):
 def test_unexpected_tool_exception_is_reported_not_raised(tools, monkeypatch):
     def boom(**_):
         raise KeyError("missing")
+
     monkeypatch.setattr(tools, "get_user_profile", boom)
     text, is_error = tools.call("get_user_profile", {})
     assert is_error and "KeyError" in text

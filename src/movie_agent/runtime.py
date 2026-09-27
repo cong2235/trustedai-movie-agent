@@ -8,8 +8,11 @@ their first request (measured: first recommend 17 s cold vs 0.1 s warm).
 
 from __future__ import annotations
 
+import logging
 import threading
 import time
+
+log = logging.getLogger(__name__)
 
 _lock = threading.Lock()
 _state: dict = {}
@@ -17,13 +20,14 @@ _state: dict = {}
 
 def shared_tools():
     from .tools import MovieTools
+
     with _lock:
         if "tools" not in _state:
             t0 = time.time()
-            print("[warm-up] building data, CF matrices, SVD and embeddings index...", flush=True)
+            log.info("warm-up: building data, CF matrices, SVD and embeddings index")
             _state["tools"] = MovieTools.build()
             _state["ready_s"] = round(time.time() - t0, 1)
-            print(f"[warm-up] ready in {_state['ready_s']} s", flush=True)
+            log.info("warm-up: ready in %.1f s", _state["ready_s"])
     return _state["tools"]
 
 

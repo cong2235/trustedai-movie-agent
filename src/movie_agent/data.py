@@ -29,8 +29,20 @@ def display_title(raw: str) -> str:
 
 
 _ROMAN = {"ii": "2", "iii": "3", "iv": "4", "v": "5", "vi": "6", "vii": "7", "viii": "8", "ix": "9"}
-_NUMWORDS = {"two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7", "eight": "8",
-             "nine": "9", "ten": "10", "eleven": "11", "twelve": "12", "thirteen": "13"}
+_NUMWORDS = {
+    "two": "2",
+    "three": "3",
+    "four": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "nine": "9",
+    "ten": "10",
+    "eleven": "11",
+    "twelve": "12",
+    "thirteen": "13",
+}
 
 
 def _normalize(text: str) -> str:
@@ -50,18 +62,18 @@ def _numbers(norm: str) -> set[str]:
 
 @dataclass
 class MovieData:
-    movies: pd.DataFrame          # indexed by movieId: title, year, genres(list), plot, display
-    ratings: pd.DataFrame         # userId, movieId, rating, timestamp
-    tags: pd.DataFrame            # userId, movieId, tag (cleaned, lowercased)
+    movies: pd.DataFrame  # indexed by movieId: title, year, genres(list), plot, display
+    ratings: pd.DataFrame  # userId, movieId, rating, timestamp
+    tags: pd.DataFrame  # userId, movieId, tag (cleaned, lowercased)
     _title_keys: list[str] = field(default_factory=list, repr=False)
     _title_ids: list[int] = field(default_factory=list, repr=False)
 
     # ------------------------------------------------------------------ load
     @classmethod
-    def load(cls, data_dir=config.DATA_DIR) -> "MovieData":
+    def load(cls, data_dir=config.DATA_DIR) -> MovieData:
         movies = pd.read_csv(data_dir / "movies_with_plots.csv")
-        movies["genres"] = movies["genres"].str.split("|").apply(
-            lambda gs: [g for g in gs if g != "(no genres listed)"]
+        movies["genres"] = (
+            movies["genres"].str.split("|").apply(lambda gs: [g for g in gs if g != "(no genres listed)"])
         )
         movies["display"] = movies["title"].map(display_title)
         # Data-quality guard: 198 movies in 41 groups share a byte-identical plot (a join error upstream;
@@ -76,7 +88,7 @@ class MovieData:
         tags = tags[~tags["tag"].isin(config.NOISE_TAGS)]
         return cls(movies=movies, ratings=ratings, tags=tags)
 
-    def with_ratings(self, ratings: pd.DataFrame) -> "MovieData":
+    def with_ratings(self, ratings: pd.DataFrame) -> MovieData:
         """Same catalogue, different ratings (used for train/test splits)."""
         return MovieData(movies=self.movies, ratings=ratings.reset_index(drop=True), tags=self.tags)
 
@@ -159,10 +171,10 @@ class MovieData:
             self._build_title_index()
         year = None
         years = list(re.finditer(r"\b(18|19|20)\d{2}\b", query))
-        if years and years[-1].start() > 0:      # the last one: "2001: A Space Odyssey 1968" -> 1968
+        if years and years[-1].start() > 0:  # the last one: "2001: A Space Odyssey 1968" -> 1968
             m = years[-1]
             year = int(m.group(0))
-            query = query[:m.start()] + query[m.end():]
+            query = query[: m.start()] + query[m.end() :]
         q = _normalize(query.replace("(", " ").replace(")", " "))
         q_nums = _numbers(q)
         hits = process.extract(q, self._title_keys, scorer=fuzz.WRatio, limit=max(limit * 8, 40))
@@ -180,7 +192,7 @@ class MovieData:
             if q_nums and not q_nums <= _numbers(key):
                 score *= 0.7
             elif q_nums and set(q.split()) <= set(key.split()):
-                score = max(score, 95.0)     # "terminator 2" is fully contained in "terminator 2 judgment day"
+                score = max(score, 95.0)  # "terminator 2" is fully contained in "terminator 2 judgment day"
             best[mid] = max(best.get(mid, 0), score)
 
         if year is not None:
@@ -195,8 +207,8 @@ class MovieData:
             return (-score, not year_match, -self.movie_stats.loc[mid, "count"])
 
         ranked = sorted(best.items(), key=rank_key)
-        return [{"movie_id": mid, "title": self.label(mid), "score": round(s, 1)}
-                for mid, s in ranked[:limit]]
+        return [{"movie_id": mid, "title": self.label(mid), "score": round(s, 1)} for mid, s in ranked[:limit]]
+
 
 def genre_matrix(movies: pd.DataFrame, genres: list[str]) -> np.ndarray:
     """Binary (n_movies, n_genres) matrix aligned with movies.index."""

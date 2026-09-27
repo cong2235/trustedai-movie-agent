@@ -7,11 +7,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from movie_agent.config import setup_logging  # noqa: E402
 from movie_agent.runtime import warm_in_background  # noqa: E402
 
 if __name__ == "__main__":
+    setup_logging()
     warm_in_background()
     from streamlit.web import cli as stcli
-    sys.argv = ["streamlit", "run", str(ROOT / "app" / "streamlit_app.py"), "--server.address=0.0.0.0",
-                "--server.port=8501", "--server.headless=true", "--browser.gatherUsageStats=false", *sys.argv[1:]]
+
+    sys.argv = [
+        "streamlit",
+        "run",
+        str(ROOT / "app" / "streamlit_app.py"),
+        "--server.address=0.0.0.0",
+        "--server.port=8501",
+        "--server.headless=true",
+        "--browser.gatherUsageStats=false",
+        *sys.argv[1:],
+    ]
     sys.exit(stcli.main())

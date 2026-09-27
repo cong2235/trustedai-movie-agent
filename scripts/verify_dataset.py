@@ -54,7 +54,9 @@ def verify_dataset() -> bool:
     plots_available = movies["plot"].notna().sum()
     plot_lengths = movies["plot"].str.len()
     print(f"\nPlot summaries: {plots_available}/{len(movies)} movies")
-    print(f"Plot length: min={plot_lengths.min():.0f}, avg={plot_lengths.mean():.0f}, max={plot_lengths.max():.0f} chars")
+    print(
+        f"Plot length: min={plot_lengths.min():.0f}, avg={plot_lengths.mean():.0f}, max={plot_lengths.max():.0f} chars"
+    )
 
     # Rating coverage
     rated_movies = ratings["movieId"].nunique()
@@ -71,7 +73,7 @@ def verify_dataset() -> bool:
     print(f"  Genres: {sample['genres']}")
     print(f"  Plot: {sample['plot'][:120]}...")
 
-    print("\n" + "=" * 60)  
+    print("\n" + "=" * 60)
     print("All checks passed.")
     print("=" * 60)
     return True

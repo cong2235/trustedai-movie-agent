@@ -22,14 +22,14 @@ from .embedders import artifact_dir, get_embedder
 
 def _chunks(text: str, size: int = config.CHUNK_WORDS, max_chunks: int = config.MAX_CHUNKS) -> list[str]:
     words = text.split()
-    return [" ".join(words[i:i + size]) for i in range(0, len(words), size)][:max_chunks] or [""]
+    return [" ".join(words[i : i + size]) for i in range(0, len(words), size)][:max_chunks] or [""]
 
 
 def build_embeddings(data: MovieData, backend: str | None = None) -> None:
     """Encode every plot chunk once and cache to artifacts/<backend>/."""
     embedder = get_embedder(backend)
     texts, owner = [], []
-    for row_idx, (mid, row) in enumerate(data.movies.iterrows()):
+    for row_idx, (_mid, row) in enumerate(data.movies.iterrows()):
         header = f"{row['display']} ({row['year']}). Genres: {', '.join(row['genres'])}. "
         for j, chunk in enumerate(_chunks(row["plot"])):
             texts.append((header if j == 0 else "") + chunk)
@@ -46,21 +46,28 @@ def build_embeddings(data: MovieData, backend: str | None = None) -> None:
     np.save(out / "chunk_vecs.npy", vecs)
     np.save(out / "chunk_owner.npy", owner)
     np.save(out / "movie_vecs.npy", movie_vecs)
-    (out / "embeddings_meta.json").write_text(json.dumps({
-        "backend": embedder.name, "model": embedder.model_id, "dim": int(vecs.shape[1]),
-        "n_movies": len(data.movies), "n_chunks": len(texts),
-        "movie_ids": [int(m) for m in data.movies.index],
-    }))
+    (out / "embeddings_meta.json").write_text(
+        json.dumps(
+            {
+                "backend": embedder.name,
+                "model": embedder.model_id,
+                "dim": int(vecs.shape[1]),
+                "n_movies": len(data.movies),
+                "n_chunks": len(texts),
+                "movie_ids": [int(m) for m in data.movies.index],
+            }
+        )
+    )
 
 
 @dataclass
 class ContentIndex:
     data: MovieData
-    movie_vecs: np.ndarray    # (n_movies, d), rows aligned with data.movies.index
-    chunk_vecs: np.ndarray    # (n_chunks, d)
-    chunk_owner: np.ndarray   # (n_chunks,) row index into movie_vecs
+    movie_vecs: np.ndarray  # (n_movies, d), rows aligned with data.movies.index
+    chunk_vecs: np.ndarray  # (n_chunks, d)
+    chunk_owner: np.ndarray  # (n_chunks,) row index into movie_vecs
     tfidf: TfidfVectorizer
-    tfidf_mat: object         # sparse (n_movies, vocab)
+    tfidf_mat: object  # sparse (n_movies, vocab)
     backend: str = config.EMBED_BACKEND
     _encoder: object = None
 
@@ -76,15 +83,16 @@ class ContentIndex:
         return out
 
     @classmethod
-    def load(cls, data: MovieData, use_tags: bool = True, backend: str | None = None) -> "ContentIndex":
+    def load(cls, data: MovieData, use_tags: bool = True, backend: str | None = None) -> ContentIndex:
         """use_tags=False builds the lexical index from title/genres/plot only (used by the search eval,
         where tags are the relevance labels and indexing them would leak the answer)."""
         backend = backend or config.EMBED_BACKEND
         adir = artifact_dir(backend)
         meta_path = adir / "embeddings_meta.json"
         if not meta_path.exists():
-            raise FileNotFoundError(f"Embeddings for '{backend}' missing - run "
-                                    f"`python scripts/build_index.py --backend {backend}`.")
+            raise FileNotFoundError(
+                f"Embeddings for '{backend}' missing - run `python scripts/build_index.py --backend {backend}`."
+            )
         meta = json.loads(meta_path.read_text())
         if meta["movie_ids"] != [int(m) for m in data.movies.index]:
             raise ValueError("Embedding cache is out of sync with movies_with_plots.csv - rebuild it.")
@@ -95,14 +103,17 @@ class ContentIndex:
             # tags are rare but precise, so repeat them to up-weight
             plot = row["plot"] if row["plot_ok"] else ""
             docs.append(f"{row['display']} {' '.join(row['genres'])} {tags} {tags} {tags} {plot}")
-        tfidf = TfidfVectorizer(stop_words="english", sublinear_tf=True, ngram_range=(1, 2),
-                                min_df=2, max_df=0.5)
+        tfidf = TfidfVectorizer(stop_words="english", sublinear_tf=True, ngram_range=(1, 2), min_df=2, max_df=0.5)
         tfidf_mat = tfidf.fit_transform(docs)
-        return cls(data=data,
-                   movie_vecs=np.load(adir / "movie_vecs.npy"),
-                   chunk_vecs=np.load(adir / "chunk_vecs.npy"),
-                   chunk_owner=np.load(adir / "chunk_owner.npy"),
-                   tfidf=tfidf, tfidf_mat=tfidf_mat, backend=backend)
+        return cls(
+            data=data,
+            movie_vecs=np.load(adir / "movie_vecs.npy"),
+            chunk_vecs=np.load(adir / "chunk_vecs.npy"),
+            chunk_owner=np.load(adir / "chunk_owner.npy"),
+            tfidf=tfidf,
+            tfidf_mat=tfidf_mat,
+            backend=backend,
+        )
 
     # ----------------------------------------------------------- similarity
     def similar_to_movies(self, rows: np.ndarray, weights: np.ndarray | None = None) -> np.ndarray:
@@ -119,7 +130,7 @@ class ContentIndex:
         if self._encoder is None:
             self._encoder = get_embedder(self.backend)
         cache = self.__dict__.setdefault("_qcache", {})
-        if query not in cache:            # dense_scores and the excerpt picker both need it
+        if query not in cache:  # dense_scores and the excerpt picker both need it
             cache[query] = self._encoder.encode_query(query)
         return cache[query]
 
@@ -135,8 +146,10 @@ class ContentIndex:
 
     def relevance(self, query: str, mode: str = "hybrid", lexical_weight: float = 0.1) -> np.ndarray:
         """Query relevance for every movie, z-scored so dense and lexical are on one scale."""
+
         def z(x):
             return (x - x.mean()) / (x.std() + 1e-9)
+
         if mode == "dense":
             return z(self.dense_scores(query))
         if mode == "lexical":

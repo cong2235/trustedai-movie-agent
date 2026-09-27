@@ -1,7 +1,7 @@
 """Print an operational health report from logs/telemetry.db (the dashboard shows the same with charts).
 
-    python scripts/monitor.py              # all time
-    python scripts/monitor.py --hours 24   # last 24 h
+python scripts/monitor.py              # all time
+python scripts/monitor.py --hours 24   # last 24 h
 """
 
 import argparse

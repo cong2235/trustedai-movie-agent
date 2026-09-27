@@ -22,7 +22,7 @@ from movie_agent.agent import MovieAgent, detect_provider  # noqa: E402
 from movie_agent.telemetry import Telemetry  # noqa: E402
 from movie_agent.tools import MovieTools  # noqa: E402
 
-SERIES_1 = "#2a78d6"   # reference palette, categorical slot 1: every chart here is single-series
+SERIES_1 = "#2a78d6"  # reference palette, categorical slot 1: every chart here is single-series
 
 st.set_page_config(page_title="Movie Discovery Agent", page_icon="🎬", layout="wide")
 
@@ -37,8 +37,9 @@ def shared_tools() -> MovieTools:
 
 def new_session_tools() -> MovieTools:
     base = shared_tools()
-    return MovieTools(data=base.data, cf=base.cf, content=base.content, rec=base.rec, reranker=base.reranker,
-                      memory=base.memory)
+    return MovieTools(
+        data=base.data, cf=base.cf, content=base.content, rec=base.rec, reranker=base.reranker, memory=base.memory
+    )
 
 
 @st.cache_resource
@@ -49,12 +50,23 @@ def telemetry() -> Telemetry:
 # ------------------------------------------------------------------ sidebar
 with st.sidebar:
     st.header("Session")
-    user_id = st.number_input("User ID (1-610)", min_value=1, max_value=610, value=15, step=1,
-                              help="Suggested: 1 (action/comedy, 190 ratings), 15 (sci-fi, 85), 30 (sparse, 18)")
+    user_id = st.number_input(
+        "User ID (1-610)",
+        min_value=1,
+        max_value=610,
+        value=15,
+        step=1,
+        help="Suggested: 1 (action/comedy, 190 ratings), 15 (sci-fi, 85), 30 (sparse, 18)",
+    )
     provider = detect_provider()
-    st.caption(f"LLM: **{provider or 'none'}** · embeddings: **{config.EMBED_BACKEND}** · re-ranker: **{config.RERANKER}**")
-    if st.button("New conversation", width="stretch") or "agent" not in st.session_state \
-            or st.session_state.get("user_id") != user_id:
+    st.caption(
+        f"LLM: **{provider or 'none'}** · embeddings: **{config.EMBED_BACKEND}** · re-ranker: **{config.RERANKER}**"
+    )
+    if (
+        st.button("New conversation", width="stretch")
+        or "agent" not in st.session_state
+        or st.session_state.get("user_id") != user_id
+    ):
         if provider is None:
             st.session_state.agent = None
         else:
@@ -77,8 +89,10 @@ with st.sidebar:
             shared_tools().memory.forget(int(user_id), m["memory_id"])
             st.rerun()
     st.divider()
-    st.caption("Try: *What should I watch tonight?* · *What do people with similar taste think about Pulp Fiction?* · "
-               "*I liked Toy Story but I'm tired of animated movies* · *What's my blind spot?*")
+    st.caption(
+        "Try: *What should I watch tonight?* · *What do people with similar taste think about Pulp Fiction?* · "
+        "*I liked Toy Story but I'm tired of animated movies* · *What's my blind spot?*"
+    )
 
 chat_tab, monitor_tab = st.tabs(["💬 Chat", "📈 Monitor"])
 
@@ -91,11 +105,15 @@ with chat_tab:
                 meta = msg["meta"]
                 badge = "🛠️ revised by grounding check" if meta["revised"] else "✅ grounding check passed"
                 ttft = f" · first token {meta['ttft_s']} s" if meta.get("ttft_s") else ""
-                st.caption(f"{meta['latency_s']} s{ttft} · {meta['tokens']} tokens · {len(meta['calls'])} tool calls · {badge}")
+                st.caption(
+                    f"{meta['latency_s']} s{ttft} · {meta['tokens']} tokens · {len(meta['calls'])} tool calls · {badge}"
+                )
                 with st.expander("Evidence: tool calls and outputs"):
                     for c in meta["calls"]:
-                        st.markdown(f"**`{c['tool']}`** `{json.dumps(c['input'], ensure_ascii=False)}` · {c['ms']} ms"
-                                    + (" · ❌ error" if c["is_error"] else ""))
+                        st.markdown(
+                            f"**`{c['tool']}`** `{json.dumps(c['input'], ensure_ascii=False)}` · {c['ms']} ms"
+                            + (" · ❌ error" if c["is_error"] else "")
+                        )
                         st.json(c["output"], expanded=False)
                 cols = st.columns([1, 1, 12])
                 if cols[0].button("👍", key=f"up{i}"):
@@ -115,7 +133,7 @@ with chat_tab:
             box = st.empty()
             streamed: list[str] = []
 
-            def on_token(delta: str) -> None:        # answer text appears as it is generated
+            def on_token(delta: str) -> None:  # answer text appears as it is generated
                 if not streamed:
                     status.update(label="Writing the answer…")
                 streamed.append(delta)
@@ -123,9 +141,20 @@ with chat_tab:
 
             res = st.session_state.agent.ask(prompt, on_token=on_token)
             status.update(label=f"Done in {res.latency_s} s", state="complete")
-        st.session_state.history.append({"role": "assistant", "content": res.text, "meta": {
-            "turn_id": res.turn_id, "latency_s": res.latency_s, "revised": res.revised, "ttft_s": res.ttft_s,
-            "tokens": res.usage["input_tokens"] + res.usage["output_tokens"], "calls": res.tool_calls}})
+        st.session_state.history.append(
+            {
+                "role": "assistant",
+                "content": res.text,
+                "meta": {
+                    "turn_id": res.turn_id,
+                    "latency_s": res.latency_s,
+                    "revised": res.revised,
+                    "ttft_s": res.ttft_s,
+                    "tokens": res.usage["input_tokens"] + res.usage["output_tokens"],
+                    "calls": res.tool_calls,
+                },
+            }
+        )
         st.rerun()
 
 # ------------------------------------------------------------------ monitor
@@ -149,8 +178,9 @@ with monitor_tab:
             slo = monitor.SLOS.get(slo_key or key)
             ok = None if (slo is None or v is None) else (v <= slo[1] if slo[0] == "<=" else v >= slo[1])
             icon = "" if ok is None else ("✅ " if ok else "⚠️ ")
-            col.metric(label, "n/a" if v is None else fmt.format(v),
-                       help=None if slo is None else f"SLO {slo[0]} {slo[1]}")
+            col.metric(
+                label, "n/a" if v is None else fmt.format(v), help=None if slo is None else f"SLO {slo[0]} {slo[1]}"
+            )
             if icon:
                 col.caption(icon + ("within SLO" if ok else "breaches SLO"))
 
@@ -173,8 +203,12 @@ with monitor_tab:
         c1, c2 = st.columns(2)
         c3, c4 = st.columns(2)
         # one measure per chart: no dual axes
-        for col, name, title in ((c1, "turns", "Turns"), (c2, "latency_p95_s", "Latency p95 (s)"),
-                                 (c3, "cost_usd", "Cost (USD)"), (c4, "guardrail_rate", "Guardrail trigger rate")):
+        for col, name, title in (
+            (c1, "turns", "Turns"),
+            (c2, "latency_p95_s", "Latency p95 (s)"),
+            (c3, "cost_usd", "Cost (USD)"),
+            (c4, "guardrail_rate", "Guardrail trigger rate"),
+        ):
             col.caption(title)
             col.line_chart(ts[[name]], color=SERIES_1, height=180)
 
@@ -185,6 +219,18 @@ with monitor_tab:
         st.dataframe(ev, width="stretch", hide_index=True) if len(ev) else st.caption("none")
         st.subheader("Recent turns")
         recent = turns.sort_values("ts", ascending=False).head(50)[
-            ["time", "user_id", "model", "question", "latency_ms", "n_tool_calls", "n_tool_errors",
-             "guardrail_issues", "revised", "cost_usd", "feedback"]]
+            [
+                "time",
+                "user_id",
+                "model",
+                "question",
+                "latency_ms",
+                "n_tool_calls",
+                "n_tool_errors",
+                "guardrail_issues",
+                "revised",
+                "cost_usd",
+                "feedback",
+            ]
+        ]
         st.dataframe(recent, width="stretch", hide_index=True)

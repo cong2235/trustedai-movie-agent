@@ -26,8 +26,8 @@ from .content import ContentIndex
 from .data import MovieData
 
 SPARSE_USER_THRESHOLD = 50
-PERSONAL_WEIGHT_WITH_REQUEST = 0.3   # share of personal taste when re-ranking a request-retrieved pool
-REQUEST_POOL = 40                    # candidates retrieved by the explicit request before re-ranking
+PERSONAL_WEIGHT_WITH_REQUEST = 0.3  # share of personal taste when re-ranking a request-retrieved pool
+REQUEST_POOL = 40  # candidates retrieved by the explicit request before re-ranking
 DEFAULT_WEIGHTS = {"item_knn": 1.0, "user_knn": 0.6, "content": 0.3, "quality": 0.15, "popularity": 0.0}
 
 
@@ -61,7 +61,7 @@ class Recommender:
         ur = self.data.user_ratings[user_id]
         prefs = preference_weight(ur.to_numpy())
         liked = prefs > 0
-        if not liked.any():                      # nothing above 3 stars: use their relative favourites
+        if not liked.any():  # nothing above 3 stars: use their relative favourites
             liked = ur.to_numpy() >= ur.median()
             prefs = np.ones_like(prefs)
         rows = np.array([self.cf.m_index[m] for m in ur.index[liked]])
@@ -87,8 +87,9 @@ class Recommender:
             "pure_svd": self.cf.pure_svd_scores(user_id),
         }
 
-    def score(self, user_id: int, weights: dict | None = None,
-              signals: dict[str, np.ndarray] | None = None) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
+    def score(
+        self, user_id: int, weights: dict | None = None, signals: dict[str, np.ndarray] | None = None
+    ) -> tuple[np.ndarray, dict[str, np.ndarray], np.ndarray]:
         """Blended score for every movie. Returns (score, z-scored signals, candidate mask)."""
         w = weights or self.weights_for(user_id)
         sig = signals or self.signals(user_id)
@@ -98,17 +99,24 @@ class Recommender:
         return total, zs, cand
 
     # ---------------------------------------------------------------- API
-    def recommend(self, user_id: int, n: int = 10, *,
-                  include_genres: list[str] | None = None,
-                  exclude_genres: list[str] | None = None,
-                  min_year: int | None = None, max_year: int | None = None,
-                  min_ratings: int = 0,
-                  exclude_movie_ids: list[int] | None = None,
-                  anchor_movie_ids: list[int] | None = None,
-                  query_relevance: np.ndarray | None = None,
-                  attribute_relevance: np.ndarray | None = None,
-                  diversify: bool = True,
-                  rerank_query: str | None = None, reranker=None) -> list[dict]:
+    def recommend(
+        self,
+        user_id: int,
+        n: int = 10,
+        *,
+        include_genres: list[str] | None = None,
+        exclude_genres: list[str] | None = None,
+        min_year: int | None = None,
+        max_year: int | None = None,
+        min_ratings: int = 0,
+        exclude_movie_ids: list[int] | None = None,
+        anchor_movie_ids: list[int] | None = None,
+        query_relevance: np.ndarray | None = None,
+        attribute_relevance: np.ndarray | None = None,
+        diversify: bool = True,
+        rerank_query: str | None = None,
+        reranker=None,
+    ) -> list[dict]:
         """Top-n unseen movies for the user under hard constraints, with evidence for each.
 
         anchor_movie_ids: "more like X" - blends item-item and plot similarity to the anchors into the score.
@@ -116,8 +124,9 @@ class Recommender:
         attribute_relevance: per-movie match with requested moods / twist (from MovieAttributes.match).
         """
         total, zs, cand = self.score(user_id)
-        mask = cand & self._constraint_mask(include_genres, exclude_genres, min_year, max_year,
-                                            min_ratings, exclude_movie_ids)
+        mask = cand & self._constraint_mask(
+            include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_movie_ids
+        )
         if not mask.any():
             return []
 
@@ -145,9 +154,11 @@ class Recommender:
             # (top items reach z≈10), so "more like Toy Story" returned The Silence of the Lambs.
             idx = np.where(mask)[0]
             pool = idx[np.argsort(-request[idx])[:REQUEST_POOL]]
-            pct = lambda x: np.argsort(np.argsort(x)) / max(len(x) - 1, 1)   # noqa: E731
+            pct = lambda x: np.argsort(np.argsort(x)) / max(len(x) - 1, 1)  # noqa: E731
             final = np.full_like(total, -np.inf)
-            final[pool] = (1 - PERSONAL_WEIGHT_WITH_REQUEST) * pct(request[pool]) + PERSONAL_WEIGHT_WITH_REQUEST * pct(total[pool])
+            final[pool] = (1 - PERSONAL_WEIGHT_WITH_REQUEST) * pct(request[pool]) + PERSONAL_WEIGHT_WITH_REQUEST * pct(
+                total[pool]
+            )
             total = final
             order = list(pool[np.argsort(-total[pool])])
             if rerank_query and reranker is not None:
@@ -156,7 +167,7 @@ class Recommender:
                 rr = reranker.rerank(rerank_query, ids, [float(total[self.cf.m_index[m]]) for m in ids], self.data)
                 order = [self.cf.m_index[m] for m in rr.order] + order[30:]
                 total = total.copy()
-                for rank, i in enumerate(order):          # keep MMR consistent with the re-ranked order
+                for rank, i in enumerate(order):  # keep MMR consistent with the re-ranked order
                     total[i] = -rank
                 zs["rerank_fit_0_10"] = np.full_like(total, np.nan)
                 for m, sc in rr.scores.items():
@@ -170,8 +181,11 @@ class Recommender:
 
     def _genre_jaccard(self, movie_ids: list[int]) -> np.ndarray:
         target = {g for m in movie_ids for g in self.data.movies.loc[m, "genres"]} - {"IMAX"}
-        return self.data.movies["genres"].apply(
-            lambda gs: len(target & set(gs)) / max(len(target | (set(gs) - {"IMAX"})), 1)).to_numpy(dtype=np.float32)
+        return (
+            self.data.movies["genres"]
+            .apply(lambda gs: len(target & set(gs)) / max(len(target | (set(gs) - {"IMAX"})), 1))
+            .to_numpy(dtype=np.float32)
+        )
 
     def _constraint_mask(self, include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_ids):
         movies = self.data.movies
@@ -199,7 +213,7 @@ class Recommender:
         """Maximal Marginal Relevance on plot embeddings: avoid 5 sequels of the same franchise."""
         if self.content is None or len(order) <= n:
             return order
-        vecs = self.content.movie_vecs * self.content.plot_ok[:, None]   # unreliable plots: no redundancy signal
+        vecs = self.content.movie_vecs * self.content.plot_ok[:, None]  # unreliable plots: no redundancy signal
         s = score[order]
         s = (s - s.min()) / (s.max() - s.min() + 1e-9)
         chosen: list[int] = []
@@ -241,7 +255,11 @@ class Recommender:
                 sims = self.content.movie_vecs[rows] @ self.content.movie_vecs[row]
                 top = np.argsort(-sims)[:2]
                 out["similar_plots_you_liked"] = [
-                    {"title": data.label(liked[i]), "your_rating": float(ur[liked[i]]), "plot_similarity": round(float(sims[i]), 2)}
+                    {
+                        "title": data.label(liked[i]),
+                        "your_rating": float(ur[liked[i]]),
+                        "plot_similarity": round(float(sims[i]), 2),
+                    }
                     for i in top
                 ]
         # 3. people evidence: what your taste-neighbours gave it
@@ -250,7 +268,8 @@ class Recommender:
             ratings = np.array([n[2] for n in neigh])
             out["similar_users_who_rated_it"] = {
                 # counts, not fractions: a fraction field was once misread by the LLM (see REPORT, run 2)
-                "n": len(neigh), "avg_rating": round(float(ratings.mean()), 2),
+                "n": len(neigh),
+                "avg_rating": round(float(ratings.mean()), 2),
                 "n_rated_4_or_higher": int((ratings >= 4).sum()),
             }
         pred = cf.predict_rating(user_id, movie_id) if movie_id not in ur.index else {"prediction": None}
@@ -258,13 +277,17 @@ class Recommender:
             out["predicted_rating_for_you"] = round(pred["prediction"], 1)
         # 4. genre fit
         from .profiles import genre_affinity
+
         aff = genre_affinity(data, user_id)
         # compact: only genres the user has rated; {"Drama": {"your_avg": 3.86, "n": 35}}
-        out["genre_fit"] = {g: {"your_avg": round(float(aff.loc[g, "avg_rating"]), 2), "n": int(aff.loc[g, "n_rated"])}
-                            for g in out["genres"] if g in aff.index and aff.loc[g, "n_rated"] > 0}
+        out["genre_fit"] = {
+            g: {"your_avg": round(float(aff.loc[g, "avg_rating"]), 2), "n": int(aff.loc[g, "n_rated"])}
+            for g in out["genres"]
+            if g in aff.index and aff.loc[g, "n_rated"] > 0
+        }
         if zs is not None:
             sig = {k: round(float(v[row]), 1) for k, v in zs.items() if not np.isnan(v[row])}
-            out["signal_breakdown_z"] = dict(sorted(sig.items(), key=lambda kv: -kv[1])[:3])   # top 3 drivers
+            out["signal_breakdown_z"] = dict(sorted(sig.items(), key=lambda kv: -kv[1])[:3])  # top 3 drivers
         out["evidence_strength"] = _evidence_strength(out)
         return out
 

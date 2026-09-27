@@ -90,8 +90,8 @@ class TurnResult:
     turn_id: str = ""
     guardrail: dict = field(default_factory=dict)
     revised: bool = False
-    ttft_s: float | None = None          # time to first streamed answer token
-    call_log: list = field(default_factory=list)   # per LLM call: latency, input tokens, hedged
+    ttft_s: float | None = None  # time to first streamed answer token
+    call_log: list = field(default_factory=list)  # per LLM call: latency, input tokens, hedged
 
 
 # --------------------------------------------------------------------------- backends
@@ -100,6 +100,7 @@ class AnthropicBackend:
 
     def __init__(self, model: str):
         import anthropic
+
         self.anthropic = anthropic
         self.client = anthropic.Anthropic()
         self.model = model
@@ -111,8 +112,10 @@ class AnthropicBackend:
         if self.use_fallbacks:
             try:
                 return self.client.messages.create(
-                    **kwargs, extra_headers={"anthropic-beta": "server-side-fallback-2026-07-01"},
-                    extra_body={"fallbacks": "default"})
+                    **kwargs,
+                    extra_headers={"anthropic-beta": "server-side-fallback-2026-07-01"},
+                    extra_body={"fallbacks": "default"},
+                )
             except self.anthropic.BadRequestError:
                 self.use_fallbacks = False
         return self.client.messages.create(**kwargs)
@@ -120,9 +123,16 @@ class AnthropicBackend:
     def step(self, system: str, messages: list, on_token=None) -> tuple[str, list[tuple[str, str, dict]], str, dict]:
         """One model call. Returns (text, [(call_id, tool_name, args)], stop_reason, usage) and appends the reply.
         (Streaming is implemented on the OpenAI backend; this backend returns the whole reply at once.)"""
-        r = self._create(model=self.model, max_tokens=16000, tools=TOOL_SCHEMAS, messages=messages,
-                         system=[{"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
-                                 {"type": "text", "text": system}])
+        r = self._create(
+            model=self.model,
+            max_tokens=16000,
+            tools=TOOL_SCHEMAS,
+            messages=messages,
+            system=[
+                {"type": "text", "text": SYSTEM_PROMPT, "cache_control": {"type": "ephemeral"}},
+                {"type": "text", "text": system},
+            ],
+        )
         messages.append({"role": "assistant", "content": r.content})
         calls = [(b.id, b.name, dict(b.input)) for b in r.content if b.type == "tool_use"]
         text = "\n".join(b.text for b in r.content if b.type == "text").strip()
@@ -132,8 +142,15 @@ class AnthropicBackend:
         return text, calls, r.stop_reason, usage
 
     def tool_results(self, messages: list, results: list[tuple[str, str, bool]]) -> None:
-        messages.append({"role": "user", "content": [   # all results in ONE message keeps parallel calls working
-            {"type": "tool_result", "tool_use_id": cid, "content": text, "is_error": err} for cid, text, err in results]})
+        messages.append(
+            {
+                "role": "user",
+                "content": [  # all results in ONE message keeps parallel calls working
+                    {"type": "tool_result", "tool_use_id": cid, "content": text, "is_error": err}
+                    for cid, text, err in results
+                ],
+            }
+        )
 
     def user(self, messages: list, text: str) -> None:
         messages.append({"role": "user", "content": text})
@@ -147,20 +164,34 @@ class OpenAIBackend:
 
     def __init__(self, model: str):
         import openai
-        self.client = openai.OpenAI(timeout=30.0, max_retries=2)   # bound the tail; SDK default is 10 min
+
+        self.client = openai.OpenAI(timeout=30.0, max_retries=2)  # bound the tail; SDK default is 10 min
         self._hedge_client = openai.OpenAI(timeout=30.0, max_retries=0)
         self.model = model
-        self.tools = [{"type": "function", "function": {"name": t["name"], "description": t["description"],
-                                                        "parameters": t["input_schema"]}} for t in TOOL_SCHEMAS]
+        self.tools = [
+            {
+                "type": "function",
+                "function": {"name": t["name"], "description": t["description"], "parameters": t["input_schema"]},
+            }
+            for t in TOOL_SCHEMAS
+        ]
 
     def step(self, system: str, messages: list, on_token=None):
         """One streamed model call. Text deltas go to on_token as they arrive (time-to-first-token is what the
         user feels); tool-call deltas are accumulated by index. Returns (text, calls, stop_reason, usage)."""
         msgs = [{"role": "system", "content": SYSTEM_PROMPT + "\n\n" + system}] + messages
         t_call = time.time()
-        stream, hedged, first_chunk_s = self._hedged_stream(dict(
-            model=self.model, messages=msgs, tools=self.tools, temperature=0.2, max_completion_tokens=4000,
-            stream=True, stream_options={"include_usage": True}))
+        stream, hedged, first_chunk_s = self._hedged_stream(
+            dict(
+                model=self.model,
+                messages=msgs,
+                tools=self.tools,
+                temperature=0.2,
+                max_completion_tokens=4000,
+                stream=True,
+                stream_options={"include_usage": True},
+            )
+        )
         text, tool_acc, finish, usage = [], {}, None, None
         for chunk in stream:
             if chunk.usage is not None:
@@ -184,9 +215,10 @@ class OpenAIBackend:
         entry = {"role": "assistant", "content": content}
         calls = []
         if tool_acc:
-            entry["tool_calls"] = [{"id": a["id"], "type": "function",
-                                    "function": {"name": a["name"], "arguments": a["args"]}}
-                                   for _, a in sorted(tool_acc.items())]
+            entry["tool_calls"] = [
+                {"id": a["id"], "type": "function", "function": {"name": a["name"], "arguments": a["args"]}}
+                for _, a in sorted(tool_acc.items())
+            ]
             for _, a in sorted(tool_acc.items()):
                 try:
                     args = json.loads(a["args"] or "{}")
@@ -195,11 +227,17 @@ class OpenAIBackend:
                 calls.append((a["id"], a["name"], args))
         messages.append(entry)
         stop = "tool_use" if calls else (finish or "stop")
-        u = {"input_tokens": getattr(usage, "prompt_tokens", 0) or 0,
-             "output_tokens": getattr(usage, "completion_tokens", 0) or 0,
-             "call": {"first_chunk_s": round(first_chunk_s, 2), "total_s": round(time.time() - t_call, 2),
-                      "input_tokens": getattr(usage, "prompt_tokens", 0) or 0,
-                      "hedged": hedged, "tool_calls": len(calls)}}
+        u = {
+            "input_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+            "output_tokens": getattr(usage, "completion_tokens", 0) or 0,
+            "call": {
+                "first_chunk_s": round(first_chunk_s, 2),
+                "total_s": round(time.time() - t_call, 2),
+                "input_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+                "hedged": hedged,
+                "tool_calls": len(calls),
+            },
+        }
         return content.strip(), calls, stop, u
 
     def _hedged_stream(self, kwargs):
@@ -209,6 +247,7 @@ class OpenAIBackend:
         Returns (chunk iterator, hedged?, seconds to first chunk)."""
         import queue
         import threading
+
         t0 = time.time()
         q: queue.Queue = queue.Queue()
         stop = [threading.Event(), threading.Event()]
@@ -224,12 +263,12 @@ class OpenAIBackend:
                         st.close()
                         return
                     q.put((i, ch))
-                q.put((i, None))                      # end of stream
-            except Exception as e:                    # surfaced only if it is the stream we end up using
+                q.put((i, None))  # end of stream
+            except Exception as e:  # surfaced only if it is the stream we end up using
                 q.put((i, e))
 
         threading.Thread(target=worker, args=(0,), daemon=True).start()
-        hedged = config.HEDGE_AFTER_S <= 0          # disabled: behave as a plain stream (never duplicate)
+        hedged = config.HEDGE_AFTER_S <= 0  # disabled: behave as a plain stream (never duplicate)
         errors = {}
         while True:
             try:
@@ -242,7 +281,7 @@ class OpenAIBackend:
                 errors[i] = first
                 if config.HEDGE_AFTER_S <= 0 or not hedged or len(errors) == 2:
                     raise first
-                continue                              # one request failed; wait for the other
+                continue  # one request failed; wait for the other
             winner = i
             break
         stop[1 - winner].set()
@@ -255,7 +294,7 @@ class OpenAIBackend:
                     raise item
                 yield item
                 j, item = q.get()
-                while j != winner:                    # drop anything the loser already queued
+                while j != winner:  # drop anything the loser already queued
                     j, item = q.get()
 
         return chunks(), hedged and config.HEDGE_AFTER_S > 0, first_chunk_s
@@ -282,12 +321,14 @@ class MovieAgent:
     model: str | None = None
     messages: list = field(default_factory=list)
     telemetry: Telemetry | None = None
-    guardrail: bool = True          # re-check every answer against the tool outputs; revise once on failure
+    guardrail: bool = True  # re-check every answer against the tool outputs; revise once on failure
 
     def __post_init__(self):
         self.provider = self.provider or detect_provider()
         if self.provider not in BACKENDS:
-            raise RuntimeError("No LLM provider configured: set ANTHROPIC_API_KEY or OPENAI_API_KEY (see .env.example).")
+            raise RuntimeError(
+                "No LLM provider configured: set ANTHROPIC_API_KEY or OPENAI_API_KEY (see .env.example)."
+            )
         cls = BACKENDS[self.provider]
         self.model = self.model or os.environ.get("MOVIE_AGENT_MODEL") or cls.default_model
         self.backend = cls(self.model)
@@ -295,7 +336,7 @@ class MovieAgent:
         self.titles = TitleIndex.for_data(self.tools.data)
         self.session_id = Telemetry.new_id()
         self._session_trace_start = 0
-        self._turns: list[dict] = []     # per turn: index of its first message, question, final answer
+        self._turns: list[dict] = []  # per turn: index of its first message, question, final answer
         self._call_log: list[dict] = []  # per LLM call of the current turn (reset in ask)
 
     def start(self, user_id: int) -> dict:
@@ -383,35 +424,57 @@ class MovieAgent:
             self.backend.user(self.messages, user_text)
             text, stop = self._run_loop(usage, llm_calls, on_token=_tok)
             if self.guardrail and text:
-                outputs = [t["output"] for t in self.tools.trace[self._session_trace_start:]]
+                outputs = [t["output"] for t in self.tools.trace[self._session_trace_start :]]
                 report = check_answer(text, outputs, self.titles, self.tools.session.user_id)
                 if has_issues(report):
                     revised = True
                     self.backend.user(self.messages, revision_request(report))
-                    text, stop = self._run_loop(usage, llm_calls)       # revision is not streamed
-                    outputs = [t["output"] for t in self.tools.trace[self._session_trace_start:]]
+                    text, stop = self._run_loop(usage, llm_calls)  # revision is not streamed
+                    outputs = [t["output"] for t in self.tools.trace[self._session_trace_start :]]
                     after = check_answer(text, outputs, self.titles, self.tools.session.user_id)
             self._turns[-1]["answer"] = text
-        except Exception as e:                     # log, then surface to the caller
+        except Exception as e:  # log, then surface to the caller
             error = f"{type(e).__name__}: {e}"[:500]
             raise
         finally:
             calls = self.tools.trace[trace_start:]
             latency = time.time() - t0
-            self.telemetry.log_turn({
-                "turn_id": turn_id, "session_id": self.session_id, "user_id": self.tools.session.user_id,
-                "provider": self.provider, "model": self.model, "question": user_text, "answer": text,
-                "latency_ms": round(latency * 1000), "llm_calls": llm_calls[0], **usage,
-                "cost_usd": cost_usd(self.model, usage["input_tokens"], usage["output_tokens"]),
-                "n_tool_calls": len(calls), "n_tool_errors": sum(c["is_error"] for c in calls),
-                "stop_reason": stop, "guardrail_issues": int(has_issues(report)) if report else 0,
-                "guardrail_detail": json.dumps({"first": report, "after_revision": after}, ensure_ascii=False),
-                "revised": int(revised), "issues_after_revision": None if after is None else int(has_issues(after)),
-                "ttft_ms": None if first_token[0] is None else round(first_token[0] * 1000),
-                "context_messages": len(self.messages),
-                "llm_call_detail": json.dumps(self._call_log),
-                "error": error}, calls)
-        return TurnResult(text=text, tool_calls=calls, latency_s=round(latency, 1), usage=usage, stop_reason=stop,
-                          turn_id=turn_id, guardrail={"first": report, "after_revision": after}, revised=revised,
-                          ttft_s=None if first_token[0] is None else round(first_token[0], 2),
-                          call_log=list(self._call_log))
+            self.telemetry.log_turn(
+                {
+                    "turn_id": turn_id,
+                    "session_id": self.session_id,
+                    "user_id": self.tools.session.user_id,
+                    "provider": self.provider,
+                    "model": self.model,
+                    "question": user_text,
+                    "answer": text,
+                    "latency_ms": round(latency * 1000),
+                    "llm_calls": llm_calls[0],
+                    **usage,
+                    "cost_usd": cost_usd(self.model, usage["input_tokens"], usage["output_tokens"]),
+                    "n_tool_calls": len(calls),
+                    "n_tool_errors": sum(c["is_error"] for c in calls),
+                    "stop_reason": stop,
+                    "guardrail_issues": int(has_issues(report)) if report else 0,
+                    "guardrail_detail": json.dumps({"first": report, "after_revision": after}, ensure_ascii=False),
+                    "revised": int(revised),
+                    "issues_after_revision": None if after is None else int(has_issues(after)),
+                    "ttft_ms": None if first_token[0] is None else round(first_token[0] * 1000),
+                    "context_messages": len(self.messages),
+                    "llm_call_detail": json.dumps(self._call_log),
+                    "error": error,
+                },
+                calls,
+            )
+        return TurnResult(
+            text=text,
+            tool_calls=calls,
+            latency_s=round(latency, 1),
+            usage=usage,
+            stop_reason=stop,
+            turn_id=turn_id,
+            guardrail={"first": report, "after_revision": after},
+            revised=revised,
+            ttft_s=None if first_token[0] is None else round(first_token[0], 2),
+            call_log=list(self._call_log),
+        )

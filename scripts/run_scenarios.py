@@ -44,9 +44,22 @@ from movie_agent.memory import MemoryStore  # noqa: E402
 from movie_agent.render import render  # noqa: E402
 from movie_agent.tools import MovieTools, ToolError  # noqa: E402
 
-ABSENT_PHRASES = ["not in the dataset", "isn't in the dataset", "is not in", "isn't in", "not available",
-                  "absent", "not present", "doesn't exist in", "does not exist in", "not part of", "no record",
-                  "missing from", "couldn't find", "could not find"]
+ABSENT_PHRASES = [
+    "not in the dataset",
+    "isn't in the dataset",
+    "is not in",
+    "isn't in",
+    "not available",
+    "absent",
+    "not present",
+    "doesn't exist in",
+    "does not exist in",
+    "not part of",
+    "no record",
+    "missing from",
+    "couldn't find",
+    "could not find",
+]
 RUN_INFO: dict = {}
 
 
@@ -72,7 +85,7 @@ def _arg_ok(tools: MovieTools, value, spec, history=None) -> bool:
     {"contains_movie": title} | {"max"|"min": n}"""
     if spec is True:
         return value not in (None, "", [], {})
-    if "absent_or_below" in spec:                        # a constraint the user has since lifted
+    if "absent_or_below" in spec:  # a constraint the user has since lifted
         return value in (None, "", []) or float(value) < spec["absent_or_below"]
     if value in (None, "", []):
         return False
@@ -130,26 +143,49 @@ def memory_checks(ch: dict, mems: list[dict], tools: MovieTools) -> list[str]:
             miss = [] if len(have) >= want else [f"{want - len(have)} more"]
         if miss:
             problems.append(f"memory lacks {kind}: {miss}")
-    for kind, pattern in ch.get("memory_titles_match", {}).items():   # "I've seen Star Wars": only a Star Wars film
-        wrong = [tools.data.label(m["movie_id"]) for m in mems if m["kind"] == kind and m["movie_id"] is not None
-                 and pattern.lower() not in tools.data.label(m["movie_id"]).lower()]
+    for kind, pattern in ch.get("memory_titles_match", {}).items():  # "I've seen Star Wars": only a Star Wars film
+        wrong = [
+            tools.data.label(m["movie_id"])
+            for m in mems
+            if m["kind"] == kind
+            and m["movie_id"] is not None
+            and pattern.lower() not in tools.data.label(m["movie_id"]).lower()
+        ]
         if wrong:
             problems.append(f"{kind} memory holds the wrong movie(s): {wrong}")
     for kind, bad in ch.get("memory_lacks", {}).items():
         have = [m for m in mems if m["kind"] == kind]
         if bad == "any" and have:
-            problems.append(f"memory should have no {kind}, has {[(m['note'] or tools.data.label(m['movie_id'])) for m in have]}")
+            problems.append(
+                f"memory should have no {kind}, has {[(m['note'] or tools.data.label(m['movie_id'])) for m in have]}"
+            )
         elif isinstance(bad, list):
             for b in bad:
-                hit = [m for m in have if (m["note"] and b.lower() in m["note"].lower())
-                       or (m["movie_id"] is not None and m["movie_id"] == _resolve(tools, b))]
+                hit = [
+                    m
+                    for m in have
+                    if (m["note"] and b.lower() in m["note"].lower())
+                    or (m["movie_id"] is not None and m["movie_id"] == _resolve(tools, b))
+                ]
                 if hit:
                     problems.append(f"memory should not have {kind} '{b}'")
     return problems
 
 
-def check_turn(turn, answer, trace, conv_trace, earlier_recs, tools: MovieTools, user_id: int, scripted: bool,
-               history=None, memory_after=None, usage=None, max_call_tokens=None) -> dict:
+def check_turn(
+    turn,
+    answer,
+    trace,
+    conv_trace,
+    earlier_recs,
+    tools: MovieTools,
+    user_id: int,
+    scripted: bool,
+    history=None,
+    memory_after=None,
+    usage=None,
+    max_call_tokens=None,
+) -> dict:
     called = {t["tool"] for t in trace}
     # a tool already called earlier in this session counts: re-using its output (still in context) is legitimate
     called_session = called | {t["tool"] for t in conv_trace}
@@ -159,7 +195,7 @@ def check_turn(turn, answer, trace, conv_trace, earlier_recs, tools: MovieTools,
     titles = TitleIndex.for_data(tools.data)
     outputs = [t["output"] for t in conv_trace]
     grounding = {k: [] for k in ISSUE_KEYS}
-    if not scripted:                          # templates are generated from tool output; nothing to verify
+    if not scripted:  # templates are generated from tool output; nothing to verify
         grounding = check_answer(answer, outputs, titles, user_id)
     mentioned, _ = titles.mentioned(answer)
     tool_recs = recommended_in(trace)
@@ -196,7 +232,7 @@ def check_turn(turn, answer, trace, conv_trace, earlier_recs, tools: MovieTools,
         text_ok = any(p in low for p in ABSENT_PHRASES)
     if ch.get("mentions_any"):
         text_ok = text_ok and any(s.lower() in low for s in ch["mentions_any"])
-    if ch.get("mentions_prev") and not (scripted and turn.get("llm_only")):   # needs a model to answer from history
+    if ch.get("mentions_prev") and not (scripted and turn.get("llm_only")):  # needs a model to answer from history
         t, k = ch["mentions_prev"]
         listed = history[t]["recs_order"] if history and t < len(history) else []
         text_ok = text_ok and k < len(listed) and listed[k] in set(TitleIndex.for_data(tools.data).mentioned(answer)[0])
@@ -207,14 +243,30 @@ def check_turn(turn, answer, trace, conv_trace, earlier_recs, tools: MovieTools,
     budget = turn.get("max_input_tokens")
     if budget and max_call_tokens and max_call_tokens > budget:
         mem_problems.append(f"context budget: a call saw {max_call_tokens} input tokens > {budget}")
-    passed = (tool_ok and not arg_problems and not viol and text_ok and golden is not False and not mem_problems
-              and not any(grounding.get(k) for k in ISSUE_KEYS))
-    return {"passed": passed, "tools_called": sorted(called), "tool_recall_ok": tool_ok, "arg_problems": arg_problems,
-            "tool_errors": [t["tool"] for t in trace if t["is_error"]],
-            "n_decimals": grounding.get("n_decimals", 0), "n_rating_claims": grounding.get("n_rating_claims", 0),
-            **{k: grounding.get(k, []) for k in ISSUE_KEYS},
-            "recommended": [tools.data.label(m) for m in recs], "constraint_violations": viol,
-            "golden_hit": golden, "text_check_ok": text_ok, "memory_problems": mem_problems}
+    passed = (
+        tool_ok
+        and not arg_problems
+        and not viol
+        and text_ok
+        and golden is not False
+        and not mem_problems
+        and not any(grounding.get(k) for k in ISSUE_KEYS)
+    )
+    return {
+        "passed": passed,
+        "tools_called": sorted(called),
+        "tool_recall_ok": tool_ok,
+        "arg_problems": arg_problems,
+        "tool_errors": [t["tool"] for t in trace if t["is_error"]],
+        "n_decimals": grounding.get("n_decimals", 0),
+        "n_rating_claims": grounding.get("n_rating_claims", 0),
+        **{k: grounding.get(k, []) for k in ISSUE_KEYS},
+        "recommended": [tools.data.label(m) for m in recs],
+        "constraint_violations": viol,
+        "golden_hit": golden,
+        "text_check_ok": text_ok,
+        "memory_problems": mem_problems,
+    }
 
 
 # ------------------------------------------------------------------ runners
@@ -232,13 +284,15 @@ def run_scripted(tools: MovieTools, scenario) -> list[dict]:
         start = len(tools.trace)
         parts = []
         for name, args in turn["plan"]:
-            def sub(v):
+
+            def sub(v, first_rec=first_rec):  # called within this iteration; bound explicitly
                 if v == "$FIRST_REC":
                     return first_rec
-                if isinstance(v, str) and v.startswith("$PREV:"):    # "$PREV:t:k" = k-th rec of turn t
+                if isinstance(v, str) and v.startswith("$PREV:"):  # "$PREV:t:k" = k-th rec of turn t
                     _, t, k = v.split(":")
                     return str(recs_by_turn[int(t)][int(k)])
                 return v
+
             args = {k: sub(v) for k, v in args.items()}
             text, _ = tools.call(name, args)
             parts.append(render(name, json.loads(text)))
@@ -247,27 +301,39 @@ def run_scripted(tools: MovieTools, scenario) -> list[dict]:
         recs_by_turn.append(recs)
         if recs:
             first_rec = str(recs[0])
-        turns.append({"q": turn["q"], "answer": "\n\n".join(parts), "trace": trace,
-                      "memory_after": tools.memory.list(current)})
+        turns.append(
+            {"q": turn["q"], "answer": "\n\n".join(parts), "trace": trace, "memory_after": tools.memory.list(current)}
+        )
     return turns
 
 
 def run_llm(tools: MovieTools, scenario) -> list[dict]:
     from movie_agent.agent import MovieAgent
+
     agent = MovieAgent(tools=tools)
     RUN_INFO.update(provider=agent.provider, model=agent.model)
     agent.start(scenario["user_id"])
     turns, current = [], scenario["user_id"]
     for turn in scenario["turns"]:
         if turn.get("new_session") or turn_user(scenario, turn) != current:
-            current = turn_user(scenario, turn)          # a later visit (or another user): fresh conversation,
-            agent.start(current)                         # same long-term memory store
+            current = turn_user(scenario, turn)  # a later visit (or another user): fresh conversation,
+            agent.start(current)  # same long-term memory store
         res = agent.ask(turn["q"])
-        turns.append({"q": turn["q"], "answer": res.text, "trace": res.tool_calls, "latency_s": res.latency_s,
-                      "ttft_s": res.ttft_s, "usage": res.usage, "revised": res.revised,
-                      "guardrail_first": res.guardrail.get("first"), "memory_after": tools.memory.list(current),
-                      "context_messages": len(agent.messages),
-                      "max_call_input_tokens": max((c.get("input_tokens", 0) for c in res.call_log), default=0)})
+        turns.append(
+            {
+                "q": turn["q"],
+                "answer": res.text,
+                "trace": res.tool_calls,
+                "latency_s": res.latency_s,
+                "ttft_s": res.ttft_s,
+                "usage": res.usage,
+                "revised": res.revised,
+                "guardrail_first": res.guardrail.get("first"),
+                "memory_after": tools.memory.list(current),
+                "context_messages": len(agent.messages),
+                "max_call_input_tokens": max((c.get("input_tokens", 0) for c in res.call_log), default=0),
+            }
+        )
     return turns
 
 
@@ -285,25 +351,45 @@ JUDGE_KEYS = ["grounded", "personalised", "explains", "honest", "helpful"]
 def judge(turn_record: dict) -> dict:
     """LLM-as-judge on one turn. Uses the same provider as the agent (a self-judging bias worth noting)."""
     from movie_agent.agent import detect_provider
-    tool_json = json.dumps([{"tool": t["tool"], "output": t["output"]} for t in turn_record["trace"]],
-                           ensure_ascii=False)[:60000]
+
+    tool_json = json.dumps(
+        [{"tool": t["tool"], "output": t["output"]} for t in turn_record["trace"]], ensure_ascii=False
+    )[:60000]
     prompt = f"USER: {turn_record['q']}\n\nREPLY:\n{turn_record['answer']}\n\nTOOL OUTPUTS:\n{tool_json}"
     if detect_provider() == "openai":
         import openai
+
         r = openai.OpenAI(timeout=60).chat.completions.create(
-            model=os.environ.get("MOVIE_AGENT_JUDGE_MODEL", "gpt-4o-mini"), temperature=0,
+            model=os.environ.get("MOVIE_AGENT_JUDGE_MODEL", "gpt-4o-mini"),
+            temperature=0,
             response_format={"type": "json_object"},
-            messages=[{"role": "system", "content": JUDGE_RUBRIC + "\nReply as JSON with integer keys "
-                       + ", ".join(JUDGE_KEYS) + " and a string key rationale."},
-                      {"role": "user", "content": prompt}])
+            messages=[
+                {
+                    "role": "system",
+                    "content": JUDGE_RUBRIC
+                    + "\nReply as JSON with integer keys "
+                    + ", ".join(JUDGE_KEYS)
+                    + " and a string key rationale.",
+                },
+                {"role": "user", "content": prompt},
+            ],
+        )
         return json.loads(r.choices[0].message.content)
     import anthropic
-    schema = {"type": "object", "additionalProperties": False, "required": JUDGE_KEYS + ["rationale"],
-              "properties": {k: {"type": "integer"} for k in JUDGE_KEYS} | {"rationale": {"type": "string"}}}
+
+    schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": JUDGE_KEYS + ["rationale"],
+        "properties": {k: {"type": "integer"} for k in JUDGE_KEYS} | {"rationale": {"type": "string"}},
+    }
     resp = anthropic.Anthropic().messages.create(
-        model=config.DEFAULT_MODEL, max_tokens=2000, system=JUDGE_RUBRIC,
+        model=config.DEFAULT_MODEL,
+        max_tokens=2000,
+        system=JUDGE_RUBRIC,
         output_config={"format": {"type": "json_schema", "schema": schema}, "effort": "low"},
-        messages=[{"role": "user", "content": prompt}])
+        messages=[{"role": "user", "content": prompt}],
+    )
     return json.loads(next(b.text for b in resp.content if b.type == "text"))
 
 
@@ -312,16 +398,34 @@ def to_markdown(sc, turns, checks) -> str:
     for turn_def, t, c in zip(sc["turns"], turns, checks):
         if turn_def.get("new_session"):
             md += ["---", "*(new session - long-term memory carries over)*", ""]
-        md += [f"**User:** {t['q']}", "", "<details><summary>Tool calls: " + ", ".join(
-            f"{x['tool']}({json.dumps(x['input'], ensure_ascii=False)})" for x in t["trace"]) + "</summary>", ""]
+        md += [
+            f"**User:** {t['q']}",
+            "",
+            "<details><summary>Tool calls: "
+            + ", ".join(f"{x['tool']}({json.dumps(x['input'], ensure_ascii=False)})" for x in t["trace"])
+            + "</summary>",
+            "",
+        ]
         for x in t["trace"]:
-            md += [f"`{x['tool']}` ({x['ms']} ms) ->", "```json",
-                   json.dumps(x["output"], ensure_ascii=False, indent=1)[:2500], "```"]
+            md += [
+                f"`{x['tool']}` ({x['ms']} ms) ->",
+                "```json",
+                json.dumps(x["output"], ensure_ascii=False, indent=1)[:2500],
+                "```",
+            ]
         issues = {k: c[k] for k in ("arg_problems", "constraint_violations", "memory_problems", *ISSUE_KEYS) if c[k]}
-        md += ["</details>", "", "**Assistant:**", "", t["answer"], "",
-               f"> {'PASS' if c['passed'] else 'FAIL'} · tools_ok={c['tool_recall_ok']} · golden={c['golden_hit']} · "
-               f"text_ok={c['text_check_ok']} · memory={c.get('memory_after')} · issues={issues or 'none'}"
-               + (f" · judge={c['judge']}" if "judge" in c else ""), ""]
+        md += [
+            "</details>",
+            "",
+            "**Assistant:**",
+            "",
+            t["answer"],
+            "",
+            f"> {'PASS' if c['passed'] else 'FAIL'} · tools_ok={c['tool_recall_ok']} · golden={c['golden_hit']} · "
+            f"text_ok={c['text_check_ok']} · memory={c.get('memory_after')} · issues={issues or 'none'}"
+            + (f" · judge={c['judge']}" if "judge" in c else ""),
+            "",
+        ]
     return "\n".join(md)
 
 
@@ -338,12 +442,14 @@ def main():
     scenarios = SCENARIOS
     if args.suite == "memory":
         from eval.memory_scenarios import MEMORY_SCENARIOS
+
         scenarios = MEMORY_SCENARIOS
         args.suffix = "_memory" + args.suffix
     if args.suite == "heldout":
         if args.mode != "llm":
             sys.exit("The held-out suite has no reference plans: run it with --mode llm.")
         from eval.heldout_scenarios import HELDOUT_SCENARIOS
+
         scenarios = HELDOUT_SCENARIOS
         args.suffix = "_heldout" + args.suffix
 
@@ -351,6 +457,7 @@ def main():
     tag = args.mode
     if args.mode == "llm":
         from movie_agent.agent import BACKENDS, detect_provider
+
         tag = f"llm_{os.environ.get('MOVIE_AGENT_MODEL') or BACKENDS[detect_provider()].default_model}"
     tag += args.suffix
     out_dir = config.OUTPUT_DIR / f"transcripts_{tag}"
@@ -360,7 +467,7 @@ def main():
     runs = [(sc, r) for sc in scenarios if not args.only or sc["id"] == args.only for r in range(args.repeat)]
     for sc, rep in runs:
         tools.trace = []
-        tools.memory = MemoryStore(":memory:")          # isolated long-term memory per run
+        tools.memory = MemoryStore(":memory:")  # isolated long-term memory per run
         turns = run_scripted(tools, sc) if scripted else run_llm(tools, sc)
         checks, earlier, conv_trace, history = [], set(), [], []
         prev_user = sc["user_id"]
@@ -370,27 +477,69 @@ def main():
                 conv_trace, earlier = [], set()
             prev_user = uid
             conv_trace += rec["trace"]
-            c = check_turn(turn, rec["answer"], rec["trace"], conv_trace, earlier, tools, uid, scripted,
-                           history=history, memory_after=rec.get("memory_after"), usage=rec.get("usage"),
-                           max_call_tokens=rec.get("max_call_input_tokens"))
+            c = check_turn(
+                turn,
+                rec["answer"],
+                rec["trace"],
+                conv_trace,
+                earlier,
+                tools,
+                uid,
+                scripted,
+                history=history,
+                memory_after=rec.get("memory_after"),
+                usage=rec.get("usage"),
+                max_call_tokens=rec.get("max_call_input_tokens"),
+            )
             history.append({"recs_order": ordered_recs(rec["answer"], rec["trace"], tools, scripted)})
             if args.judge and not scripted:
                 c["judge"] = judge(rec)
             earlier |= set(recommended_in(rec["trace"]))
-            c.update(latency_s=rec.get("latency_s"), ttft_s=rec.get("ttft_s"), usage=rec.get("usage"),
-                     guardrail_revised=rec.get("revised"), context_messages=rec.get("context_messages"),
-                     max_call_input_tokens=rec.get("max_call_input_tokens"),
-                     memory_after=[(m["kind"], m["note"] or tools.data.label(m["movie_id"])) for m in rec.get("memory_after", [])])
+            c.update(
+                latency_s=rec.get("latency_s"),
+                ttft_s=rec.get("ttft_s"),
+                usage=rec.get("usage"),
+                guardrail_revised=rec.get("revised"),
+                context_messages=rec.get("context_messages"),
+                max_call_input_tokens=rec.get("max_call_input_tokens"),
+                memory_after=[
+                    (m["kind"], m["note"] or tools.data.label(m["movie_id"])) for m in rec.get("memory_after", [])
+                ],
+            )
             checks.append(c)
         name = sc["id"] + (f"_r{rep + 1}" if args.repeat > 1 else "")
         (out_dir / f"{name}.md").write_text(to_markdown(sc, turns, checks), encoding="utf-8")
-        summary.append({"id": sc["id"], "run": rep + 1, "user_id": sc["user_id"],
-                        "turns": [{"q": t["q"], **c} for t, c in zip(sc["turns"], checks)]})
-        print("PASS" if all(c["passed"] for c in checks) else "FAIL", name,
-              [("ok" if c["passed"] else {k: c[k] for k in ("arg_problems", "constraint_violations", "golden_hit",
-                                                            "text_check_ok", "memory_problems", *ISSUE_KEYS)
-                                          if c[k] not in ([], True, None)})
-               for c in checks])
+        summary.append(
+            {
+                "id": sc["id"],
+                "run": rep + 1,
+                "user_id": sc["user_id"],
+                "turns": [{"q": t["q"], **c} for t, c in zip(sc["turns"], checks)],
+            }
+        )
+        print(
+            "PASS" if all(c["passed"] for c in checks) else "FAIL",
+            name,
+            [
+                (
+                    "ok"
+                    if c["passed"]
+                    else {
+                        k: c[k]
+                        for k in (
+                            "arg_problems",
+                            "constraint_violations",
+                            "golden_hit",
+                            "text_check_ok",
+                            "memory_problems",
+                            *ISSUE_KEYS,
+                        )
+                        if c[k] not in ([], True, None)
+                    }
+                )
+                for c in checks
+            ],
+        )
 
     all_turns = [t for s in summary for t in s["turns"]]
     n = len(all_turns)
@@ -399,7 +548,11 @@ def main():
     for s in summary:
         by_scn[s["id"]].append(all(t["passed"] for t in s["turns"]))
     agg = {
-        "mode": args.mode, **RUN_INFO, "repeat": args.repeat, "n_scenario_runs": len(summary), "n_turns": n,
+        "mode": args.mode,
+        **RUN_INFO,
+        "repeat": args.repeat,
+        "n_scenario_runs": len(summary),
+        "n_turns": n,
         "turn_pass_rate": round(sum(t["passed"] for t in all_turns) / n, 3),
         "scenario_pass_rate": round(sum(all(t["passed"] for t in s["turns"]) for s in summary) / len(summary), 3),
         "tool_recall": round(sum(t["tool_recall_ok"] for t in all_turns) / n, 3),
@@ -426,7 +579,8 @@ def main():
         agg["ttft_p50_s"] = ttft[len(ttft) // 2]
     (config.OUTPUT_DIR / "eval").mkdir(parents=True, exist_ok=True)
     (config.OUTPUT_DIR / "eval" / f"scenarios_{tag}.json").write_text(
-        json.dumps({"aggregate": agg, "scenarios": summary}, indent=2, ensure_ascii=False), encoding="utf-8")
+        json.dumps({"aggregate": agg, "scenarios": summary}, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     print(json.dumps(agg, indent=2, ensure_ascii=False))
 
 

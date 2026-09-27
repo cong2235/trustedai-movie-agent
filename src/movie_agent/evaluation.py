@@ -25,7 +25,7 @@ def temporal_split(ratings: pd.DataFrame, test_frac: float = 0.2, min_test: int 
     MovieLens) are broken by movieId for determinism.
     """
     r = ratings.sort_values(["userId", "timestamp", "movieId"])
-    rank = r.groupby("userId").cumcount(ascending=False)       # 0 = most recent
+    rank = r.groupby("userId").cumcount(ascending=False)  # 0 = most recent
     n = r.groupby("userId")["movieId"].transform("size")
     n_test = np.maximum(min_test, np.floor(n * test_frac)).astype(int)
     is_test = rank < n_test

@@ -72,11 +72,18 @@ def main():
         lines.append(f"| {mood} | {len(rows)} | {recall:.2f} | {base:.2f} | {lift:.1f}x |")
 
     graded = {}
-    for name, tags, values in (("twist", TWIST_TAGS, np.where(known, attrs.twist, np.nan)), ("violence", VIOLENCE_TAGS, attrs.violence)):
+    for name, tags, values in (
+        ("twist", TWIST_TAGS, np.where(known, attrs.twist, np.nan)),
+        ("violence", VIOLENCE_TAGS, attrs.violence),
+    ):
         rows = rows_with(tags)
         ok = known & ~np.isnan(values)
-        g = {"n_tagged": int(len(rows)), "mean_grade_tagged": float(np.nanmean(values[rows])) if len(rows) else None,
-             "mean_grade_all": float(values[ok].mean()), "thresholds": {}}
+        g = {
+            "n_tagged": int(len(rows)),
+            "mean_grade_tagged": float(np.nanmean(values[rows])) if len(rows) else None,
+            "mean_grade_all": float(values[ok].mean()),
+            "thresholds": {},
+        }
         for t in (1, 2, 3):
             base = float((values[ok] >= t).mean())
             recall = float((values[rows] >= t).mean()) if len(rows) else float("nan")
@@ -85,13 +92,20 @@ def main():
         graded[name] = g
     result.update(graded)
 
-    md = ["# Movie attributes vs user tags", "",
-          f"{result['n_labelled']} of {result['n_catalogue']} movies labelled (the rest have an unreliable plot). "
-          "Tags were never shown to the extractor. Recall = share of tagged movies that got the attribute; lift = "
-          "recall / base rate. Precision is not measurable (a missing tag does not mean a missing attribute).", ""]
+    md = [
+        "# Movie attributes vs user tags",
+        "",
+        f"{result['n_labelled']} of {result['n_catalogue']} movies labelled (the rest have an unreliable plot). "
+        "Tags were never shown to the extractor. Recall = share of tagged movies that got the attribute; lift = "
+        "recall / base rate. Precision is not measurable (a missing tag does not mean a missing attribute).",
+        "",
+    ]
     md += lines
-    md += ["", f"Mean twist grade: tagged {graded['twist']['mean_grade_tagged']:.2f} vs all {graded['twist']['mean_grade_all']:.2f}. "
-               f"Mean violence grade: tagged {graded['violence']['mean_grade_tagged']:.2f} vs all {graded['violence']['mean_grade_all']:.2f}."]
+    md += [
+        "",
+        f"Mean twist grade: tagged {graded['twist']['mean_grade_tagged']:.2f} vs all {graded['twist']['mean_grade_all']:.2f}. "
+        f"Mean violence grade: tagged {graded['violence']['mean_grade_tagged']:.2f} vs all {graded['violence']['mean_grade_all']:.2f}.",
+    ]
     out = config.OUTPUT_DIR / "eval"
     (out / "attributes_eval.md").write_text("\n".join(md), encoding="utf-8")
     (out / "attributes_eval.json").write_text(json.dumps(result, indent=2), encoding="utf-8")

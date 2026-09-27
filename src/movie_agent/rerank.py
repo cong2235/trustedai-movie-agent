@@ -15,7 +15,7 @@ re-ranker glitch cannot throw away a strong first-stage match. Every call is tim
 from __future__ import annotations
 
 import hashlib
-import json     
+import json
 import os
 import time
 from dataclasses import dataclass, field
@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from . import config
-from .content import _chunks 
+from .content import _chunks
 from .data import MovieData
 
 
@@ -32,8 +32,11 @@ def candidate_text(data: MovieData, movie_id: int, plot_chars: int = 600, show_t
     row = data.movies.loc[movie_id]
     tags = ", ".join(data.movie_tags.get(movie_id, [])[:8]) if show_tags else ""
     plot = row["plot"][:plot_chars] if row["plot_ok"] else "(plot unavailable)"
-    return (f"{row['display']} ({row['year']}) | genres: {', '.join(row['genres'])}"
-            + (f" | tags: {tags}" if tags else "") + f" | plot: {plot}")
+    return (
+        f"{row['display']} ({row['year']}) | genres: {', '.join(row['genres'])}"
+        + (f" | tags: {tags}" if tags else "")
+        + f" | plot: {plot}"
+    )
 
 
 def _z(x: np.ndarray) -> np.ndarray:
@@ -41,9 +44,9 @@ def _z(x: np.ndarray) -> np.ndarray:
 
 
 @dataclass
-class RerankResult: 
-    order: list[int]                 # movie ids, best first
-    scores: dict[int, float]         # raw re-ranker score per movie id
+class RerankResult:
+    order: list[int]  # movie ids, best first
+    scores: dict[int, float]  # raw re-ranker score per movie id
     ms: int
     kind: str
     error: str | None = None
@@ -58,7 +61,7 @@ class NoRerank:
 
 
 class _Blend:
-    blend = 0.7        # weight on the re-ranker vs the first stage (z-scored within the pool)
+    blend = 0.7  # weight on the re-ranker vs the first stage (z-scored within the pool)
     show_tags = True
 
     def _finish(self, movie_ids, first_stage, raw: dict[int, float], t0: float, error=None) -> RerankResult:
@@ -79,6 +82,7 @@ class CrossEncoderRerank(_Blend):
         t0 = time.time()
         if self._model is None:
             from sentence_transformers import CrossEncoder
+
             self._model = CrossEncoder(config.CROSS_ENCODER_MODEL)
         pairs = []
         for m in movie_ids:
@@ -97,9 +101,10 @@ Return JSON: {"scores": [[<candidate id>, <0-10>], ...]} covering every candidat
 @dataclass
 class LLMRerank(_Blend):
     """Listwise LLM re-ranker. Output format was measured (30 queries, tags hidden, gpt-4o-mini):
-        {"id":.., "score":..} objects, plot 600 chars   NDCG topic 0.422 / tone 0.117, 3.8 s
-        bare score array in candidate order             0.294 / 0.067, 1.8 s  (the model loses its place)
-        [id, score] pairs, plot 400 chars  (shipped)    0.429 / 0.124, 2.3 s"""
+    {"id":.., "score":..} objects, plot 600 chars   NDCG topic 0.422 / tone 0.117, 3.8 s
+    bare score array in candidate order             0.294 / 0.067, 1.8 s  (the model loses its place)
+    [id, score] pairs, plot 400 chars  (shipped)    0.429 / 0.124, 2.3 s"""
+
     kind: str = "llm"
     model: str = config.LLM_RERANK_MODEL
     plot_chars: int = 400
@@ -112,24 +117,36 @@ class LLMRerank(_Blend):
 
     def rerank(self, query, movie_ids, first_stage, data) -> RerankResult:
         t0 = time.time()
-        key = hashlib.sha1(f"v3|{self.model}|{self.show_tags}|{self.plot_chars}|{query}|{movie_ids}".encode()).hexdigest()
+        key = hashlib.sha1(
+            f"v3|{self.model}|{self.show_tags}|{self.plot_chars}|{query}|{movie_ids}".encode()
+        ).hexdigest()
         if key in self._cache:
             raw = {int(k): v for k, v in self._cache[key].items()}
             res = self._finish(movie_ids, first_stage, raw, t0)
-            res.kind = "llm-cache"      # monitored separately: cache hits must not flatter the latency SLO
+            res.kind = "llm-cache"  # monitored separately: cache hits must not flatter the latency SLO
             return res
-        listing = "\n".join(f"[{i}] {candidate_text(data, m, self.plot_chars, self.show_tags)}"
-                            for i, m in enumerate(movie_ids))
+        listing = "\n".join(
+            f"[{i}] {candidate_text(data, m, self.plot_chars, self.show_tags)}" for i, m in enumerate(movie_ids)
+        )
         try:
             resp = _openai_client().chat.completions.create(
-                model=self.model, temperature=0, response_format={"type": "json_object"}, max_tokens=500,
-                messages=[{"role": "system", "content": LLM_RERANK_PROMPT},
-                          {"role": "user", "content": f"Request: {query}\n\n{len(movie_ids)} candidates:\n{listing}"}])
+                model=self.model,
+                temperature=0,
+                response_format={"type": "json_object"},
+                max_tokens=500,
+                messages=[
+                    {"role": "system", "content": LLM_RERANK_PROMPT},
+                    {"role": "user", "content": f"Request: {query}\n\n{len(movie_ids)} candidates:\n{listing}"},
+                ],
+            )
             pairs = json.loads(resp.choices[0].message.content)["scores"]
-            raw = {movie_ids[int(p[0])]: float(p[1]) for p in pairs
-                   if isinstance(p, list) and len(p) == 2 and str(p[0]).isdigit() and int(p[0]) < len(movie_ids)}
+            raw = {
+                movie_ids[int(p[0])]: float(p[1])
+                for p in pairs
+                if isinstance(p, list) and len(p) == 2 and str(p[0]).isdigit() and int(p[0]) < len(movie_ids)
+            }
             error = None if len(raw) == len(movie_ids) else f"scored {len(raw)} of {len(movie_ids)} candidates"
-        except Exception as e:           # never fail the user's request because the re-ranker failed
+        except Exception as e:  # never fail the user's request because the re-ranker failed
             return self._finish(movie_ids, first_stage, {}, t0, error=f"{type(e).__name__}: {e}"[:200])
         self._cache[key] = raw
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -145,6 +162,7 @@ def _openai_client():
     spikes of 19-27 s were observed in testing; past 8 s the request falls back to the stage-1 order."""
     if "c" not in _CLIENT:
         import openai
+
         _CLIENT["c"] = openai.OpenAI(timeout=config.RERANK_TIMEOUT_S, max_retries=1)
     return _CLIENT["c"]
 
@@ -152,5 +170,5 @@ def _openai_client():
 def get_reranker(kind: str | None = None):
     kind = kind or config.RERANKER
     if kind == "llm" and not os.environ.get("OPENAI_API_KEY"):
-        kind = "cross"        # the LLM re-ranker uses OpenAI; degrade gracefully without a key
+        kind = "cross"  # the LLM re-ranker uses OpenAI; degrade gracefully without a key
     return {"none": NoRerank, "cross": CrossEncoderRerank, "llm": LLMRerank}[kind]()

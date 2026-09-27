@@ -25,7 +25,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from movie_agent import config  # noqa: E402
 from movie_agent.attributes import ATTRIBUTES_PATH, MOODS  # noqa: E402
 from movie_agent.data import MovieData  # noqa: E402
 from movie_agent.telemetry import cost_usd  # noqa: E402
@@ -59,8 +58,11 @@ def movie_text(row) -> str:
 def label_batch(client, batch: list[tuple[int, str]]) -> tuple[list[dict], dict]:
     listing = "\n\n".join(f"[{mid}] {text}" for mid, text in batch)
     resp = client.chat.completions.create(
-        model=MODEL, temperature=0, response_format={"type": "json_object"},
-        messages=[{"role": "system", "content": PROMPT}, {"role": "user", "content": listing}])
+        model=MODEL,
+        temperature=0,
+        response_format={"type": "json_object"},
+        messages=[{"role": "system", "content": PROMPT}, {"role": "user", "content": listing}],
+    )
     wanted = {mid for mid, _ in batch}
     out = []
     for item in json.loads(resp.choices[0].message.content).get("movies", []):
@@ -75,10 +77,17 @@ def label_batch(client, batch: list[tuple[int, str]]) -> tuple[list[dict], dict]
         evidence = str(item.get("twist_evidence") or "").strip()
         twist = item.get("twist")
         twist = int(twist) if isinstance(twist, (int, float)) and 0 <= twist <= 3 else 0
-        if twist >= 2 and not evidence:        # a reveal claimed without quoting the plot is downgraded
+        if twist >= 2 and not evidence:  # a reveal claimed without quoting the plot is downgraded
             twist = 1
-        out.append({"movie_id": mid, "moods": moods, "twist": twist, "twist_evidence": evidence[:200] if twist >= 2 else "",
-                    "violence": int(violence) if isinstance(violence, (int, float)) and 0 <= violence <= 3 else None})
+        out.append(
+            {
+                "movie_id": mid,
+                "moods": moods,
+                "twist": twist,
+                "twist_evidence": evidence[:200] if twist >= 2 else "",
+                "violence": int(violence) if isinstance(violence, (int, float)) and 0 <= violence <= 3 else None,
+            }
+        )
     usage = {"in": resp.usage.prompt_tokens, "out": resp.usage.completion_tokens}
     return out, usage
 
@@ -90,15 +99,20 @@ def main():
     args = ap.parse_args()
 
     import openai
+
     client = openai.OpenAI(timeout=60.0, max_retries=3)
     data = MovieData.load()
     ATTRIBUTES_PATH.parent.mkdir(parents=True, exist_ok=True)
     done = set()
-    if ATTRIBUTES_PATH.exists():                       # resumable: keep what is already labelled
-        done = {json.loads(line)["movie_id"] for line in ATTRIBUTES_PATH.read_text(encoding="utf-8").splitlines() if line}
-    todo = [(int(mid), movie_text(row)) for mid, row in data.movies.iterrows() if row["plot_ok"] and int(mid) not in done]
-    todo = todo[:args.limit] if args.limit else todo
-    batches = [todo[i:i + BATCH] for i in range(0, len(todo), BATCH)]
+    if ATTRIBUTES_PATH.exists():  # resumable: keep what is already labelled
+        done = {
+            json.loads(line)["movie_id"] for line in ATTRIBUTES_PATH.read_text(encoding="utf-8").splitlines() if line
+        }
+    todo = [
+        (int(mid), movie_text(row)) for mid, row in data.movies.iterrows() if row["plot_ok"] and int(mid) not in done
+    ]
+    todo = todo[: args.limit] if args.limit else todo
+    batches = [todo[i : i + BATCH] for i in range(0, len(todo), BATCH)]
     print(f"{len(done)} already labelled, {len(todo)} to go in {len(batches)} calls")
 
     t0, tokens, n_done, missing = time.time(), {"in": 0, "out": 0}, 0, 0
@@ -107,7 +121,7 @@ def main():
         for fut in as_completed(futures):
             try:
                 rows, usage = fut.result()
-            except Exception as e:                     # a failed batch is simply picked up by the next run
+            except Exception as e:  # a failed batch is simply picked up by the next run
                 print(f"batch failed: {type(e).__name__}: {e}"[:200])
                 continue
             for r in rows:
@@ -118,9 +132,11 @@ def main():
             tokens = {k: tokens[k] + usage[k] for k in tokens}
             if n_done % 500 < BATCH:
                 print(f"  {n_done}/{len(todo)}  {time.time() - t0:.0f}s")
-    print(f"labelled {n_done}, missing from replies {missing} (re-run to fill), "
-          f"tokens in/out {tokens['in']}/{tokens['out']}, cost ${cost_usd(MODEL, tokens['in'], tokens['out']):.2f}, "
-          f"{time.time() - t0:.0f}s")
+    print(
+        f"labelled {n_done}, missing from replies {missing} (re-run to fill), "
+        f"tokens in/out {tokens['in']}/{tokens['out']}, cost ${cost_usd(MODEL, tokens['in'], tokens['out']):.2f}, "
+        f"{time.time() - t0:.0f}s"
+    )
 
 
 if __name__ == "__main__":

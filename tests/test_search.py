@@ -153,3 +153,32 @@ def test_relevance_modes_agree_on_an_obvious_query(content, data):
     for mode in ("dense", "lexical", "hybrid"):
         top = np.argsort(-content.relevance("documentary", mode=mode))[:20]
         assert is_doc[top].mean() > 0.9, mode
+
+
+def test_already_seen_is_excluded_and_remembered(tools):
+    heat, casino = tools.resolve("Heat"), tools.resolve("Casino")
+    out = tools.recommend_movies(n=10, include_genres=["Crime"], already_seen=["Heat", "Casino"])
+    ids = {r["movie_id"] for r in out["recommendations"]}
+    assert not {heat, casino} & ids
+    assert set(out["remembered_as_seen"]) == {"Heat (1995)", "Casino (1995)"}
+    assert {heat, casino} <= tools.memory.excluded_movie_ids(USER)  # survives into later sessions
+
+
+def test_already_seen_reports_titles_it_cannot_resolve(tools):
+    out = tools.search_movies("a crime film", n=3, already_seen=["The Matrix"])
+    assert out["already_seen_not_resolved"][0]["title"] == "The Matrix"
+    assert not tools.memory.list(USER)  # nothing wrong was stored
+
+
+def test_quality_floor_uses_the_raw_mean(tools):
+    maid = tools.resolve("Maid to Order")  # 3 ratings, mean 1.83, but Bayesian mean ~3.1
+    row = tools.cf.m_index[maid]
+    assert not tools.rec.quality_ok(2.75)[row]
+    unrated = int(np.argmin(tools.data.movie_stats["count"].to_numpy()))
+    assert tools.rec.quality_ok(2.75)[unrated]  # too few ratings to judge: passes
+    out = tools.search_movies("a funny comedy", n=15)
+    stats = tools.data.movie_stats
+    for r in out["results"]:
+        st = stats.loc[r["movie_id"]]
+        assert st["count"] < 3 or st["mean"] >= 2.75
+    assert out["results"] and all(r["movie_id"] != maid for r in out["results"])

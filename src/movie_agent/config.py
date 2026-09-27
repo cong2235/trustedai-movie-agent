@@ -41,6 +41,14 @@ BAYES_PRIOR_COUNT = 10  # pseudo-ratings pulling small-sample means to the globa
 
 TITLE_MATCH_CONFIDENT = 90  # fuzzy title score above which we accept the top hit
 
+# --- Quality floor ----------------------------------------------------------
+# Movies with at least QUALITY_FLOOR_MIN_COUNT ratings and a raw mean below QUALITY_FLOOR_MEAN are not recommended
+# unless the caller lowers the floor. The raw mean, not the Bayesian one: shrinkage toward the global mean lifts a
+# 1.83-star film with 3 ratings to 3.1, which is how "Maid to Order" reached a held-out answer.
+# Movies with fewer ratings pass (unknown quality). Impact: scripts/evaluate_quality_floor.py.
+QUALITY_FLOOR_MEAN = 2.75
+QUALITY_FLOOR_MIN_COUNT = 3
+
 # --- Collaborative filtering -----------------------------------------------
 MIN_CO_RATED = 3  # minimum overlap to compute a user-user similarity at all
 USER_SIM_SHRINK = 10  # sim *= n / (n + shrink): damp similarities built on few co-ratings

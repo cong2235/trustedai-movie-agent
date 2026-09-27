@@ -206,6 +206,33 @@ class MovieTools:
     def _attribute_card(self, movie_id: int) -> dict | None:
         return self.attributes.card(self.cf.m_index[movie_id]) if self.attributes is not None else None
 
+    def _store_seen(self, uid: int | None, titles: list[str] | None) -> tuple[list[int], list[dict]]:
+        """'I've already watched Heat and Casino': exclude them now AND remember them, in the same call.
+
+        Held-out finding: given only exclude_titles, the model excluded the movies for one request and never called
+        remember, so a later session could suggest them again. Taking the fact as an argument of the recommendation
+        itself means the correct behaviour no longer depends on a second tool call. Titles that do not resolve are
+        reported back instead of failing the whole request."""
+        stored, problems = [], []
+        for title in titles or []:
+            try:
+                mid = self.resolve(title)
+            except ToolError as e:
+                problems.append({"title": title, "error": str(e), **e.details})
+                continue
+            if uid is not None:
+                self.memory.add(uid, "seen", mid, None)
+            stored.append(mid)
+        return stored, problems
+
+    def _seen_report(self, seen_now: list[int], not_stored: list[dict]) -> dict:
+        out = {}
+        if seen_now:
+            out["remembered_as_seen"] = [self.data.label(m) for m in seen_now]
+        if not_stored:
+            out["already_seen_not_resolved"] = not_stored
+        return out
+
     def _memory_excluded(self, uid: int) -> list[int]:
         return sorted(self.memory.excluded_movie_ids(uid))
 
@@ -395,6 +422,8 @@ class MovieTools:
         moods: list[str] | None = None,
         twist_ending: bool = False,
         max_violence: int | None = None,
+        already_seen: list[str] | None = None,
+        min_avg_rating: float = config.QUALITY_FLOOR_MEAN,
         allow_repeats: bool = False,  # internal only: not in the LLM schema (see TOOL_SCHEMAS)
         user_id: int | None = None,
     ) -> dict:
@@ -402,7 +431,8 @@ class MovieTools:
         anchors = [self.resolve(t) for t in (more_like or [])]
         # "more like X" must never return X itself (found by the memory test suite: it did whenever the user had
         # not rated X, e.g. "something like The Machinist" -> The Machinist)
-        excluded = [self.resolve(t) for t in (exclude_titles or [])] + anchors
+        seen_now, not_stored = self._store_seen(uid, already_seen)
+        excluded = [self.resolve(t) for t in (exclude_titles or [])] + anchors + seen_now
         if not allow_repeats:
             excluded += self.session.suggested
         excluded += self._memory_excluded(uid)  # seen / dismissed / disliked in earlier sessions
@@ -418,6 +448,7 @@ class MovieTools:
             min_year=min_year,
             max_year=max_year,
             min_ratings=min_ratings,
+            min_avg_rating=min_avg_rating,
             exclude_movie_ids=excluded,
             anchor_movie_ids=anchors or None,
             query_relevance=rel,
@@ -444,10 +475,12 @@ class MovieTools:
                     moods=moods,
                     twist_ending=twist_ending or None,
                     max_violence=max_violence,
+                    min_avg_rating=min_avg_rating,
                     genres_avoided_from_memory=avoided,
                 ).items()
                 if v
             },
+            **self._seen_report(seen_now, not_stored),
             "excluded_already_suggested": 0 if allow_repeats else len(self.session.suggested) - len(recs),
             "recommendations": recs,
             "note": "signal_breakdown_z = top ranking drivers (item_knn: co-rating with your movies; user_knn: "
@@ -467,6 +500,8 @@ class MovieTools:
         moods: list[str] | None = None,
         twist_ending: bool = False,
         max_violence: int | None = None,
+        already_seen: list[str] | None = None,
+        min_avg_rating: float = config.QUALITY_FLOOR_MEAN,
     ) -> dict:
         """Free-text search over plots/tags, re-ranked by quality (and the user's taste if known)."""
         if self.content is None:
@@ -481,15 +516,20 @@ class MovieTools:
             score = score + config.ATTRIBUTE_WEIGHT * _z(attr_match, all_mask)
         uid = self.session.user_id if personalize else None
         seen = np.zeros(len(rel), dtype=bool)
+        seen_now, not_stored = self._store_seen(self.session.user_id, already_seen)
+        for m in seen_now:
+            seen[self.cf.m_index[m]] = True
         if uid is not None:
             exclude_genres, _ = self._with_avoided_genres(uid, include_genres, exclude_genres)
-            seen = self.cf.rated_mask(uid)
+            seen |= self.cf.rated_mask(uid)
             for m in self._memory_excluded(uid):
                 seen[self.cf.m_index[m]] = True
             taste = _z(self.rec.taste_vector_scores(uid), ~seen)
             score = score + 0.3 * taste
         mask = (
-            self.rec._constraint_mask(include_genres, exclude_genres, min_year, max_year, min_ratings, None)
+            self.rec._constraint_mask(
+                include_genres, exclude_genres, min_year, max_year, min_ratings, None, min_avg_rating
+            )
             & ~seen
             & violence_ok
         )
@@ -534,6 +574,7 @@ class MovieTools:
                 **({"error": rr.error} if rr.error else {}),
             },
             "results": results,
+            **self._seen_report(seen_now, not_stored),
             "note": "Stage 1: plot/tag relevance + 0.35*quality z + 0.3*taste z. Stage 2: re-ranker fit score "
             "(0-10, judges tone/structure from title, tags and plot excerpt) blended 0.7/0.3 with stage 1. "
             "Confirm claims like 'has a twist' from the excerpt or tags.",
@@ -735,6 +776,19 @@ _attribute_args = {
     },
 }
 _genre_list = {"type": "array", "items": {"type": "string"}, "description": f"Genres from: {_GENRES}."}
+_request_args = {
+    "already_seen": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Movies the user says they have already watched. They are excluded now AND remembered as "
+        "seen for future sessions, so no separate remember call is needed for them.",
+    },
+    "min_avg_rating": {
+        "type": "number",
+        "description": f"Quality floor on the average rating of movies with enough ratings. Default "
+        f"{config.QUALITY_FLOOR_MEAN}; set 0 only if the user asks for obscure, cult or 'so bad it is good' films.",
+    },
+}
 _user = {"type": "integer", "description": "Defaults to the current session user; only set to inspect someone else."}
 
 TOOL_SCHEMAS = [
@@ -803,7 +857,12 @@ TOOL_SCHEMAS = [
                     "'something like X' - it is the only way results will resemble X (genre filters "
                     "alone just return the user's generic favourites).",
                 },
-                "exclude_titles": {"type": "array", "items": {"type": "string"}},
+                "exclude_titles": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Skip these for this request only. Movies already watched go in already_seen.",
+                },
+                **_request_args,
                 "mood_or_description": {
                     "type": "string",
                     "description": "Free-text vibe, e.g. 'feel-good heist comedy'.",
@@ -839,6 +898,7 @@ TOOL_SCHEMAS = [
                     "description": "Blend in the user's taste and hide movies they rated. Default true.",
                 },
                 **_attribute_args,
+                **_request_args,
             },
             "required": ["query"],
         },

@@ -109,6 +109,7 @@ class Recommender:
         min_year: int | None = None,
         max_year: int | None = None,
         min_ratings: int = 0,
+        min_avg_rating: float | None = None,
         exclude_movie_ids: list[int] | None = None,
         anchor_movie_ids: list[int] | None = None,
         query_relevance: np.ndarray | None = None,
@@ -125,7 +126,7 @@ class Recommender:
         """
         total, zs, cand = self.score(user_id)
         mask = cand & self._constraint_mask(
-            include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_movie_ids
+            include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_movie_ids, min_avg_rating
         )
         if not mask.any():
             return []
@@ -187,7 +188,9 @@ class Recommender:
             .to_numpy(dtype=np.float32)
         )
 
-    def _constraint_mask(self, include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_ids):
+    def _constraint_mask(
+        self, include_genres, exclude_genres, min_year, max_year, min_ratings, exclude_ids, min_avg_rating=None
+    ):
         movies = self.data.movies
         mask = np.ones(len(movies), dtype=bool)
         genres = movies["genres"]
@@ -203,11 +206,19 @@ class Recommender:
             mask &= movies["year"].to_numpy() <= max_year
         if min_ratings:
             mask &= self.data.movie_stats["count"].to_numpy() >= min_ratings
+        if min_avg_rating:
+            mask &= self.quality_ok(min_avg_rating)
         if exclude_ids:
             for m in exclude_ids:
                 if m in self.cf.m_index:
                     mask[self.cf.m_index[m]] = False
         return mask
+
+    def quality_ok(self, min_avg_rating: float) -> np.ndarray:
+        """Movies that clear the floor: enough ratings with a mean at or above it, or too few ratings to judge."""
+        stats = self.data.movie_stats
+        judged = stats["count"].to_numpy() >= config.QUALITY_FLOOR_MIN_COUNT
+        return ~judged | (stats["mean"].to_numpy() >= min_avg_rating)
 
     def _mmr(self, order: list[int], score: np.ndarray, n: int, lam: float = 0.8) -> list[int]:
         """Maximal Marginal Relevance on plot embeddings: avoid 5 sequels of the same franchise."""

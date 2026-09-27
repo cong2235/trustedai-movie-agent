@@ -213,17 +213,26 @@ class MovieTools:
         remember, so a later session could suggest them again. Taking the fact as an argument of the recommendation
         itself means the correct behaviour no longer depends on a second tool call. Titles that do not resolve are
         reported back instead of failing the whole request."""
-        stored, problems = [], []
+        stored, problems = self._resolve_all(titles)
+        if uid is not None:
+            for mid in stored:
+                self.memory.add(uid, "seen", mid, None)
+        return stored, problems
+
+    def _resolve_all(self, titles: list[str] | None) -> tuple[list[int], list[dict]]:
+        """Resolve several titles, reporting the ones that fail instead of failing the whole request.
+
+        Held-out v2 finding: "I've seen Inception and Interstellar" -> exclude_titles=["Inception", "Interstellar"].
+        Interstellar is not in the dataset, resolve() raised, the whole recommend call failed and the model answered
+        from the user's rating history instead. A title outside the catalogue can never be recommended, so skipping
+        it is safe; an ambiguous one is reported with its candidates."""
+        ids, problems = [], []
         for title in titles or []:
             try:
-                mid = self.resolve(title)
+                ids.append(self.resolve(title))
             except ToolError as e:
                 problems.append({"title": title, "error": str(e), **e.details})
-                continue
-            if uid is not None:
-                self.memory.add(uid, "seen", mid, None)
-            stored.append(mid)
-        return stored, problems
+        return ids, problems
 
     def _seen_report(self, seen_now: list[int], not_stored: list[dict]) -> dict:
         out = {}
@@ -432,7 +441,8 @@ class MovieTools:
         # "more like X" must never return X itself (found by the memory test suite: it did whenever the user had
         # not rated X, e.g. "something like The Machinist" -> The Machinist)
         seen_now, not_stored = self._store_seen(uid, already_seen)
-        excluded = [self.resolve(t) for t in (exclude_titles or [])] + anchors + seen_now
+        skipped, not_skipped = self._resolve_all(exclude_titles)
+        excluded = skipped + anchors + seen_now
         if not allow_repeats:
             excluded += self.session.suggested
         excluded += self._memory_excluded(uid)  # seen / dismissed / disliked in earlier sessions
@@ -440,22 +450,36 @@ class MovieTools:
         rel = self.content.relevance(mood_or_description) if (mood_or_description and self.content) else None
         attr_match, violence_ok = self._attribute_request(moods, twist_ending, max_violence)
         excluded += [int(m) for m in self.cf.movie_ids[~violence_ok]]
-        recs = self.rec.recommend(
-            uid,
-            n=max(1, min(int(n), 10)),
-            include_genres=include_genres,
-            exclude_genres=exclude_genres,
-            min_year=min_year,
-            max_year=max_year,
-            min_ratings=min_ratings,
-            min_avg_rating=min_avg_rating,
-            exclude_movie_ids=excluded,
-            anchor_movie_ids=anchors or None,
-            query_relevance=rel,
-            attribute_relevance=attr_match,
-            rerank_query=mood_or_description,
-            reranker=self.reranker,
-        )
+
+        def run(floor):
+            return self.rec.recommend(
+                uid,
+                n=max(1, min(int(n), 10)),
+                include_genres=include_genres,
+                exclude_genres=exclude_genres,
+                min_year=min_year,
+                max_year=max_year,
+                min_ratings=min_ratings,
+                min_avg_rating=floor,
+                exclude_movie_ids=excluded,
+                anchor_movie_ids=anchors or None,
+                query_relevance=rel,
+                attribute_relevance=attr_match,
+                rerank_query=mood_or_description,
+                reranker=self.reranker,
+            )
+
+        recs, floor_note = run(min_avg_rating), None
+        if not recs and min_avg_rating:
+            # The floor is a default, not something the user asked for. When it alone leaves nothing (held-out:
+            # "a war film before 1960" for a user who had rated all but one, which averages 2.5), show what exists and
+            # say it is below the usual bar instead of claiming there is nothing.
+            recs = run(None)
+            if recs:
+                floor_note = (
+                    f"Nothing met the constraints at the usual quality floor (average >= {min_avg_rating}); "
+                    "these fall below it. Tell the user."
+                )
         for r in recs:
             if (card := self._attribute_card(r["movie_id"])) is not None:
                 r["attributes"] = card
@@ -481,6 +505,8 @@ class MovieTools:
                 if v
             },
             **self._seen_report(seen_now, not_stored),
+            **({"exclude_titles_not_found": not_skipped} if not_skipped else {}),
+            **({"quality_floor_relaxed": floor_note} if floor_note else {}),
             "excluded_already_suggested": 0 if allow_repeats else len(self.session.suggested) - len(recs),
             "recommendations": recs,
             "note": "signal_breakdown_z = top ranking drivers (item_knn: co-rating with your movies; user_knn: "
@@ -526,13 +552,22 @@ class MovieTools:
                 seen[self.cf.m_index[m]] = True
             taste = _z(self.rec.taste_vector_scores(uid), ~seen)
             score = score + 0.3 * taste
-        mask = (
-            self.rec._constraint_mask(
-                include_genres, exclude_genres, min_year, max_year, min_ratings, None, min_avg_rating
+
+        def allowed(floor):
+            return (
+                self.rec._constraint_mask(include_genres, exclude_genres, min_year, max_year, min_ratings, None, floor)
+                & ~seen
+                & violence_ok
             )
-            & ~seen
-            & violence_ok
-        )
+
+        mask, floor_note = allowed(min_avg_rating), None
+        if not mask.any() and min_avg_rating:  # the default floor alone left nothing: relax it and say so
+            mask = allowed(None)
+            if mask.any():
+                floor_note = (
+                    f"Nothing met the constraints at the usual quality floor (average >= {min_avg_rating}); "
+                    "these fall below it. Tell the user."
+                )
         n = max(1, min(int(n), 15))
         # stage 1: recall-oriented pool; stage 2: re-rank the pool for fit, including tone and structure
         pool = [i for i in np.argsort(-np.where(mask, score, -np.inf))[: max(config.RERANK_POOL, n)] if mask[i]]
@@ -575,6 +610,7 @@ class MovieTools:
             },
             "results": results,
             **self._seen_report(seen_now, not_stored),
+            **({"quality_floor_relaxed": floor_note} if floor_note else {}),
             "note": "Stage 1: plot/tag relevance + 0.35*quality z + 0.3*taste z. Stage 2: re-ranker fit score "
             "(0-10, judges tone/structure from title, tags and plot excerpt) blended 0.7/0.3 with stage 1. "
             "Confirm claims like 'has a twist' from the excerpt or tags.",

@@ -182,3 +182,21 @@ def test_quality_floor_uses_the_raw_mean(tools):
         st = stats.loc[r["movie_id"]]
         assert st["count"] < 3 or st["mean"] >= 2.75
     assert out["results"] and all(r["movie_id"] != maid for r in out["results"])
+
+
+def test_absent_title_in_exclude_titles_does_not_fail_the_request(tools):
+    # held-out v2: "I've seen Inception and Interstellar" -> Interstellar is not in the dataset
+    out = tools.recommend_movies(n=5, include_genres=["Sci-Fi"], exclude_titles=["Inception", "Interstellar"])
+    assert out["recommendations"]
+    assert [p["title"] for p in out["exclude_titles_not_found"]] == ["Interstellar"]
+    assert tools.resolve("Inception") not in {r["movie_id"] for r in out["recommendations"]}
+
+
+def test_quality_floor_is_relaxed_and_flagged_when_it_leaves_nothing(tools):
+    # held-out v1 re-run: user 474 has rated every pre-1960 war film except one that averages 2.5
+    tools.set_user(474)
+    out = tools.recommend_movies(n=3, include_genres=["War"], max_year=1959)
+    assert [r["title"] for r in out["recommendations"]] == ["To Be or Not to Be (1942)"]
+    assert "below" in out["quality_floor_relaxed"]
+    strict = tools.recommend_movies(n=3, include_genres=["Comedy"])
+    assert "quality_floor_relaxed" not in strict  # normal requests are untouched

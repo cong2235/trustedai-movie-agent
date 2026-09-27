@@ -2,9 +2,9 @@
 
 **User:** Please remember that I don't like horror movies.
 
-<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "Horror"})</summary>
+<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "Horror", "scope": "lasting"})</summary>
 
-`remember` (0 ms) ->
+`remember` (1 ms) ->
 ```json
 {
  "ok": true,
@@ -30,7 +30,7 @@ Noted (avoid_genre): Horror - Horror movies are excluded from future recommendat
 
 <details><summary>Tool calls: recommend_movies({"n": 4})</summary>
 
-`recommend_movies` (78 ms) ->
+`recommend_movies` (56 ms) ->
 ```json
 {
  "user_id": 30,
@@ -191,7 +191,7 @@ Recommendations:
    "kind": "avoid_genre",
    "movie_id": null,
    "note": "Horror",
-   "created_ts": 1790327834.4193249,
+   "created_ts": 1790477743.4751754,
    "movie": null
   }
  ]
@@ -201,7 +201,13 @@ Recommendations:
 ```json
 {
  "ok": true,
- "memory_id": 1
+ "removed": [
+  {
+   "kind": "avoid_genre",
+   "what": "Horror"
+  }
+ ],
+ "note": null
 }
 ```
 </details>
@@ -221,7 +227,7 @@ Forgotten.
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "include_genres": ["Horror"]})</summary>
 
-`recommend_movies` (51 ms) ->
+`recommend_movies` (42 ms) ->
 ```json
 {
  "user_id": 30,

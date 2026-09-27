@@ -31,7 +31,7 @@ latency and cost. The full write-up is in [REPORT.md](REPORT.md).
 Requires Python 3.10+ (developed on 3.14, Windows, CPU only).
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt && pip install -e . --no-deps   # exact versions used: requirements-lock.txt
 cp .env.example .env                       # add OPENAI_API_KEY (and/or ANTHROPIC_API_KEY)
 python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
@@ -44,8 +44,8 @@ python -m pytest -q tests                  # 93 tests, offline (no API calls)
 ```bash
 python app/serve.py                         # web UI (warms models at start): Chat + Monitor  → http://localhost:8501
 docker compose up -d --build                # same, in a container (see Dockerfile / docker-compose.yml)
-cd src && python -m movie_agent.cli --user 15            # terminal chat; /trace /good /bad /stats
-cd src && python -m movie_agent.cli --user 15 --no-llm   # tools only, no API key
+python -m movie_agent.cli --user 15                       # terminal chat; /trace /good /bad /stats
+python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
 python scripts/monitor.py --hours 24        # health report + SLO alerts (exit code 1 on breach, cron-friendly)
 ```
 

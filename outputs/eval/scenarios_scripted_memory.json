@@ -70,6 +70,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -98,6 +99,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -126,6 +128,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -154,6 +157,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -193,6 +197,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -225,6 +230,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -256,6 +262,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -297,6 +304,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -325,6 +333,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -353,6 +362,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -381,6 +391,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -413,6 +424,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -446,6 +458,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -474,6 +487,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -500,6 +514,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -535,6 +550,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "avoid_genre",
@@ -573,6 +589,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "avoid_genre",
@@ -607,6 +624,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -639,6 +657,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -679,6 +698,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         },
         {
@@ -712,6 +732,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -747,6 +768,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "avoid_genre",
@@ -784,6 +806,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "avoid_genre",
@@ -824,6 +847,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "dismissed",
@@ -864,6 +888,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "dismissed",
@@ -902,6 +927,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": []
         }
       ]
@@ -937,6 +963,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "liked",
@@ -975,6 +1002,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "liked",
@@ -1015,6 +1043,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "seen",
@@ -1055,6 +1084,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "seen",
@@ -1088,6 +1118,7 @@
           "usage": null,
           "guardrail_revised": null,
           "context_messages": null,
+          "max_call_input_tokens": null,
           "memory_after": [
             [
               "seen",

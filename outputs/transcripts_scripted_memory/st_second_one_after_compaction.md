@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 4})</summary>
 
-`recommend_movies` (104 ms) ->
+`recommend_movies` (72 ms) ->
 ```json
 {
  "user_id": 15,
@@ -155,7 +155,7 @@ Recommendations:
 
 <details><summary>Tool calls: genre_blind_spots({})</summary>
 
-`genre_blind_spots` (83 ms) ->
+`genre_blind_spots` (47 ms) ->
 ```json
 {
  "user_id": 15,
@@ -173,18 +173,24 @@ Recommendations:
    "entry_points_liked_by_similar_users": [
     {
      "title": "Bottle Rocket (1996)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 3.78,
+     "n_ratings_all_users": 23
     },
     {
      "title": "Doctor Zhivago (1965)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 4.14,
+     "n_ratings_all_users": 21
     },
     {
      "title": "High Fidelity (2000)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 3.67,
+     "n_ratings_all_users": 75
     }
    ]
   },
@@ -200,18 +206,24 @@ Recommendations:
    "entry_points_liked_by_similar_users": [
     {
      "title": "Doctor Zhivago (1965)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 4.14,
+     "n_ratings_all_users": 21
     },
     {
      "title": "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb (1964)",
-     "similar_users_avg": 4.86,
-     "n_similar_users": 7
+     "avg_among_your_similar_users": 4.86,
+     "n_similar_users_who_rated_it": 7,
+     "avg_rating_all_users": 4.27,
+     "n_ratings_all_users": 97
     },
     {
      "title": "Lawrence of Arabia (1962)",
-     "similar_users_avg": 4.61,
-     "n_similar_users": 9
+     "avg_among_your_similar_users": 4.61,
+     "n_similar_users_who_rated_it": 9,
+     "avg_rating_all_users": 4.3,
+     "n_ratings_all_users": 45
     }
    ]
   },
@@ -227,24 +239,17 @@ Recommendations:
    "entry_points_liked_by_similar_users": [
     {
      "title": "Army of Darkness (1993)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 4
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 4,
+     "avg_rating_all_users": 4.04,
+     "n_ratings_all_users": 51
     },
     {
      "title": "Bottle Rocket (1996)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
-    },
-    {
-     "title": "Superstar (1999)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
-    }
-   ]
-  }
- ],
- "method": "genres where your share of ratings is <80% of the population's, ranked by exposure gap x how much your most similar users like the genre relative to their own average"
-}
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 3.78,
+     "n_rati
 ```
 </details>
 
@@ -261,7 +266,7 @@ Your blind spots:
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Inception"})</summary>
 
-`similar_users_opinion` (24 ms) ->
+`similar_users_opinion` (18 ms) ->
 ```json
 {
  "movie": "Inception (2010)",
@@ -348,7 +353,7 @@ Inception (2010): the 20 most similar users who rated it give it 4.36★ (simila
 
 <details><summary>Tool calls: explain_match({"movie": "110"})</summary>
 
-`explain_match` (39 ms) ->
+`explain_match` (28 ms) ->
 ```json
 {
  "movie_id": 110,

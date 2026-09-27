@@ -2,9 +2,9 @@
 
 **User:** I'm not interested in Fight Club, please never suggest it to me.
 
-<details><summary>Tool calls: remember({"kind": "dismissed", "movie": "Fight Club"})</summary>
+<details><summary>Tool calls: remember({"kind": "dismissed", "movie": "Fight Club", "scope": "lasting"})</summary>
 
-`remember` (21 ms) ->
+`remember` (16 ms) ->
 ```json
 {
  "ok": true,
@@ -30,7 +30,7 @@ Noted (dismissed): Fight Club (1999) - excluded from future recommendations.
 
 <details><summary>Tool calls: recommend_movies({"n": 6})</summary>
 
-`recommend_movies` (111 ms) ->
+`recommend_movies` (116 ms) ->
 ```json
 {
  "user_id": 30,
@@ -182,7 +182,7 @@ Recommendations:
 
 <details><summary>Tool calls: recommend_movies({"n": 4})</summary>
 
-`recommend_movies` (66 ms) ->
+`recommend_movies` (52 ms) ->
 ```json
 {
  "user_id": 15,

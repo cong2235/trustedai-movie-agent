@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 5})</summary>
 
-`recommend_movies` (130 ms) ->
+`recommend_movies` (105 ms) ->
 ```json
 {
  "user_id": 1,
@@ -156,7 +156,7 @@ Recommendations:
 
 <details><summary>Tool calls: explain_match({"movie": "318"})</summary>
 
-`explain_match` (52 ms) ->
+`explain_match` (29 ms) ->
 ```json
 {
  "movie_id": 318,
@@ -235,7 +235,7 @@ Evidence strength: strong.
 
 <details><summary>Tool calls: genre_blind_spots({})</summary>
 
-`genre_blind_spots` (90 ms) ->
+`genre_blind_spots` (37 ms) ->
 ```json
 {
  "user_id": 1,
@@ -253,18 +253,24 @@ Evidence strength: strong.
    "entry_points_liked_by_similar_users": [
     {
      "title": "It's a Wonderful Life (1946)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 4.03,
+     "n_ratings_all_users": 58
     },
     {
      "title": "Rosencrantz and Guildenstern Are Dead (1990)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 3.97,
+     "n_ratings_all_users": 16
     },
     {
      "title": "Broadcast News (1987)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 3.43,
+     "n_ratings_all_users": 28
     }
    ]
   },
@@ -280,18 +286,24 @@ Evidence strength: strong.
    "entry_points_liked_by_similar_users": [
     {
      "title": "It's a Wonderful Life (1946)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 4.03,
+     "n_ratings_all_users": 58
     },
     {
      "title": "Broadcast News (1987)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 3
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 3,
+     "avg_rating_all_users": 3.43,
+     "n_ratings_all_users": 28
     },
     {
      "title": "Tangled (2010)",
-     "similar_users_avg": 5.0,
-     "n_similar_users": 2
+     "avg_among_your_similar_users": 5.0,
+     "n_similar_users_who_rated_it": 2,
+     "avg_rating_all_users": 3.92,
+     "n_ratings_all_users": 24
     }
    ]
   }
@@ -313,7 +325,7 @@ Your blind spots:
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Pulp Fiction"})</summary>
 
-`similar_users_opinion` (22 ms) ->
+`similar_users_opinion` (17 ms) ->
 ```json
 {
  "movie": "Pulp Fiction (1994)",
@@ -400,7 +412,7 @@ Pulp Fiction (1994): the 20 most similar users who rated it give it 3.89★ (sim
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "include_genres": ["Sci-Fi"], "max_year": 1969})</summary>
 
-`recommend_movies` (65 ms) ->
+`recommend_movies` (48 ms) ->
 ```json
 {
  "user_id": 1,
@@ -551,7 +563,7 @@ Recommendations:
 
 <details><summary>Tool calls: search_movies({"query": "dark psychological thriller with a twist", "n": 4})</summary>
 
-`search_movies` (349 ms) ->
+`search_movies` (461 ms) ->
 ```json
 {
  "query": "dark psychological thriller with a twist",
@@ -559,7 +571,7 @@ Recommendations:
  "excluded_movies_you_rated": true,
  "reranker": {
   "kind": "llm-cache",
-  "ms": 9,
+  "ms": 2,
   "pool": 30
  },
  "results": [
@@ -660,7 +672,7 @@ Matches:
 
 <details><summary>Tool calls: get_rating_history({"title_contains": "star wars"})</summary>
 
-`get_rating_history` (414 ms) ->
+`get_rating_history` (9 ms) ->
 ```json
 {
  "user_id": 1,

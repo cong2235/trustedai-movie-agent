@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "min_year": 2001, "exclude_genres": ["Horror"]})</summary>
 
-`recommend_movies` (52 ms) ->
+`recommend_movies` (42 ms) ->
 ```json
 {
  "user_id": 15,
@@ -153,7 +153,7 @@ Recommendations:
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "min_year": 2001, "exclude_genres": ["Horror"]})</summary>
 
-`recommend_movies` (57 ms) ->
+`recommend_movies` (44 ms) ->
 ```json
 {
  "user_id": 15,
@@ -304,7 +304,7 @@ Recommendations:
 
 <details><summary>Tool calls: recommend_movies({"n": 2, "exclude_genres": ["Horror"]})</summary>
 
-`recommend_movies` (46 ms) ->
+`recommend_movies` (37 ms) ->
 ```json
 {
  "user_id": 15,

@@ -2,7 +2,7 @@
 
 **User:** I never want war movies recommended to me. Please remember that.
 
-<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "War"})</summary>
+<details><summary>Tool calls: remember({"kind": "avoid_genre", "note": "War", "scope": "lasting"})</summary>
 
 `remember` (0 ms) ->
 ```json
@@ -30,7 +30,7 @@ Noted (avoid_genre): War - War movies are excluded from future recommendations.
 
 <details><summary>Tool calls: recommend_movies({"n": 3, "include_genres": ["War"]})</summary>
 
-`recommend_movies` (77 ms) ->
+`recommend_movies` (43 ms) ->
 ```json
 {
  "user_id": 30,

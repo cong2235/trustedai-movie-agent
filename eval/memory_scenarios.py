@@ -85,7 +85,7 @@ MEMORY_SCENARIOS = [
     {"id": "lt_forget_preference", "user_id": 30, "turns": [
         {"q": "Please remember that I don't like horror movies.", "expect_tools": ["remember"],
          "checks": {"memory_has": {"avoid_genre": ["Horror"]}},
-         "plan": [("remember", {"kind": "avoid_genre", "note": "Horror"})]},
+         "plan": [("remember", {"kind": "avoid_genre", "note": "Horror", "scope": "lasting"})]},
         {"q": "Recommend me something for tonight.", "new_session": True, "expect_tools": ["recommend_movies"],
          "checks": {"not_rated": True, "exclude_genres": ["Horror"], "min_recs": 1},
          "plan": [("recommend_movies", {"n": 4})]},
@@ -110,7 +110,7 @@ MEMORY_SCENARIOS = [
     {"id": "lt_override_in_session", "user_id": 30, "turns": [
         {"q": "I never want war movies recommended to me. Please remember that.", "expect_tools": ["remember"],
          "checks": {"memory_has": {"avoid_genre": ["War"]}},
-         "plan": [("remember", {"kind": "avoid_genre", "note": "War"})]},
+         "plan": [("remember", {"kind": "avoid_genre", "note": "War", "scope": "lasting"})]},
         {"q": "Today I'm curious though - recommend me a war movie, just this once.", "new_session": True,
          "expect_tools": ["recommend_movies|search_movies"], "forbid_tools": ["forget_memory"],
          "checks": {"not_rated": True, "include_genres": ["War"], "min_recs": 1,
@@ -120,7 +120,7 @@ MEMORY_SCENARIOS = [
     {"id": "lt_dismissed_and_isolation", "user_id": 30, "turns": [
         {"q": "I'm not interested in Fight Club, please never suggest it to me.", "expect_tools": ["remember"],
          "checks": {"memory_has": {"dismissed": ["Fight Club"]}},
-         "plan": [("remember", {"kind": "dismissed", "movie": "Fight Club"})]},
+         "plan": [("remember", {"kind": "dismissed", "movie": "Fight Club", "scope": "lasting"})]},
         {"q": "What should I watch tonight?", "new_session": True, "expect_tools": ["recommend_movies"],
          "checks": {"not_rated": True, "exclude_titles": ["Fight Club"], "min_recs": 1},
          "plan": [("recommend_movies", {"n": 6})]},
@@ -131,7 +131,7 @@ MEMORY_SCENARIOS = [
     {"id": "lt_recall_liked", "user_id": 15, "turns": [
         {"q": "I finally watched The Machinist last night and loved it - please remember that.",
          "expect_tools": ["remember"], "checks": {"memory_has": {"liked": ["The Machinist"]}},
-         "plan": [("remember", {"kind": "liked", "movie": "The Machinist"})]},
+         "plan": [("remember", {"kind": "liked", "movie": "The Machinist", "scope": "lasting"})]},
         {"q": "Recommend me something similar to the movie I told you I loved last time.", "new_session": True,
          "expect_tools": ["recommend_movies|search_movies"],
          "expect_args": {"recommend_movies": {"more_like": {"contains_movie": "The Machinist"}}},
@@ -141,12 +141,12 @@ MEMORY_SCENARIOS = [
     {"id": "lt_ambiguous_seen", "user_id": 1, "turns": [
         {"q": "I've seen Star Wars, remember that so you don't suggest it.",
          "expect_tools": [], "checks": {"memory_titles_match": {"seen": "star wars"}},
-         "plan": [("remember", {"kind": "seen", "movie": "Star Wars: Episode IV - A New Hope"})]},
+         "plan": [("remember", {"kind": "seen", "movie": "Star Wars: Episode IV - A New Hope", "scope": "lasting"})]},
     ]},
     {"id": "lt_seen_but_discussable", "user_id": 30, "turns": [
         {"q": "I've already seen Forrest Gump.", "expect_tools": ["remember"],
          "checks": {"memory_has": {"seen": ["Forrest Gump"]}},
-         "plan": [("remember", {"kind": "seen", "movie": "Forrest Gump"})]},
+         "plan": [("remember", {"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"})]},
         {"q": "What do users with similar taste think of Forrest Gump?", "new_session": True,
          "expect_tools": ["similar_users_opinion"],
          "expect_args": {"similar_users_opinion": {"movie": {"resolves_to": "Forrest Gump"}}},

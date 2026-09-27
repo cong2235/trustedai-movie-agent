@@ -2,9 +2,9 @@
 
 **User:** I've seen Star Wars, remember that so you don't suggest it.
 
-<details><summary>Tool calls: remember({"kind": "seen", "movie": "Star Wars: Episode IV - A New Hope"})</summary>
+<details><summary>Tool calls: remember({"kind": "seen", "movie": "Star Wars: Episode IV - A New Hope", "scope": "lasting"})</summary>
 
-`remember` (28 ms) ->
+`remember` (26 ms) ->
 ```json
 {
  "ok": true,

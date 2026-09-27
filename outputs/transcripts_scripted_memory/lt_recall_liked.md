@@ -2,7 +2,7 @@
 
 **User:** I finally watched The Machinist last night and loved it - please remember that.
 
-<details><summary>Tool calls: remember({"kind": "liked", "movie": "The Machinist"})</summary>
+<details><summary>Tool calls: remember({"kind": "liked", "movie": "The Machinist", "scope": "lasting"})</summary>
 
 `remember` (15 ms) ->
 ```json
@@ -30,7 +30,7 @@ Noted (liked): The Machinist (2004) - kept as context for future sessions.
 
 <details><summary>Tool calls: recommend_movies({"n": 4, "more_like": ["The Machinist"]})</summary>
 
-`recommend_movies` (148 ms) ->
+`recommend_movies` (106 ms) ->
 ```json
 {
  "user_id": 15,

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "movie-agent"
+version = "0.1.0"
+description = "Conversational movie-discovery agent over MovieLens: LLM planning over deterministic CF / content tools"
+authors = [{ name = "Võ Trần Công" }]
+requires-python = ">=3.10"
+readme = "SOLUTION.md"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+movie-agent = "movie_agent.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

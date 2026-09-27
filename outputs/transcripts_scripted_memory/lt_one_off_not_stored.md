@@ -4,7 +4,7 @@
 
 <details><summary>Tool calls: recommend_movies({"n": 4, "exclude_genres": ["Comedy"]})</summary>
 
-`recommend_movies` (68 ms) ->
+`recommend_movies` (59 ms) ->
 ```json
 {
  "user_id": 1,
@@ -160,7 +160,7 @@ Recommendations:
 
 <details><summary>Tool calls: recommend_movies({"n": 4})</summary>
 
-`recommend_movies` (60 ms) ->
+`recommend_movies` (61 ms) ->
 ```json
 {
  "user_id": 1,

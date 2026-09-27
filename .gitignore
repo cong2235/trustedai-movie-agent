@@ -13,3 +13,5 @@ venv/
 .idea/
 .claude/
 *.log.tmp
+*.egg-info/
+build/

@@ -342,3 +342,11 @@ def test_independent_audit_catches_real_errors_only(tmp_path, data):
         assert ok not in details                                                        # former false positives
     count_issue = [i for i in issues if "Drive" in i["detail"]]
     assert count_issue == [] or int(data.movie_stats.loc[data.find_movie("Drive 2011")[0]["movie_id"], "count"]) != 91
+
+
+def test_remember_this_request_scope_is_not_stored(data, cf):
+    tools = make_tools(data, cf)
+    tools.set_user(1)
+    with pytest.raises(ToolError, match="Nothing stored"):
+        tools.remember("avoid_genre", note="Comedy", scope="this_request")
+    assert not tools.memory.avoided_genres(tools.session.user_id)

@@ -178,11 +178,20 @@ class MovieTools:
         return merged or None, from_memory
 
     # -------------------------------------------------------- long-term memory
-    def remember(self, kind: str, movie: str | int | None = None, note: str | None = None) -> dict:
-        """Store something the user said that should outlive this session."""
+    def remember(self, kind: str, movie: str | int | None = None, note: str | None = None,
+                 scope: str = "lasting") -> dict:
+        """Store something the user said that should outlive this session.
+
+        scope is the model's own explicit judgement ("lasting" vs "this_request"); the English regex guard below
+        stays as a backstop for when the model gets it wrong, not as the primary mechanism."""
         uid = self._user(None)
         if kind not in MEMORY_KINDS:
             raise ToolError(f"kind must be one of {list(MEMORY_KINDS)}")
+        if scope not in ("lasting", "this_request"):
+            raise ToolError("scope must be 'lasting' or 'this_request'")
+        if scope == "this_request":
+            raise ToolError("Nothing stored: a constraint for this request only belongs in the tool arguments "
+                            "(e.g. exclude_genres), not in long-term memory.")
         mid = self.resolve(movie) if movie not in (None, "") else None
         if kind in ("avoid_genre", "preference", "dismissed") and _is_one_off(self.session.last_user_message):
             raise ToolError("The user described a constraint for this request only (e.g. 'just for tonight'). "
@@ -582,8 +591,13 @@ TOOL_SCHEMAS += [
                     "Do not store one-off constraints for the current request.",
      "input_schema": {"type": "object", "properties": {
          "kind": {"type": "string", "enum": list(MEMORY_KINDS)},
-         "movie": _movie, "note": {"type": "string", "description": "for 'preference', the preference in a few words"}},
-         "required": ["kind"]}},
+         "movie": _movie, "note": {"type": "string", "description": "for 'preference', the preference in a few words"},
+         "scope": {"type": "string", "enum": ["lasting", "this_request"],
+                   "description": "'lasting' only if the user means it beyond this request (\"never\", \"in general\", "
+                                  "\"remember that\", or a fact such as having seen a movie). A mood or constraint "
+                                  "for now (\"tonight\", \"this time\") is 'this_request': pass it as tool arguments "
+                                  "instead and do not call remember at all."}},
+         "required": ["kind", "scope"]}},
     {"name": "list_memories",
      "description": "List what is remembered about the current user from earlier sessions (with memory ids).",
      "input_schema": {"type": "object", "properties": {}}},

@@ -2,9 +2,9 @@
 
 **User:** I've already seen Forrest Gump.
 
-<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump"})</summary>
+<details><summary>Tool calls: remember({"kind": "seen", "movie": "Forrest Gump", "scope": "lasting"})</summary>
 
-`remember` (25 ms) ->
+`remember` (16 ms) ->
 ```json
 {
  "ok": true,
@@ -30,7 +30,7 @@ Noted (seen): Forrest Gump (1994) - excluded from future recommendations.
 
 <details><summary>Tool calls: similar_users_opinion({"movie": "Forrest Gump"})</summary>
 
-`similar_users_opinion` (29 ms) ->
+`similar_users_opinion` (18 ms) ->
 ```json
 {
  "movie": "Forrest Gump (1994)",

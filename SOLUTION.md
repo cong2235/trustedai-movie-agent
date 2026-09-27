@@ -4,7 +4,7 @@ A conversational assistant that **investigates the MovieLens data on the user's 
 plans which analyses to run and calls deterministic Python tools for collaborative filtering, plot search with
 re-ranking, taste profiling and neighbour opinions. It answers with explanations grounded in the returned numbers
 and titles. Every answer is re-checked against the evidence, every turn is logged, and a dashboard monitors quality,
-latency and cost. The full write-up is in [REPORT.md](REPORT.md).
+latency and cost. The full write-up is in [REPORT.md](REPORT.md), with supporting detail in [APPENDIX.md](APPENDIX.md).
 
 ```
  user ──► Chat (Streamlit web UI or CLI)
@@ -16,11 +16,12 @@ latency and cost. The full write-up is in [REPORT.md](REPORT.md).
      │  ├─ memory.py       long-term per-user memory (SQLite): preferences, seen / dismissed / liked movies
      │  └─ telemetry.py    turn + tool-call records → logs/telemetry.db (SQLite) + logs/app.jsonl
      ▼
-   tools.py        9 tools, JSON evidence out; titles fuzzy-resolved; absent/ambiguous titles reported
+   tools.py        12 tools, JSON evidence out; titles fuzzy-resolved; absent/ambiguous titles reported
      ├─ profiles.py     taste profile, genre affinity vs population, blind spots
      ├─ cf.py           user-user Pearson (shrunk), item-item adjusted cosine, residual kNN prediction, PureSVD
      ├─ recommender.py  z-scored blend (tuned on validation) + constraints + request-first 2-stage + MMR + evidence
      ├─ content.py      chunked plot embeddings + TF-IDF   ◄── embedders.py  OpenAI 3-small | local bge-small
+     ├─ attributes.py   offline tone attributes per movie (moods, twist 0-3, violence 0-3) from data/derived/
      ├─ rerank.py       stage-2 re-ranker: LLM listwise (tone/structure aware) | cross-encoder | none
      └─ graph.py        RP3beta ± knowledge nodes (evaluated, not shipped: see REPORT, "knowledge graph")
    monitor.py      KPIs + SLO alerts from telemetry  ──► dashboard "Monitor" tab, scripts/monitor.py
@@ -36,7 +37,7 @@ cp .env.example .env                       # add OPENAI_API_KEY (and/or ANTHROPI
 python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
 python scripts/build_index.py --backend bge-small        # optional local fallback, ~29 min CPU
-python -m pytest -q tests                  # 93 tests, offline (no API calls)
+python -m pytest -q tests                  # 100 tests, offline (no API calls)
 ```
 
 ## Run it
@@ -107,7 +108,10 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 | `app/streamlit_app.py` | web UI: chat + monitoring dashboard |
 | `scripts/` | index build, offline / search / graph eval, scenario runner, monitor CLI |
 | `eval/scenarios.py` | 14 conversations / 19 turns with automatic checks and reference tool plans |
-| `tests/` | 93 tests (incl. 30 memory tests): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
+| `eval/memory_scenarios.py` | 10 conversations / 31 turns targeting short- and long-term memory |
+| `eval/heldout_scenarios.py` | 18 conversations / 20 turns, held out: committed before its only run |
+| `data/derived/` | LLM-extracted movie attributes (committed, so nobody pays for them twice) |
+| `tests/` | 100 tests (incl. 28 memory and 6 attribute tests): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
 | `outputs/eval/` | all metrics |
 | `outputs/transcripts_*` | full conversations with every tool call and output |
 | `outputs/failure_cases/` | saved evidence for failures discussed in the report |

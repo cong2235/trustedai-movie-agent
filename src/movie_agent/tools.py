@@ -39,12 +39,12 @@ def warm_up(data: MovieData, cf: CFModel, content: ContentIndex | None) -> None:
     from .profiles import population_genre_share
 
     _ = (data.movie_stats, data.movie_tags, data.user_ratings, data.all_genres)
-    data.find_movie("warm-up")  # fuzzy title index
+    data.find_movie("warm-up")
     _ = (cf.user_sim, cf.item_sim, cf.biases)
-    cf.pure_svd_scores(int(cf.user_ids[0]))  # fits the SVD factors
+    cf.pure_svd_scores(int(cf.user_ids[0]))
     population_genre_share(data)
     if content is not None:
-        content.encode_query("warm-up")  # loads the embedder / opens the API connection
+        content.encode_query("warm-up")
 
 
 _ONE_OFF = re.compile(
@@ -82,9 +82,9 @@ class ToolError(Exception):
 @dataclass
 class Session:
     user_id: int | None = None
-    suggested: list[int] = field(default_factory=list)  # movieIds recommended so far this session
-    profile_summary: str = ""  # injected into the model's context each call
-    last_user_message: str = ""  # set by the agent each turn (one-off guard)
+    suggested: list[int] = field(default_factory=list)
+    profile_summary: str = ""
+    last_user_message: str = ""
 
 
 @dataclass
@@ -97,7 +97,7 @@ class MovieTools:
     trace: list[dict] = field(default_factory=list)
     reranker: object = field(default_factory=get_reranker)
     memory: MemoryStore = field(default_factory=default_store)
-    attributes: MovieAttributes | None = None  # offline tone attributes; None when not extracted
+    attributes: MovieAttributes | None = None
 
     @classmethod
     def build(cls, weights: dict | None = None) -> MovieTools:
@@ -120,7 +120,6 @@ class MovieTools:
                     rec.segment_weights = res["segment_weights"]
         return cls(data=data, cf=cf, content=content, rec=rec, attributes=MovieAttributes.load(data))
 
-    # ------------------------------------------------------------ helpers
     def _user(self, user_id: int | None) -> int:
         uid = user_id if user_id is not None else self.session.user_id
         if uid is None:
@@ -133,7 +132,6 @@ class MovieTools:
     def resolve(self, movie: str | int) -> int:
         """Title or id -> movieId, or ToolError listing candidates so the LLM can disambiguate."""
         if isinstance(movie, int) or (isinstance(movie, str) and movie.strip().isdigit()):
-            # a digit string may be a title ("21", "1917") - an exact title match wins over the id reading
             if isinstance(movie, str):
                 exact = [c for c in self.data.find_movie(movie, limit=3) if c["score"] == 100.0]
                 if len(exact) == 1:
@@ -157,7 +155,6 @@ class MovieTools:
             closest_titles=cands,
         )
 
-    # -------------------------------------------------------------- tools
     def set_user(self, user_id: int) -> dict:
         uid = self._user(user_id)
         prof = user_profile(self.data, uid, top=5)
@@ -266,12 +263,9 @@ class MovieTools:
         that genre in the current turn (include_genres) overrides the memory."""
         wanted = {g.lower() for g in include_genres or []}
         from_memory = [g for g in self.memory.avoided_genres(uid) if g.lower() not in wanted]
-        # a genre the user explicitly asks for can't also be excluded: the model once sent include=[War] and
-        # exclude=[War] together (after reading "War is auto-excluded" in its context), which returned nothing
         merged = [g for g in dict.fromkeys([*(exclude_genres or []), *from_memory]) if g.lower() not in wanted]
         return merged or None, from_memory
 
-    # -------------------------------------------------------- long-term memory
     def remember(
         self, kind: str, movie: str | int | None = None, note: str | None = None, scope: str = "lasting"
     ) -> dict:
@@ -296,8 +290,6 @@ class MovieTools:
                 "Apply it to this request (e.g. exclude_genres) and do NOT store it."
             )
         if kind in ("avoid_genre", "preference") and _RETRACT.search(self.session.last_user_message or ""):
-            # observed: "I'm fine with horror now, forget that" -> the model re-stored avoid_genre=Horror while
-            # telling the user it had removed it
             raise ToolError(
                 "The user is retracting a stored preference: call forget_memory (e.g. kind='avoid_genre', "
                 "genre=...) instead of storing a new memory."
@@ -449,19 +441,17 @@ class MovieTools:
         max_violence: int | None = None,
         already_seen: list[str] | None = None,
         min_avg_rating: float = config.QUALITY_FLOOR_MEAN,
-        allow_repeats: bool = False,  # internal only: not in the LLM schema (see TOOL_SCHEMAS)
+        allow_repeats: bool = False,
         user_id: int | None = None,
     ) -> dict:
         uid = self._user(user_id)
         anchors = [self.resolve(t) for t in (more_like or [])]
-        # "more like X" must never return X itself (found by the memory test suite: it did whenever the user had
-        # not rated X, e.g. "something like The Machinist" -> The Machinist)
         seen_now, not_stored = self._store_seen(uid, already_seen)
         skipped, not_skipped = self._resolve_all(exclude_titles)
         excluded = skipped + anchors + seen_now
         if not allow_repeats:
             excluded += self.session.suggested
-        excluded += self._memory_excluded(uid)  # seen / dismissed / disliked in earlier sessions
+        excluded += self._memory_excluded(uid)
         exclude_genres, avoided = self._with_avoided_genres(uid, include_genres, exclude_genres)
         rel = self.content.relevance(mood_or_description) if (mood_or_description and self.content) else None
         attr_match, violence_ok = self._attribute_request(moods, twist_ending, max_violence)
@@ -487,9 +477,6 @@ class MovieTools:
 
         recs, floor_note = run(min_avg_rating), None
         if not recs and min_avg_rating:
-            # The floor is a default, not something the user asked for. When it alone leaves nothing (held-out:
-            # "a war film before 1960" for a user who had rated all but one, which averages 2.5), show what exists and
-            # say it is below the usual bar instead of claiming there is nothing.
             recs = run(None)
             if recs:
                 floor_note = (
@@ -577,7 +564,7 @@ class MovieTools:
             )
 
         mask, floor_note = allowed(min_avg_rating), None
-        if not mask.any() and min_avg_rating:  # the default floor alone left nothing: relax it and say so
+        if not mask.any() and min_avg_rating:
             mask = allowed(None)
             if mask.any():
                 floor_note = (
@@ -585,7 +572,6 @@ class MovieTools:
                     "these fall below it. Tell the user."
                 )
         n = max(1, min(int(n), 15))
-        # stage 1: recall-oriented pool; stage 2: re-rank the pool for fit, including tone and structure
         pool = [i for i in np.argsort(-np.where(mask, score, -np.inf))[: max(config.RERANK_POOL, n)] if mask[i]]
         pool_ids = [int(self.cf.movie_ids[i]) for i in pool]
         rr = self.reranker.rerank(query, pool_ids, [float(score[i]) for i in pool], self.data)
@@ -600,7 +586,7 @@ class MovieTools:
             card["matching_plot_excerpt"] = self._best_chunk(i, q_vec)
             if (attrs := self._attribute_card(mid)) is not None:
                 card["attributes"] = attrs
-            if uid is not None:  # per-user evidence, so the answer can say why it suits *this* user
+            if uid is not None:
                 ev = self.rec.explain(uid, mid)
                 card["for_you"] = {
                     k: ev[k]
@@ -669,7 +655,7 @@ class MovieTools:
         """What the k users most similar to you (among those who rated the movie) think of it."""
         uid = self._user(user_id)
         mid = self.resolve(movie)
-        neigh = self.cf.neighbors_who_rated(uid, mid, k=max(10, min(int(k), 50)))  # <10 is too noisy to summarise
+        neigh = self.cf.neighbors_who_rated(uid, mid, k=max(10, min(int(k), 50)))
         st = self.data.movie_stats.loc[mid]
         ur = self.data.user_ratings[uid]
         out = {
@@ -694,7 +680,6 @@ class MovieTools:
             "n": len(neigh),
             "weighted_avg_rating": round(float((sims * ratings).sum() / sims.sum()), 2),
             "plain_avg_rating": round(float(ratings.mean()), 2),
-            # counts, not fractions: gpt-4o-mini read "share_2_5_or_less": 0.1 as "nobody rated it below 2.5"
             "n_rated_4_or_higher": int((ratings >= 4).sum()),
             "n_rated_2_5_or_lower": int((ratings <= 2.5).sum()),
             "similarity_range": [round(float(sims.min()), 2), round(float(sims.max()), 2)],
@@ -723,7 +708,6 @@ class MovieTools:
         uid = self._user(user_id)
         mid = self.resolve(movie)
         ev = self.rec.explain(uid, mid)
-        # counter-evidence: plot-similar movies the user rated low
         ur = self.data.user_ratings[uid]
         plot_ok = self.data.movies["plot_ok"]
         disliked = [m for m in ur.index if ur[m] <= 2.5 and m != mid and plot_ok[m]]
@@ -745,7 +729,6 @@ class MovieTools:
     def genre_blind_spots(self, user_id: int | None = None) -> dict:
         return blind_spots(self.data, self.cf, self._user(user_id))
 
-    # ------------------------------------------------------------ dispatch
     def call(self, name: str, args: dict) -> tuple[str, bool]:
         """Run a tool by name. Returns (json_text, is_error) and records a trace entry."""
         t0 = time.time()
@@ -756,9 +739,9 @@ class MovieTools:
             result, is_error = fn(**_coerce_args(name, args)), False
         except ToolError as e:
             result, is_error = {"error": str(e), **e.details}, True
-        except TypeError as e:  # bad/missing arguments from the model
+        except TypeError as e:
             result, is_error = {"error": f"Invalid arguments: {e}"}, True
-        except Exception as e:  # an unexpected tool bug must not kill the whole turn; the model can recover
+        except Exception as e:
             result, is_error = {"error": f"Tool failed: {type(e).__name__}: {e}"}, True
         text = json.dumps(result, default=_json_default, ensure_ascii=False)
         self.trace.append(
@@ -804,7 +787,6 @@ def _json_default(o):
     raise TypeError(type(o))
 
 
-# ------------------------------------------------------------------ schemas
 _GENRES = (
     "Action, Adventure, Animation, Children, Comedy, Crime, Documentary, Drama, Fantasy, Film-Noir, "
     "Horror, IMAX, Musical, Mystery, Romance, Sci-Fi, Thriller, War, Western"

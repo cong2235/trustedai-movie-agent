@@ -32,7 +32,7 @@ def test_guardrail_flags_absent_title_and_ungrounded_movie(titles):
     outputs = [{"recommendations": [{"movie_id": 79132, "title": "Inception (2010)", "avg_rating": 4.07}]}]
     rep = check_answer("Try **Inception (2010)**, **The Matrix (1999)** or Alien (1979).", outputs, titles)
     assert rep["hallucinated_titles"] == ["The Matrix (1999)"]
-    assert rep["ungrounded_titles"] == ["Alien (1979)"]  # real movie, but no tool returned it
+    assert rep["ungrounded_titles"] == ["Alien (1979)"]
     assert has_issues(rep)
 
 
@@ -43,7 +43,7 @@ def test_guardrail_handles_tricky_titles(titles):
 
 def test_numeric_grounding_tolerance():
     outs = [{"avg": 4.45, "share": 0.024, "nested": [{"x": 3.86}]}]
-    assert ungrounded_numbers("avg 4.5, 2.4% share, 3.9 in drama", outs) == []  # rounding and x100 are fine
+    assert ungrounded_numbers("avg 4.5, 2.4% share, 3.9 in drama", outs) == []
     assert ungrounded_numbers("they average 4.9", outs) == ["4.9"]
 
 
@@ -94,9 +94,9 @@ def test_telemetry_roundtrip_and_kpis(tmp_path):
     k = monitor.kpis(turns, calls)
     assert k["turns"] == 3 and k["guardrail_trigger_rate"] == pytest.approx(1 / 3, abs=1e-3)
     assert k["revision_fix_rate"] == 1.0 and k["thumbs_up_rate"] == 1.0 and k["rerank_calls"] == 3
-    assert any("latency_p95_s" in a for a in monitor.alerts(k))  # the 40 s turn breaches the p95 SLO
+    assert any("latency_p95_s" in a for a in monitor.alerts(k))
     assert (tmp_path / "a.jsonl").read_text().count('"event": "tool_call"') == 3
-    later, later_calls = monitor.load(tmp_path / "t.db", since_ts=time.time() + 60)  # parameterised time filter
+    later, later_calls = monitor.load(tmp_path / "t.db", since_ts=time.time() + 60)
     assert later.empty and later_calls.empty
 
 
@@ -104,7 +104,7 @@ def test_reranker_failure_keeps_first_stage_order(data):
     ids = [1, 2, 3, 296]
     first = [0.1, 0.9, 0.5, 0.3]
     assert NoRerank().rerank("q", ids, first, data).order == [2, 3, 296, 1]
-    res = LLMRerank()._finish(ids, first, {}, time.time(), error="boom")  # what a failed LLM call returns
+    res = LLMRerank()._finish(ids, first, {}, time.time(), error="boom")
     assert res.order == [2, 3, 296, 1] and res.error == "boom"
 
 
@@ -114,7 +114,7 @@ def test_rp3beta_graph(data):
     s = g.scores(15)
     assert s.shape == (len(cf.movie_ids),) and np.isfinite(s).all()
     best = int(cf.movie_ids[np.argmax(np.where(cf.rated_mask(15), -1, s))])
-    assert g.paths(15, best)  # explainable as graph paths
+    assert g.paths(15, best)
 
 
 class _ScriptedBackend:
@@ -149,7 +149,7 @@ def test_online_guardrail_revises_and_logs(tmp_path, data, monkeypatch):
     from movie_agent.recommender import Recommender
     from movie_agent.tools import MovieTools
 
-    monkeypatch.setenv("OPENAI_API_KEY", "test-key")  # client is constructed but never called
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     cf = CFModel(data)
     tools = MovieTools(data=data, cf=cf, content=None, rec=Recommender(data, cf, None))
     tel = Telemetry(db_path=tmp_path / "t.db", jsonl_path=tmp_path / "a.jsonl")
@@ -178,7 +178,7 @@ def test_long_term_memory_excludes_seen_movies_across_sessions(data):
     for m in first[:2]:
         assert tools.remember("seen", movie=m)["ok"]
     tools.remember("preference", note="doesn't like war movies")
-    tools.set_user(30)  # new session: session state resets, memory stays
+    tools.set_user(30)
     again = [r["movie_id"] for r in tools.recommend_movies(n=5)["recommendations"]]
     assert not set(first[:2]) & set(again)
     assert "doesn't like war movies" in tools.memory_context()
@@ -197,9 +197,9 @@ def test_remember_validates_input(data):
     tools = MovieTools(data=data, cf=cf, content=None, rec=Recommender(data, cf, None), memory=MemoryStore(":memory:"))
     tools.set_user(1)
     with pytest.raises(ToolError):
-        tools.remember("seen")  # needs a movie
+        tools.remember("seen")
     with pytest.raises(ToolError):
-        tools.remember("loves")  # unknown kind
+        tools.remember("loves")
 
 
 class _EchoBackend:
@@ -241,7 +241,6 @@ def test_history_compaction_and_streaming(tmp_path, data, monkeypatch):
     )
     agent.backend = _EchoBackend()
     agent.start(15)
-    # simulate an earlier turn that carried a bulky tool exchange
     agent.messages += [
         {"role": "user", "content": "q0"},
         {"role": "assistant", "content": "", "tool_calls": ["..."]},
@@ -253,13 +252,12 @@ def test_history_compaction_and_streaming(tmp_path, data, monkeypatch):
     for i in range(1, 5):
         res = agent.ask(f"q{i}", on_token=streamed.append)
     assert res.ttft_s is not None and "".join(streamed[-2:]).startswith("answer")
-    assert not any(m.get("role") == "tool" for m in agent.messages)  # old tool output was dropped
-    assert len(agent.messages) == 2 * (len(agent._turns))  # every turn now: question + answer
+    assert not any(m.get("role") == "tool" for m in agent.messages)
+    assert len(agent.messages) == 2 * (len(agent._turns))
     assert [m["content"] for m in agent.messages if m["role"] == "user"][:2] == ["q0", "q1"]
     assert config.KEEP_FULL_TURNS == 2
 
 
-# ---- guardrail v2: real false positives from the 3x LLM run must stay clean; true errors must still be caught
 def _out(data, *titles_with_values):
     """Minimal tool output: [{movie_id, title, values...}], optionally nesting evidence movies."""
     res = []
@@ -281,7 +279,7 @@ def _out(data, *titles_with_values):
             15,
             "Similar users rate **Inception (2010)** highly. You rated it **3.5 stars**. One user with a high "
             "similarity to you rated it **4.5 stars**.",
-        ),  # "to you rated" is not a claim
+        ),
         (15, "You rated *Terminator 2: Judgment Day (1991)* and *Alien (1979)* highly, and similar users liked it."),
         (
             30,
@@ -330,7 +328,7 @@ def test_numbers_attributed_to_the_block_subject(data, titles):
         "1. **Fight Club (1999)** - you rated *Star Wars: Episode V - The Empire Strikes Back (1980)* 5 stars, and "
         "similar users gave it 4.9."
     )
-    assert misattributed_numbers(ok, out, titles) == []  # was flagged by v1
+    assert misattributed_numbers(ok, out, titles) == []
     swapped = "**Shutter Island (2010)** averages 3.7. **The Game (1997)** averages 4.02."
     assert len(misattributed_numbers(swapped, out, titles)) == 2
 
@@ -348,12 +346,12 @@ def test_avoided_genre_is_enforced_by_tools_across_sessions(data):
     cf = CFModel(data)
     tools = MovieTools(data=data, cf=cf, content=None, rec=Recommender(data, cf, None), memory=MemoryStore(":memory:"))
     tools.set_user(30)
-    tools.remember("avoid_genre", note="war")  # case-insensitive, stored as "War"
-    tools.set_user(30)  # next session; the model passes no exclude_genres
+    tools.remember("avoid_genre", note="war")
+    tools.set_user(30)
     out = tools.recommend_movies(n=8)
     assert all("War" not in r["genres"] for r in out["recommendations"])
     assert out["applied_constraints"]["genres_avoided_from_memory"] == ["War"]
-    explicit = tools.recommend_movies(n=3, include_genres=["War"])  # an explicit request overrides the memory
+    explicit = tools.recommend_movies(n=3, include_genres=["War"])
     assert explicit["recommendations"] and all("War" in r["genres"] for r in explicit["recommendations"])
 
 
@@ -370,7 +368,7 @@ class _FakeStream:
         self.delay, self.tag, self.closed = delay, tag, False
 
     def __iter__(self):
-        time.sleep(self.delay)  # slow first chunk = the tail we hedge against
+        time.sleep(self.delay)
         from types import SimpleNamespace as NS
 
         for part in (f"{self.tag}-a", f"{self.tag}-b"):
@@ -402,11 +400,11 @@ def _backend_with(delays, monkeypatch):
 
 
 def test_hedging_uses_the_faster_duplicate(monkeypatch):
-    be, made = _backend_with([6.0, 0.0], monkeypatch)  # first request stalls, the hedge is fast
+    be, made = _backend_with([6.0, 0.0], monkeypatch)
     t0 = time.time()
     text, calls, stop, u = be.step("ctx", [])
     assert text == "req1-areq1-b" and u["call"]["hedged"] and len(made) == 2
-    assert time.time() - t0 < 4.0  # did not wait for the 6 s request (loose: CI load)
+    assert time.time() - t0 < 4.0
 
 
 def test_no_hedge_when_fast(monkeypatch):
@@ -417,11 +415,9 @@ def test_no_hedge_when_fast(monkeypatch):
 
 
 def test_absent_title_reported_by_a_tool_is_not_a_hallucination(titles):
-    # regression run: the correct answer named the absent movie with its year
     outputs = [{"error": "'The Matrix' is ambiguous or not in this dataset (5,135 movies, 1903-2014)."}]
     rep = check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', outputs, titles)
     assert rep["hallucinated_titles"] == []
-    # without the tool saying so, the same sentence is still flagged
     assert check_answer('I couldn\'t find "The Matrix (1999)" in the dataset.', [], titles)["hallucinated_titles"]
 
 
@@ -442,7 +438,6 @@ def test_numbers_in_a_subjectless_block_belong_to_the_single_recommended_movie(d
         "You rated **Alien (1979)** 4 stars, and your averages in Drama (4.52) and Mystery (4.27) fit it."
     )
     assert check_answer(answer, outputs, titles)["misattributed_numbers"] == []
-    # a number that belongs to the evidence movie only is still caught when put on the recommendation
     wrong = "I recommend **Alphaville (1965)**, which everyone rates 3.61 on average."
     assert check_answer(wrong, outputs, titles)["misattributed_numbers"]
 
@@ -470,4 +465,12 @@ def test_all_openai_clients_share_one_warm_pool(monkeypatch):
     for c in (agent_client, rerank_client, embed_client):
         assert c._client is pool
     assert pool._transport._pool._keepalive_expiry == config.HTTP_KEEPALIVE_S
-    assert pool._transport._pool._http2  # streamed calls only reuse a connection over HTTP/2
+    assert pool._transport._pool._http2
+
+
+def test_bold_evidence_on_the_subject_line_is_not_the_subject(data, titles):
+    from movie_agent.guardrails import misattributed_numbers
+
+    out = _out(data, ("The Usual Suspects", {"avg_rating": 4.24}, [("Shawshank", 5.0)]))
+    text = "3. **The Usual Suspects (1995)** - You rated **The Shawshank Redemption (1994)** highly, average 4.24."
+    assert misattributed_numbers(text, out, titles) == []

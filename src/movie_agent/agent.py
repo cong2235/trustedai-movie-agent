@@ -100,11 +100,10 @@ class TurnResult:
     turn_id: str = ""
     guardrail: dict = field(default_factory=dict)
     revised: bool = False
-    ttft_s: float | None = None  # time to first streamed answer token
-    call_log: list = field(default_factory=list)  # per LLM call: latency, input tokens, hedged
+    ttft_s: float | None = None
+    call_log: list = field(default_factory=list)
 
 
-# --------------------------------------------------------------------------- backends
 class AnthropicBackend:
     default_model = config.DEFAULT_MODEL
 
@@ -114,8 +113,6 @@ class AnthropicBackend:
         self.anthropic = anthropic
         self.client = anthropic.Anthropic()
         self.model = model
-        # Server-side refusal fallback (beta), sent via extra_body because this SDK version has no typed
-        # parameter for it. It switches itself off if the API rejects it.
         self.use_fallbacks = os.environ.get("MOVIE_AGENT_FALLBACKS", "1") == "1"
 
     def _create(self, **kwargs):
@@ -155,7 +152,7 @@ class AnthropicBackend:
         messages.append(
             {
                 "role": "user",
-                "content": [  # all results in ONE message keeps parallel calls working
+                "content": [
                     {"type": "tool_result", "tool_use_id": cid, "content": text, "is_error": err}
                     for cid, text, err in results
                 ],
@@ -177,9 +174,7 @@ class OpenAIBackend:
 
         from .http import openai_client
 
-        self.client = openai_client(
-            timeout=30.0, max_retries=2
-        )  # shared warm pool; bound the tail (SDK default 10 min)
+        self.client = openai_client(timeout=30.0, max_retries=2)
         self._hedge_client = openai.OpenAI(timeout=30.0, max_retries=0)
         self.model = model
         self.tools = [
@@ -268,8 +263,6 @@ class OpenAIBackend:
 
         def worker(i: int) -> None:
             try:
-                # the duplicate goes through its own client / connection pool, so a stalled connection
-                # cannot hold both requests
                 client = self.client if i == 0 else self._hedge_client
                 st = client.chat.completions.create(**kwargs)
                 for ch in st:
@@ -277,12 +270,12 @@ class OpenAIBackend:
                         st.close()
                         return
                     q.put((i, ch))
-                q.put((i, None))  # end of stream
-            except Exception as e:  # surfaced only if it is the stream we end up using
+                q.put((i, None))
+            except Exception as e:
                 q.put((i, e))
 
         threading.Thread(target=worker, args=(0,), daemon=True).start()
-        hedged = config.HEDGE_AFTER_S <= 0  # disabled: behave as a plain stream (never duplicate)
+        hedged = config.HEDGE_AFTER_S <= 0
         errors = {}
         while True:
             try:
@@ -295,7 +288,7 @@ class OpenAIBackend:
                 errors[i] = first
                 if config.HEDGE_AFTER_S <= 0 or not hedged or len(errors) == 2:
                     raise first
-                continue  # one request failed; wait for the other
+                continue
             winner = i
             break
         stop[1 - winner].set()
@@ -308,7 +301,7 @@ class OpenAIBackend:
                     raise item
                 yield item
                 j, item = q.get()
-                while j != winner:  # drop anything the loser already queued
+                while j != winner:
                     j, item = q.get()
 
         return chunks(), hedged and config.HEDGE_AFTER_S > 0, first_chunk_s
@@ -327,7 +320,6 @@ class OpenAIBackend:
 BACKENDS = {"anthropic": AnthropicBackend, "openai": OpenAIBackend}
 
 
-# --------------------------------------------------------------------------- agent
 @dataclass
 class MovieAgent:
     tools: MovieTools
@@ -335,7 +327,7 @@ class MovieAgent:
     model: str | None = None
     messages: list = field(default_factory=list)
     telemetry: Telemetry | None = None
-    guardrail: bool = True  # re-check every answer against the tool outputs; revise once on failure
+    guardrail: bool = True
 
     def __post_init__(self):
         self.provider = self.provider or detect_provider()
@@ -350,8 +342,8 @@ class MovieAgent:
         self.titles = TitleIndex.for_data(self.tools.data)
         self.session_id = Telemetry.new_id()
         self._session_trace_start = 0
-        self._turns: list[dict] = []  # per turn: index of its first message, question, final answer
-        self._call_log: list[dict] = []  # per LLM call of the current turn (reset in ask)
+        self._turns: list[dict] = []
+        self._call_log: list[dict] = []
 
     def start(self, user_id: int) -> dict:
         self.messages = []
@@ -443,11 +435,11 @@ class MovieAgent:
                 if has_issues(report):
                     revised = True
                     self.backend.user(self.messages, revision_request(report))
-                    text, stop = self._run_loop(usage, llm_calls)  # revision is not streamed
+                    text, stop = self._run_loop(usage, llm_calls)
                     outputs = [t["output"] for t in self.tools.trace[self._session_trace_start :]]
                     after = check_answer(text, outputs, self.titles, self.tools.session.user_id)
             self._turns[-1]["answer"] = text
-        except Exception as e:  # log, then surface to the caller
+        except Exception as e:
             error = f"{type(e).__name__}: {e}"[:500]
             raise
         finally:

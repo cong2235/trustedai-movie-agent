@@ -77,7 +77,7 @@ def label_batch(client, batch: list[tuple[int, str]]) -> tuple[list[dict], dict]
         evidence = str(item.get("twist_evidence") or "").strip()
         twist = item.get("twist")
         twist = int(twist) if isinstance(twist, (int, float)) and 0 <= twist <= 3 else 0
-        if twist >= 2 and not evidence:  # a reveal claimed without quoting the plot is downgraded
+        if twist >= 2 and not evidence:
             twist = 1
         out.append(
             {
@@ -104,7 +104,7 @@ def main():
     data = MovieData.load()
     ATTRIBUTES_PATH.parent.mkdir(parents=True, exist_ok=True)
     done = set()
-    if ATTRIBUTES_PATH.exists():  # resumable: keep what is already labelled
+    if ATTRIBUTES_PATH.exists():
         done = {
             json.loads(line)["movie_id"] for line in ATTRIBUTES_PATH.read_text(encoding="utf-8").splitlines() if line
         }
@@ -121,7 +121,7 @@ def main():
         for fut in as_completed(futures):
             try:
                 rows, usage = fut.result()
-            except Exception as e:  # a failed batch is simply picked up by the next run
+            except Exception as e:
                 print(f"batch failed: {type(e).__name__}: {e}"[:200])
                 continue
             for r in rows:

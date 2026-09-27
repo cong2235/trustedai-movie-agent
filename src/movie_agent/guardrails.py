@@ -20,10 +20,7 @@ import re
 from .data import MovieData, _normalize
 
 YEAR_PAREN = re.compile(r"\((\d{4})\)")
-DECIMAL = re.compile(r"(?<![\d.])(\d\.\d{1,2})(?!\d|\.\d)")  # "4.9." at a sentence end still counts
-# "you rated X 5 stars", "you gave it a 3.5", "you rated both X and Y 5★".
-# v1 false positives, now excluded: "a user similar *to you* rated it 4.5" (lookbehinds), "you rated Terminator 2 and
-# Alien highly" (a bare number must carry a unit or follow "a"), "..., with a predicted rating of 4.8" (clause stops).
+DECIMAL = re.compile(r"(?<![\d.])(\d\.\d{1,2})(?!\d|\.\d)")
 USER_RATING_CLAIM = re.compile(
     r"(?<!to )(?<!like )(?<!than )(?<!with )(?<!as )\byou(?:'ve| have)?\s+(?:rated|gave|give)\b"
     r"(?P<inner>[^.!?;\n]{0,160}?)"
@@ -61,7 +58,7 @@ class TitleIndex:
             before = re.split(r"[\n\"“”*]", text[max(0, m.start() - 160) : m.start()])[-1]
             words = before.strip().split()
             hit = None
-            for n in range(min(20, len(words)), 0, -1):  # "Dr. Strangelove or: How I Learned ... Bomb" = 13 words
+            for n in range(min(20, len(words)), 0, -1):
                 key = (_normalize(" ".join(words[-n:])), year)
                 if key in self.index:
                     hit = self.index[key]
@@ -73,7 +70,6 @@ class TitleIndex:
                 and not words[-1].replace(".", "").isdigit()
                 and not re.search(r"user|rated|ratings|average|gave", before, re.I)
             ):
-                # report just the title-like tail: "…avg 4.07, or The Matrix" -> "The Matrix"
                 tail = re.split(r"[,;:()]|\b(?:or|and|like|watch|try)\b", before)[-1].split()
                 unknown.append(" ".join((tail or words)[-6:]) + f" ({year})")
         return found, unknown
@@ -83,7 +79,6 @@ class TitleIndex:
         return list(dict.fromkeys(m for _, m in found)), unknown
 
 
-# ------------------------------------------------------------------ number scopes
 def _numbers_in(obj, acc: list[float]) -> list[float]:
     if isinstance(obj, bool):
         return acc
@@ -91,7 +86,7 @@ def _numbers_in(obj, acc: list[float]) -> list[float]:
         acc.append(float(obj))
     elif isinstance(obj, dict):
         for k, v in obj.items():
-            for x, y in re.findall(r"(\d)_(\d)", str(k)):  # threshold in a field name: n_rated_2_5_or_lower
+            for x, y in re.findall(r"(\d)_(\d)", str(k)):
                 acc.append(float(f"{x}.{y}"))
             _numbers_in(v, acc)
     elif isinstance(obj, list):
@@ -109,7 +104,7 @@ def _scopes(outputs: list, data: MovieData) -> tuple[dict[int, set[float]], set[
     free: set[float] = set()
 
     def movie_of(d: dict):
-        if isinstance(d.get("movie_id"), int) and d["movie_id"] in known:  # never crash on a stray id
+        if isinstance(d.get("movie_id"), int) and d["movie_id"] in known:
             return d["movie_id"]
         for key in ("title", "movie"):
             if isinstance(d.get(key), str) and d[key] in by_title:
@@ -131,7 +126,7 @@ def _scopes(outputs: list, data: MovieData) -> tuple[dict[int, set[float]], set[
             for k, v in obj.items():
                 if k == "movie_id":
                     continue
-                for a, b in re.findall(r"(\d)_(\d)", k):  # "n_rated_2_5_or_lower" states a 2.5 threshold
+                for a, b in re.findall(r"(\d)_(\d)", k):
                     free.add(float(f"{a}.{b}"))
                 for d in re.findall(r"_(\d)_", k):
                     free.add(float(d))
@@ -167,8 +162,13 @@ def _is_subject(text: str, pos: int) -> bool:
     prefix = text[line_start:pos].lstrip()
     if prefix.startswith("#"):
         return True
-    opens_line = re.match(r"^(?:[-*•]\s+|\d+[.)]\s+)?\*\*", prefix) is not None
-    return opens_line and "**" in text[pos : pos + 10]
+    opening = prefix.rfind("**")
+    if opening < 0 or "**" not in text[pos : pos + 10]:
+        return False
+    head = prefix[:opening]
+    opens_line = re.fullmatch(r"(?:[-*•]\s+|\d+[.)]\s+)?", head) is not None
+    opens_sentence = re.search(r"[.!?]\s+$", head) is not None
+    return opens_line or opens_sentence
 
 
 def _recommended_ids(outputs: list) -> set[int]:
@@ -202,9 +202,6 @@ def misattributed_numbers(answer: str, outputs: list, titles: TitleIndex) -> lis
     if not found:
         return []
     movie_vals, free = _scopes(outputs, titles.data)
-    # An answer about exactly one recommended movie ("I recommend **Alphaville (1965)**. ... You rated **Alien (1979)**
-    # 4 stars ... your Drama average is 4.52") has that movie as its topic even where a block opens with no bold
-    # title: its numbers (including the genre_fit nested in its card) belong to it. False alarm in a regression run.
     recommended = _recommended_ids(outputs)
     topic = {mid for _, mid in found if mid in recommended}
     topic_scope = movie_vals.get(next(iter(topic)), set()) if len(topic) == 1 else set()
@@ -220,7 +217,7 @@ def misattributed_numbers(answer: str, outputs: list, titles: TitleIndex) -> lis
             prior_subjects = [mid for pos, mid in subjects if pos < m.start()]
             subject = prior_subjects[-1] if prior_subjects else None
             ok_scope = set(movie_vals.get(subject, ())) if subject else set()
-            if subject is None:  # no bold title: any movie named in the block, or the answer's single topic
+            if subject is None:
                 for mid in block_movies:
                     ok_scope |= movie_vals.get(mid, set())
                 ok_scope |= topic_scope
@@ -247,13 +244,13 @@ def wrong_user_ratings(answer: str, titles: TitleIndex, user_id: int | None) -> 
     found, _ = titles.mentions(answer)
     issues = []
     for m in USER_RATING_CLAIM.finditer(answer):
-        if not (m.group("unit") or m.group("art")):  # a bare number is not a rating claim
+        if not (m.group("unit") or m.group("art")):
             continue
-        if OTHER_RATER.search(m.group("inner")):  # "...you rated X, and similar users gave it 4.5"
+        if OTHER_RATER.search(m.group("inner")):
             continue
         claimed = float(m.group("n"))
         movies = [mid for pos, mid in found if m.start("inner") <= pos < m.start("n")]
-        if not movies:  # "you gave it a 3" -> the movie named just before
+        if not movies:
             prev = [mid for pos, mid in found if pos < m.start()]
             movies = prev[-1:] if re.search(r"\bit\b", m.group("inner")) else []
         for mid in movies:
@@ -275,7 +272,6 @@ def check_answer(answer: str, outputs: list, titles: TitleIndex, user_id: int | 
         titles.data.label(m) for m in mentioned if f'"movie_id": {m},' not in blob and titles.data.label(m) not in blob
     ]
     absent = _reported_absent(blob)
-    # "I couldn't find The Matrix (1999) in the dataset" is the correct answer, not a hallucination
     unknown = [t for t in unknown if not any(_bare_title(t).endswith(a) for a in absent)]
     return {
         "n_titles": len(mentioned),

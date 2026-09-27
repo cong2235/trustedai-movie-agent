@@ -119,7 +119,7 @@ SCENARIOS = [
     {
         "id": "u1_terminator_2",
         "user_id": 1,
-        "turns": [  # regression: sequels used to resolve to part 1
+        "turns": [
             {
                 "q": "What do users with similar taste think of Terminator 2?",
                 "expect_tools": ["similar_users_opinion"],
@@ -290,7 +290,6 @@ SCENARIOS = [
             },
         ],
     },
-    # long-term memory across two sessions (Failure 3's proposed fix)
     {
         "id": "u30_memory_two_sessions",
         "user_id": 30,
@@ -315,7 +314,7 @@ SCENARIOS = [
                     "exclude_genres": ["War"],
                 },
                 "plan": [("recommend_movies", {"n": 5})],
-            },  # the tool applies the remembered genre itself
+            },
         ],
     },
 ]

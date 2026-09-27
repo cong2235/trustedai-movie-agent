@@ -33,7 +33,7 @@ from movie_agent.recommender import DEFAULT_WEIGHTS, SPARSE_USER_THRESHOLD, Reco
 
 OUT = config.OUTPUT_DIR / "eval"
 K = 10
-LONG_TAIL = 5  # movies with fewer train ratings than this are "long tail"
+LONG_TAIL = 5
 
 
 def load_content(data: MovieData) -> ContentIndex | None:
@@ -47,7 +47,7 @@ def load_content(data: MovieData) -> ContentIndex | None:
 def build(full: MovieData, ratings: pd.DataFrame, content_full: ContentIndex | None) -> Recommender:
     data = full.with_ratings(ratings)
     content = None
-    if content_full is not None:  # embeddings don't depend on ratings; reuse, re-bind data
+    if content_full is not None:
         content = ContentIndex(
             data=data,
             movie_vecs=content_full.movie_vecs,
@@ -78,7 +78,7 @@ def evaluate_models(
             continue
         n_train = int(cf.rated_mask(u).sum())
         for name, w in models.items():
-            if "sparse" in w:  # segment-specific blend
+            if "sparse" in w:
                 w = w["sparse" if len(rec.data.user_ratings[u]) < SPARSE_USER_THRESHOLD else "rich"]
             total, _, cand = rec.score(u, weights=w, signals=signals[u])
             total = np.where(cand, total, -np.inf)
@@ -227,7 +227,6 @@ def main():
     full = MovieData.load()
     content_full = load_content(full)
 
-    # ---------------------------------------------------------------- tuning on validation
     split = temporal_split(full.ratings, test_frac=0.2)
     inner = temporal_split(split.train, test_frac=0.125)
     rec_val = build(full, inner.train, content_full)
@@ -236,7 +235,6 @@ def main():
     best_w, grid = tune(rec_val, rel_val, sig_val)
     grid.to_csv(OUT / "tuning_grid_validation.csv", index=False)
     print(f"tuned weights (validation NDCG@10={grid['NDCG@10'].iloc[0]:.4f}): {best_w}  [{time.time() - t0:.0f}s]")
-    # segment-specific blends: does a sparse-history user need a different mix?
     n_val = {u: len(rec_val.data.user_ratings[u]) for u in rel_val}
     seg_w, seg_val_ndcg = {}, 0.0
     for seg, pick in {
@@ -248,13 +246,11 @@ def main():
         g.to_csv(OUT / f"tuning_grid_validation_{seg}.csv", index=False)
         seg_val_ndcg += g["NDCG@10"].iloc[0] * len(rel_seg) / len(rel_val)
         print(f"  {seg} ({len(rel_seg)} users): {seg_w[seg]}")
-    # decided on validation only, so the test numbers stay untouched by this choice
     use_seg = bool(seg_val_ndcg > grid["NDCG@10"].iloc[0] + 0.002)
     print(
         f"  segment blend validation NDCG {seg_val_ndcg:.4f} vs global {grid['NDCG@10'].iloc[0]:.4f} -> use: {use_seg}"
     )
 
-    # ---------------------------------------------------------------- test
     rec = build(full, split.train, content_full)
     relevant = relevant_items(split.test)
     signals = precompute_signals(rec, list(relevant))
@@ -281,7 +277,6 @@ def main():
     bucket_sizes = per_user[per_user["model"] == "ItemKNN"].groupby("bucket").size()
     by_bucket.insert(0, "n_users", bucket_sizes)
 
-    # bootstrap CI for the headline comparison
     hyb = per_user[per_user.model == "Hybrid (tuned on validation)"].set_index("user")[f"NDCG@{K}"]
     rng = np.random.default_rng(0)
     cis = {}

@@ -126,15 +126,15 @@ def test_no_prediction_for_already_rated_movie(tools):
 @pytest.mark.parametrize(
     "query,expected_title",
     [
-        ("Terminator 2", "Terminator 2: Judgment Day (1991)"),  # was: The Terminator (1984)
-        ("Godfather 2", "The Godfather: Part II (1974)"),  # was: The Godfather (1972)
-        ("Alien 3", "Alien³ (1992)"),  # was: Alien (1979)
-        ("Ocean's 12", "Ocean's Twelve (2004)"),  # was: Twelve Monkeys
+        ("Terminator 2", "Terminator 2: Judgment Day (1991)"),
+        ("Godfather 2", "The Godfather: Part II (1974)"),
+        ("Alien 3", "Alien³ (1992)"),
+        ("Ocean's 12", "Ocean's Twelve (2004)"),
         ("Rocky 4", "Rocky IV (1985)"),
         ("Back to the Future 2", "Back to the Future Part II (1989)"),
-        ("Toy Story", "Toy Story (1995)"),  # no number -> not the sequel
+        ("Toy Story", "Toy Story (1995)"),
         ("The Godfather", "The Godfather (1972)"),
-        ("21", "21 (2008)"),  # numeric title beats "movie id 21"
+        ("21", "21 (2008)"),
         ("2012", "2012 (2009)"),
     ],
 )
@@ -143,7 +143,7 @@ def test_sequels_and_numeric_titles_resolve_correctly(tools, data, query, expect
 
 
 def test_numeric_string_still_works_as_movie_id(tools):
-    assert tools.resolve("79132") == 79132  # Inception's id; no movie is titled "79132"
+    assert tools.resolve("79132") == 79132
 
 
 def test_absent_number_title_is_not_guessed(tools):
@@ -186,5 +186,5 @@ def test_expected_fit_reflects_the_prediction_not_the_amount_of_evidence():
 
     assert _expected_fit(4.2) == "good match"
     assert _expected_fit(3.8) == "likely match"
-    assert _expected_fit(3.5).startswith("uncertain")  # Kick-Ass for user 23: 20 raters, predicted 3.5
+    assert _expected_fit(3.5).startswith("uncertain")
     assert _expected_fit(None) is None

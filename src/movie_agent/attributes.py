@@ -42,10 +42,10 @@ MOODS = (
 
 @dataclass
 class MovieAttributes:
-    moods: np.ndarray  # (n_movies, len(MOODS)) bool
-    twist: np.ndarray  # (n_movies,) 0-3: how far the ending overturns the story (0 also for unknown)
-    violence: np.ndarray  # (n_movies,) float, nan = unknown
-    known: np.ndarray  # (n_movies,) bool: the movie has attributes at all
+    moods: np.ndarray
+    twist: np.ndarray
+    violence: np.ndarray
+    known: np.ndarray
 
     @classmethod
     def load(cls, data: MovieData, path=ATTRIBUTES_PATH) -> MovieAttributes | None:

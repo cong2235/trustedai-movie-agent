@@ -81,7 +81,7 @@ def main():
     for i in range(args.n):
         try:
             rows.append(one_call(client, args.model, with_tools=i % 2 == 0, question=questions[i % 3]))
-        except Exception as e:  # a timeout here is data, not a crash
+        except Exception as e:
             rows.append({"error": f"{type(e).__name__}: {e}"[:200], "with_tools": i % 2 == 0})
         r = rows[-1]
         print(

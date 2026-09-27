@@ -51,7 +51,7 @@ def main() -> None:
     ap.add_argument("--user", type=int, required=True)
     ap.add_argument("--no-llm", action="store_true", help="use tools directly (no API key needed)")
     args = ap.parse_args()
-    config.setup_logging("WARNING")  # the chat UI owns the terminal; only warnings reach the log
+    config.setup_logging("WARNING")
 
     console.print("[dim]loading data, CF model and embeddings...[/dim]")
     tools = MovieTools.build()

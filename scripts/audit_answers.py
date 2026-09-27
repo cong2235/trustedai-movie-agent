@@ -27,8 +27,7 @@ AVG = re.compile(
     r"(?:average(?: rating)?(?: of)?|avg\.?|rated)\s*(?:of\s*)?\**(\d\.\d{1,2})\**|\**(\d\.\d{1,2})\**\s*(?:★\s*)?(?:average|avg)",
     re.I,
 )
-COUNT = re.compile(r"(?<![\d.])(\d{1,4})\s+(?:user\s+)?ratings?\b", re.I)  # not the "0" of "5.0 rating"
-# the user's own numbers: genre averages ("you have an average of 4.2") and ratings ("rated 5.0 by you")
+COUNT = re.compile(r"(?<![\d.])(\d{1,4})\s+(?:user\s+)?ratings?\b", re.I)
 OWN_AVG = re.compile(
     r"\byou(?:'ve| have)?\b[^.]{0,40}\baverage|\byour average|\bby you\b|\byou rated\b|"
     r"\byour (?:high )?(?:ratings?|love)\b",
@@ -60,17 +59,13 @@ def audit_file(path: Path, data: MovieData, titles: TitleIndex) -> list[dict]:
         subject = None
         for sent in sentences(answer):
             s_found, _ = titles.mentions(sent)
-            # a bold title *opening* a list item / paragraph is its subject; a bold title mid-sentence is evidence
-            # ("users who liked **The Shawshank Redemption** also appreciated this film")
             opens = sent.lstrip().startswith("**") or re.match(r"#+\s", sent.lstrip())
             bold = [m for pos, m in s_found if "**" in sent[pos : pos + 10]] if opens else []
             bold = bold[:1]
             if bold:
-                subject = bold[0]  # a new list item / paragraph subject
+                subject = bold[0]
             if not s_found and subject is None:
                 continue
-            # "this film has an average of 3.7" or a sentence naming only evidence movies -> the block subject;
-            # otherwise the first movie the sentence names
             refers_back = re.search(r"\b(this|the) (film|movie|one)\b|\bit (has|holds|is rated)\b", sent, re.I)
             if subject is not None and (refers_back or not s_found or bold):
                 mid = subject
@@ -84,7 +79,7 @@ def audit_file(path: Path, data: MovieData, titles: TitleIndex) -> list[dict]:
                     x = float(m.group(1) or m.group(2))
                     n_checked += 1
                     true = stats.loc[mid, "mean"]
-                    if true != true or abs(true - x) > 0.051:  # NaN-safe
+                    if true != true or abs(true - x) > 0.051:
                         issues.append(
                             {
                                 "file": path.name,
@@ -96,7 +91,7 @@ def audit_file(path: Path, data: MovieData, titles: TitleIndex) -> list[dict]:
                 n = int(m.group(1))
                 n_checked += 1
                 if NEIGHBOUR.search(sent[max(0, m.start() - 60) : m.end()]):
-                    continue  # "10 similar users" is a neighbourhood count
+                    continue
                 if n != int(stats.loc[mid, "count"]):
                     issues.append(
                         {

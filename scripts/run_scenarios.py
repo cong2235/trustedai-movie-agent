@@ -64,7 +64,6 @@ ABSENT_PHRASES = [
 RUN_INFO: dict = {}
 
 
-# ------------------------------------------------------------------ helpers
 def recommended_in(trace: list[dict]) -> list[int]:
     ids = []
     for t in trace:
@@ -86,7 +85,7 @@ def _arg_ok(tools: MovieTools, value, spec, history=None) -> bool:
     {"contains_movie": title} | {"max"|"min": n}"""
     if spec is True:
         return value not in (None, "", [], {})
-    if "absent_or_below" in spec:  # a constraint the user has since lifted
+    if "absent_or_below" in spec:
         return value in (None, "", []) or float(value) < spec["absent_or_below"]
     if value in (None, "", []):
         return False
@@ -144,7 +143,7 @@ def memory_checks(ch: dict, mems: list[dict], tools: MovieTools) -> list[str]:
             miss = [] if len(have) >= want else [f"{want - len(have)} more"]
         if miss:
             problems.append(f"memory lacks {kind}: {miss}")
-    for kind, pattern in ch.get("memory_titles_match", {}).items():  # "I've seen Star Wars": only a Star Wars film
+    for kind, pattern in ch.get("memory_titles_match", {}).items():
         wrong = [
             tools.data.label(m["movie_id"])
             for m in mems
@@ -188,7 +187,6 @@ def check_turn(
     max_call_tokens=None,
 ) -> dict:
     called = {t["tool"] for t in trace}
-    # a tool already called earlier in this session counts: re-using its output (still in context) is legitimate
     called_session = called | {t["tool"] for t in conv_trace}
     tool_ok = all(any(alt in called_session for alt in req.split("|")) for req in turn["expect_tools"])
     arg_problems = args_check(turn, trace, tools, history)
@@ -196,7 +194,7 @@ def check_turn(
     titles = TitleIndex.for_data(tools.data)
     outputs = [t["output"] for t in conv_trace]
     grounding = {k: [] for k in ISSUE_KEYS}
-    if not scripted:  # templates are generated from tool output; nothing to verify
+    if not scripted:
         grounding = check_answer(answer, outputs, titles, user_id)
     mentioned, _ = titles.mentioned(answer)
     tool_recs = recommended_in(trace)
@@ -236,14 +234,13 @@ def check_turn(
         text_ok = any(p in low for p in ABSENT_PHRASES)
     if ch.get("mentions_any"):
         text_ok = text_ok and any(s.lower() in low for s in ch["mentions_any"])
-    if ch.get("mentions_prev") and not (scripted and turn.get("llm_only")):  # needs a model to answer from history
+    if ch.get("mentions_prev") and not (scripted and turn.get("llm_only")):
         t, k = ch["mentions_prev"]
         listed = history[t]["recs_order"] if history and t < len(history) else []
         text_ok = text_ok and k < len(listed) and listed[k] in set(TitleIndex.for_data(tools.data).mentioned(answer)[0])
     if ch.get("min_recs"):
         text_ok = text_ok and len(recs) >= ch["min_recs"]
     mem_problems = memory_checks(ch, memory_after if memory_after is not None else tools.memory.list(user_id), tools)
-    # context budget per LLM call (what the model sees at once); a turn may make several calls
     budget = turn.get("max_input_tokens")
     if budget and max_call_tokens and max_call_tokens > budget:
         mem_problems.append(f"context budget: a call saw {max_call_tokens} input tokens > {budget}")
@@ -273,7 +270,6 @@ def check_turn(
     }
 
 
-# ------------------------------------------------------------------ runners
 def turn_user(scenario, turn) -> int:
     return turn.get("user_id", scenario["user_id"])
 
@@ -289,10 +285,10 @@ def run_scripted(tools: MovieTools, scenario) -> list[dict]:
         parts = []
         for name, args in turn["plan"]:
 
-            def sub(v, first_rec=first_rec):  # called within this iteration; bound explicitly
+            def sub(v, first_rec=first_rec):
                 if v == "$FIRST_REC":
                     return first_rec
-                if isinstance(v, str) and v.startswith("$PREV:"):  # "$PREV:t:k" = k-th rec of turn t
+                if isinstance(v, str) and v.startswith("$PREV:"):
                     _, t, k = v.split(":")
                     return str(recs_by_turn[int(t)][int(k)])
                 return v
@@ -320,8 +316,8 @@ def run_llm(tools: MovieTools, scenario) -> list[dict]:
     turns, current = [], scenario["user_id"]
     for turn in scenario["turns"]:
         if turn.get("new_session") or turn_user(scenario, turn) != current:
-            current = turn_user(scenario, turn)  # a later visit (or another user): fresh conversation,
-            agent.start(current)  # same long-term memory store
+            current = turn_user(scenario, turn)
+            agent.start(current)
         res = agent.ask(turn["q"])
         turns.append(
             {
@@ -433,7 +429,6 @@ def to_markdown(sc, turns, checks) -> str:
     return "\n".join(md)
 
 
-# ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mode", choices=["scripted", "llm"], default="scripted")
@@ -478,7 +473,7 @@ def main():
     runs = [(sc, r) for sc in scenarios if not args.only or sc["id"] == args.only for r in range(args.repeat)]
     for sc, rep in runs:
         tools.trace = []
-        tools.memory = MemoryStore(":memory:")  # isolated long-term memory per run
+        tools.memory = MemoryStore(":memory:")
         turns = run_scripted(tools, sc) if scripted else run_llm(tools, sc)
         checks, earlier, conv_trace, history = [], set(), [], []
         prev_user = sc["user_id"]

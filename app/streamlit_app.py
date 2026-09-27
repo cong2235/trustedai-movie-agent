@@ -22,7 +22,7 @@ from movie_agent.agent import MovieAgent, detect_provider  # noqa: E402
 from movie_agent.telemetry import Telemetry  # noqa: E402
 from movie_agent.tools import MovieTools  # noqa: E402
 
-SERIES_1 = "#2a78d6"  # reference palette, categorical slot 1: every chart here is single-series
+SERIES_1 = "#2a78d6"
 
 st.set_page_config(page_title="Movie Discovery Agent", page_icon="🎬", layout="wide")
 
@@ -47,7 +47,6 @@ def telemetry() -> Telemetry:
     return Telemetry()
 
 
-# ------------------------------------------------------------------ sidebar
 with st.sidebar:
     st.header("Session")
     user_id = st.number_input(
@@ -96,7 +95,6 @@ with st.sidebar:
 
 chat_tab, monitor_tab = st.tabs(["💬 Chat", "📈 Monitor"])
 
-# --------------------------------------------------------------------- chat
 with chat_tab:
     for i, msg in enumerate(st.session_state.get("history", [])):
         with st.chat_message(msg["role"]):
@@ -133,7 +131,7 @@ with chat_tab:
             box = st.empty()
             streamed: list[str] = []
 
-            def on_token(delta: str) -> None:  # answer text appears as it is generated
+            def on_token(delta: str) -> None:
                 if not streamed:
                     status.update(label="Writing the answer…")
                 streamed.append(delta)
@@ -157,7 +155,6 @@ with chat_tab:
         )
         st.rerun()
 
-# ------------------------------------------------------------------ monitor
 with monitor_tab:
     window = st.radio("Window", ["1 h", "24 h", "7 d", "All"], index=3, horizontal=True)
     since = {"1 h": 3600, "24 h": 86400, "7 d": 7 * 86400}.get(window)
@@ -202,7 +199,6 @@ with monitor_tab:
         st.subheader("Over time")
         c1, c2 = st.columns(2)
         c3, c4 = st.columns(2)
-        # one measure per chart: no dual axes
         for col, name, title in (
             (c1, "turns", "Turns"),
             (c2, "latency_p95_s", "Latency p95 (s)"),

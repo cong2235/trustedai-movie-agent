@@ -32,7 +32,6 @@ def preference_weight(ratings: np.ndarray) -> np.ndarray:
 class CFModel:
     data: MovieData
 
-    # ------------------------------------------------------------- matrices
     @cached_property
     def user_ids(self) -> np.ndarray:
         return np.sort(self.data.ratings["userId"].unique())
@@ -84,7 +83,6 @@ class CFModel:
         w.data = preference_weight(w.data)
         return w
 
-    # ------------------------------------------------------- user-user sims
     @cached_property
     def user_sim(self) -> np.ndarray:
         """Pearson correlation on co-rated items, significance-weighted by overlap.
@@ -96,7 +94,7 @@ class CFModel:
         Rc, B = self.Rc, self.B
         num = (Rc @ Rc.T).toarray()
         sq = Rc.multiply(Rc)
-        norm_uv = (sq @ B.T).toarray()  # sum over co-rated of rc_u^2
+        norm_uv = (sq @ B.T).toarray()
         denom = np.sqrt(norm_uv * norm_uv.T) + 1e-9
         n = (B @ B.T).toarray()
         sim = num / denom
@@ -139,7 +137,6 @@ class CFModel:
             if sims[i] > 0
         ]
 
-    # ------------------------------------------------------ rating baseline
     @cached_property
     def biases(self) -> tuple[float, np.ndarray, np.ndarray]:
         """Regularised baseline r_ui ≈ mu + b_u + b_i (Koren 2008), fitted by two closed-form passes."""
@@ -194,7 +191,6 @@ class CFModel:
         top = top[sims[top] > 0]
         return np.asarray(sims[top] @ self.W[top].toarray()).ravel()
 
-    # ------------------------------------------------------- item-item sims
     @cached_property
     def item_sim(self) -> np.ndarray:
         """Adjusted cosine between movies (user-mean-centred), significance-weighted by co-raters."""
@@ -212,13 +208,13 @@ class CFModel:
         u = self.u_index[user_id]
         rated = self.R[u].indices
         prefs = self.W[u].data
-        S = self.item_sim[:, rated]  # (n_movies, n_rated)
+        S = self.item_sim[:, rated]
         if len(rated) > k:
             cut = np.argpartition(-S, k - 1, axis=1)[:, :k]
             mask = np.zeros_like(S, dtype=bool)
             np.put_along_axis(mask, cut, True, axis=1)
             S = np.where(mask, S, 0.0)
-        S = np.clip(S, 0.0, None)  # negative sims are too noisy here
+        S = np.clip(S, 0.0, None)
         return S @ prefs
 
     def item_contributions(self, user_id: int, movie_id: int, top: int = 5) -> list[tuple[int, float, float]]:
@@ -230,7 +226,6 @@ class CFModel:
         order = np.argsort(-contrib)[:top]
         return [(int(self.movie_ids[rated[i]]), float(sims[i]), float(ratings[i])) for i in order if contrib[i] > 0]
 
-    # ---------------------------------------------------------- baselines
     def pure_svd_scores(self, user_id: int, factors: int = 50) -> np.ndarray:
         """PureSVD (Cremonesi et al. 2010): strong top-N baseline, not explainable."""
         if not hasattr(self, "_svd_V"):

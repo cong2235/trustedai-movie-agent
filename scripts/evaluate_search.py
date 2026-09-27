@@ -40,7 +40,6 @@ from movie_agent.data import MovieData  # noqa: E402
 from movie_agent.embedders import BACKENDS, artifact_dir  # noqa: E402
 from movie_agent.rerank import get_reranker  # noqa: E402
 
-# query -> tags whose movies count as relevant
 TOPIC = {
     "characters travel back in time and change history": {"time travel"},
     "an adventure set in outer space": {"space"},
@@ -75,7 +74,6 @@ TONE = {
     "a mind-bending psychological movie that messes with your head": {"mindfuck", "psychological"},
     "a satire that mocks society": {"satire", "spoof"},
 }
-# the attribute arguments an agent should pass for each tone query (see the tool schema for moods / twist_ending)
 TONE_ATTRS = {
     "a thriller with a shocking twist ending": {"moods": ["tense"], "twist_ending": True},
     "a pitch-black dark comedy": {"moods": ["dark-comedy"]},
@@ -125,7 +123,7 @@ def main():
         for qset, queries in (("topic", TOPIC), ("tone", TONE)):
             for query, labels in queries.items():
                 rel = set().union(*(tagged.get(t, set()) for t in labels))
-                first = idx.relevance(query) + 0.35 * qz  # the shipped first stage (without taste)
+                first = idx.relevance(query) + 0.35 * qz
                 pool_rows = np.argsort(-first)[: config.RERANK_POOL]
                 pool_ids = [int(ids[i]) for i in pool_rows]
                 variants = {
@@ -142,7 +140,7 @@ def main():
                         a_rows = np.argsort(-with_attrs)[: config.RERANK_POOL]
                         pools["stage 1 + attributes"] = (a_rows, with_attrs)
                     else:
-                        pools["stage 1 + attributes"] = (pool_rows, first)  # nothing requested: same pipeline
+                        pools["stage 1 + attributes"] = (pool_rows, first)
                     variants["stage 1 + attributes"] = [int(ids[i]) for i in pools["stage 1 + attributes"][0][:K]]
                 for name, rr in rerankers.items():
                     if name == "none":

@@ -36,7 +36,6 @@ SLOS = {
 def load(db_path: Path = config.TELEMETRY_DB, since_ts: float | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not Path(db_path).exists():
         return pd.DataFrame(), pd.DataFrame()
-    # closing(): sqlite3's own context manager only commits, it never closes the connection
     with closing(sqlite3.connect(db_path)) as c:
         where, params = (" WHERE ts >= ?", (float(since_ts),)) if since_ts else ("", ())
         turns = pd.read_sql(f"SELECT * FROM turns{where}", c, params=params)
@@ -52,7 +51,7 @@ def kpis(turns: pd.DataFrame, calls: pd.DataFrame) -> dict:
         return {"turns": 0}
     lat = turns["latency_ms"] / 1000
     rr_all = calls[calls["rerank_kind"].notna() & (calls["rerank_kind"] != "none")] if not calls.empty else calls
-    rr = rr_all[rr_all["rerank_kind"] != "llm-cache"] if len(rr_all) else rr_all  # live calls only
+    rr = rr_all[rr_all["rerank_kind"] != "llm-cache"] if len(rr_all) else rr_all
     fb = turns["feedback"].dropna()
     k = {
         "turns": int(len(turns)),

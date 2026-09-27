@@ -63,11 +63,11 @@ def build_embeddings(data: MovieData, backend: str | None = None) -> None:
 @dataclass
 class ContentIndex:
     data: MovieData
-    movie_vecs: np.ndarray  # (n_movies, d), rows aligned with data.movies.index
-    chunk_vecs: np.ndarray  # (n_chunks, d)
-    chunk_owner: np.ndarray  # (n_chunks,) row index into movie_vecs
+    movie_vecs: np.ndarray
+    chunk_vecs: np.ndarray
+    chunk_owner: np.ndarray
     tfidf: TfidfVectorizer
-    tfidf_mat: object  # sparse (n_movies, vocab)
+    tfidf_mat: object
     backend: str = config.EMBED_BACKEND
     _encoder: object = None
 
@@ -100,7 +100,6 @@ class ContentIndex:
         docs = []
         for mid, row in data.movies.iterrows():
             tags = " ".join(data.movie_tags.get(mid, [])) if use_tags else ""
-            # tags are rare but precise, so repeat them to up-weight
             plot = row["plot"] if row["plot_ok"] else ""
             docs.append(f"{row['display']} {' '.join(row['genres'])} {tags} {tags} {tags} {plot}")
         tfidf = TfidfVectorizer(stop_words="english", sublinear_tf=True, ngram_range=(1, 2), min_df=2, max_df=0.5)
@@ -115,7 +114,6 @@ class ContentIndex:
             backend=backend,
         )
 
-    # ----------------------------------------------------------- similarity
     def similar_to_movies(self, rows: np.ndarray, weights: np.ndarray | None = None) -> np.ndarray:
         """Cosine similarity of every movie to the (weighted) centroid of `rows`."""
         w = np.ones(len(rows)) if weights is None else np.asarray(weights, dtype=np.float32)
@@ -130,7 +128,7 @@ class ContentIndex:
         if self._encoder is None:
             self._encoder = get_embedder(self.backend)
         cache = self.__dict__.setdefault("_qcache", {})
-        if query not in cache:  # dense_scores and the excerpt picker both need it
+        if query not in cache:
             cache[query] = self._encoder.encode_query(query)
         return cache[query]
 
@@ -154,5 +152,4 @@ class ContentIndex:
             return z(self.dense_scores(query))
         if mode == "lexical":
             return z(self.lexical_scores(query))
-        # movies with an unreliable plot get a neutral dense score, so only a strong title/tag match lifts them
         return (1 - lexical_weight) * z(self.dense_scores(query)) + lexical_weight * z(self.lexical_scores(query))

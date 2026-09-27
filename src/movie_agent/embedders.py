@@ -28,7 +28,7 @@ class LocalBGE:
 
     @cached_property
     def model(self):
-        from sentence_transformers import SentenceTransformer  # heavy import, keep lazy
+        from sentence_transformers import SentenceTransformer
 
         return SentenceTransformer(self.model_id)
 
@@ -50,14 +50,14 @@ class OpenAIEmbedder:
 
         from .http import openai_client
 
-        return openai_client(timeout=60.0, max_retries=0)  # retries are handled in _embed
+        return openai_client(timeout=60.0, max_retries=0)
 
     def _embed(self, batch: list[str], timeout: float = 60.0, attempts: int = 5) -> np.ndarray:
         for attempt in range(attempts):
             try:
                 resp = self.client.with_options(timeout=timeout).embeddings.create(model=self.model_id, input=batch)
                 return np.array([d.embedding for d in resp.data], dtype=np.float32)
-            except Exception as e:  # rate limits / transient network errors: back off and retry
+            except Exception as e:
                 if attempt == attempts - 1:
                     raise
                 wait = 2**attempt
@@ -73,7 +73,7 @@ class OpenAIEmbedder:
         return vecs / (np.linalg.norm(vecs, axis=1, keepdims=True) + 1e-9)
 
     def encode_query(self, query: str) -> np.ndarray:
-        v = self._embed([query], timeout=10.0, attempts=2)[0]  # interactive path: fail fast
+        v = self._embed([query], timeout=10.0, attempts=2)[0]
         return v / (np.linalg.norm(v) + 1e-9)
 
 

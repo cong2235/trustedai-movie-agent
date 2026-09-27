@@ -122,7 +122,7 @@ def test_search_violence_filter_and_attribute_cards(tools):
     out = tools.search_movies("a thriller", n=5, max_violence=0)
     assert out["results"], "comedies have violence 0 in the fixture, so something must pass"
     for r in out["results"]:
-        assert "Comedy" in _genres(tools, r["movie_id"])  # everything else is violence 3 and filtered out
+        assert "Comedy" in _genres(tools, r["movie_id"])
         assert r["attributes"]["violence_0_3"] == 0
 
 
@@ -161,21 +161,21 @@ def test_already_seen_is_excluded_and_remembered(tools):
     ids = {r["movie_id"] for r in out["recommendations"]}
     assert not {heat, casino} & ids
     assert set(out["remembered_as_seen"]) == {"Heat (1995)", "Casino (1995)"}
-    assert {heat, casino} <= tools.memory.excluded_movie_ids(USER)  # survives into later sessions
+    assert {heat, casino} <= tools.memory.excluded_movie_ids(USER)
 
 
 def test_already_seen_reports_titles_it_cannot_resolve(tools):
     out = tools.search_movies("a crime film", n=3, already_seen=["The Matrix"])
     assert out["already_seen_not_stored"][0]["title"] == "The Matrix"
-    assert not tools.memory.list(USER)  # nothing wrong was stored
+    assert not tools.memory.list(USER)
 
 
 def test_quality_floor_uses_the_raw_mean(tools):
-    maid = tools.resolve("Maid to Order")  # 3 ratings, mean 1.83, but Bayesian mean ~3.1
+    maid = tools.resolve("Maid to Order")
     row = tools.cf.m_index[maid]
     assert not tools.rec.quality_ok(2.75)[row]
     unrated = int(np.argmin(tools.data.movie_stats["count"].to_numpy()))
-    assert tools.rec.quality_ok(2.75)[unrated]  # too few ratings to judge: passes
+    assert tools.rec.quality_ok(2.75)[unrated]
     out = tools.search_movies("a funny comedy", n=15)
     stats = tools.data.movie_stats
     for r in out["results"]:
@@ -185,7 +185,6 @@ def test_quality_floor_uses_the_raw_mean(tools):
 
 
 def test_absent_title_in_exclude_titles_does_not_fail_the_request(tools):
-    # held-out v2: "I've seen Inception and Interstellar" -> Interstellar is not in the dataset
     out = tools.recommend_movies(n=5, include_genres=["Sci-Fi"], exclude_titles=["Inception", "Interstellar"])
     assert out["recommendations"]
     assert [p["title"] for p in out["exclude_titles_not_found"]] == ["Interstellar"]
@@ -193,20 +192,18 @@ def test_absent_title_in_exclude_titles_does_not_fail_the_request(tools):
 
 
 def test_quality_floor_is_relaxed_and_flagged_when_it_leaves_nothing(tools):
-    # held-out v1 re-run: user 474 has rated every pre-1960 war film except one that averages 2.5
     tools.set_user(474)
     out = tools.recommend_movies(n=3, include_genres=["War"], max_year=1959)
     assert [r["title"] for r in out["recommendations"]] == ["To Be or Not to Be (1942)"]
     assert "below" in out["quality_floor_relaxed"]
     strict = tools.recommend_movies(n=3, include_genres=["Comedy"])
-    assert "quality_floor_relaxed" not in strict  # normal requests are untouched
+    assert "quality_floor_relaxed" not in strict
 
 
 def test_own_suggestions_passed_as_already_seen_are_not_remembered(tools):
-    # live use: "3 more" -> the model passed its earlier picks as already_seen to avoid repeats
     first = [r["title"] for r in tools.recommend_movies(n=3, include_genres=["Action"])["recommendations"]]
     out = tools.recommend_movies(n=3, include_genres=["Action"], already_seen=first)
-    assert not set(first) & {r["title"] for r in out["recommendations"]}  # still excluded
-    assert not tools.memory.list(USER)  # but nothing was written to long-term memory
+    assert not set(first) & {r["title"] for r in out["recommendations"]}
+    assert not tools.memory.list(USER)
     assert "remembered_as_seen" not in out
     assert {p["title"] for p in out["already_seen_not_stored"]} == set(first)

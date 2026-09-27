@@ -9,7 +9,7 @@ from . import config
 from .cf import CFModel
 from .data import MovieData
 
-NON_GENRES = {"IMAX"}  # a screening format, not a taste
+NON_GENRES = {"IMAX"}
 
 
 def population_genre_share(data: MovieData) -> pd.Series:
@@ -152,8 +152,6 @@ def blind_spots(data: MovieData, cf: CFModel, user_id: int, top: int = 5) -> dic
                 "similar_users_relative_liking": round(neigh_rel, 2),
                 "score": round((1 - min(r["lift"], 1)) * (0.5 + neigh_rel), 3),
                 "entry_points_liked_by_similar_users": [
-                    # both averages, explicitly named: the model once reported the 2-user neighbourhood average (5.0)
-                    # as the movie's "average rating" (dataset: 4.03) - caught by scripts/audit_answers.py
                     {
                         "title": data.label(m),
                         "avg_among_your_similar_users": round(a["avg"], 2),

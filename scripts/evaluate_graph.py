@@ -50,7 +50,6 @@ def main():
     split = temporal_split(full.ratings, test_frac=0.2)
     inner = temporal_split(split.train, test_frac=0.125)
 
-    # ---------------------------------------------------------- tune on validation
     rec_v = build(full, inner.train, content)
     rel_v = relevant_items(inner.test)
     sig_v = precompute_signals(rec_v, list(rel_v))
@@ -72,7 +71,6 @@ def main():
     pd.DataFrame(grid_rows).to_csv(OUT / "graph_tuning_validation.csv", index=False)
     kg_best = max((k for k in best if k > 0), key=lambda k: best[k][0])
 
-    # blend weight for the graph signal inside the hybrid, chosen on validation
     g_plain = RP3Beta(rec_v.cf, alpha=best[0.0][1], beta=best[0.0][2]).fit()
     g_kg = RP3Beta(rec_v.cf, alpha=best[kg_best][1], beta=best[kg_best][2], kg_weight=kg_best).fit()
     add_graph_signal(rec_v, sig_v, "rp3", g_plain)
@@ -83,7 +81,6 @@ def main():
         blend[sig] = max(cands, key=cands.get)
         print(f"hybrid + {sig}: validation {cands} -> weight {blend[sig]}")
 
-    # ---------------------------------------------------------------- test
     rec = build(full, split.train, content)
     rel = relevant_items(split.test)
     sig = precompute_signals(rec, list(rel))

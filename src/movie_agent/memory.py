@@ -28,7 +28,7 @@ from pathlib import Path
 from . import config
 
 KINDS = ("preference", "seen", "dismissed", "disliked", "liked", "avoid_genre")
-EXCLUDING = ("seen", "dismissed", "disliked", "liked")  # "liked" also means watched: don't re-suggest it
+EXCLUDING = ("seen", "dismissed", "disliked", "liked")
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS memories (
@@ -37,8 +37,6 @@ CREATE TABLE IF NOT EXISTS memories (
 );
 CREATE INDEX IF NOT EXISTS idx_mem_user ON memories(user_id);
 """
-# SQLite treats NULLs as distinct in a plain unique index, so (user, 'seen', 356, NULL) could be stored twice -
-# every movie memory has a NULL note. An expression index over COALESCEd columns makes duplicates impossible.
 DEDUPE_AND_INDEX = """
 DELETE FROM memories WHERE memory_id NOT IN (
     SELECT MIN(memory_id) FROM memories GROUP BY user_id, kind, COALESCE(movie_id, -1), COALESCE(note, ''));
@@ -58,7 +56,7 @@ class MemoryStore:
         self._lock = threading.Lock()
         with self._lock:
             self._conn.executescript(SCHEMA)
-            self._conn.executescript(DEDUPE_AND_INDEX)  # also migrates stores created by the first version
+            self._conn.executescript(DEDUPE_AND_INDEX)
             self._conn.commit()
 
     def close(self) -> None:

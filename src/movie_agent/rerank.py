@@ -45,8 +45,8 @@ def _z(x: np.ndarray) -> np.ndarray:
 
 @dataclass
 class RerankResult:
-    order: list[int]  # movie ids, best first
-    scores: dict[int, float]  # raw re-ranker score per movie id
+    order: list[int]
+    scores: dict[int, float]
     ms: int
     kind: str
     error: str | None = None
@@ -61,7 +61,7 @@ class NoRerank:
 
 
 class _Blend:
-    blend = 0.7  # weight on the re-ranker vs the first stage (z-scored within the pool)
+    blend = 0.7
     show_tags = True
 
     def _finish(self, movie_ids, first_stage, raw: dict[int, float], t0: float, error=None) -> RerankResult:
@@ -87,7 +87,6 @@ class CrossEncoderRerank(_Blend):
         pairs = []
         for m in movie_ids:
             row = data.movies.loc[m]
-            # the cross-encoder window is short: header + the start of the plot (the premise)
             plot = _chunks(row["plot"])[0] if row["plot_ok"] else ""
             pairs.append((query, candidate_text(data, m, 0, self.show_tags) + " " + plot))
         scores = self._model.predict(pairs, show_progress_bar=False)
@@ -123,7 +122,7 @@ class LLMRerank(_Blend):
         if key in self._cache:
             raw = {int(k): v for k, v in self._cache[key].items()}
             res = self._finish(movie_ids, first_stage, raw, t0)
-            res.kind = "llm-cache"  # monitored separately: cache hits must not flatter the latency SLO
+            res.kind = "llm-cache"
             return res
         listing = "\n".join(
             f"[{i}] {candidate_text(data, m, self.plot_chars, self.show_tags)}" for i, m in enumerate(movie_ids)
@@ -146,7 +145,7 @@ class LLMRerank(_Blend):
                 if isinstance(p, list) and len(p) == 2 and str(p[0]).isdigit() and int(p[0]) < len(movie_ids)
             }
             error = None if len(raw) == len(movie_ids) else f"scored {len(raw)} of {len(movie_ids)} candidates"
-        except Exception as e:  # never fail the user's request because the re-ranker failed
+        except Exception as e:
             return self._finish(movie_ids, first_stage, {}, t0, error=f"{type(e).__name__}: {e}"[:200])
         self._cache[key] = raw
         self.cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -170,5 +169,5 @@ def _openai_client():
 def get_reranker(kind: str | None = None):
     kind = kind or config.RERANKER
     if kind == "llm" and not os.environ.get("OPENAI_API_KEY"):
-        kind = "cross"  # the LLM re-ranker uses OpenAI; degrade gracefully without a key
+        kind = "cross"
     return {"none": NoRerank, "cross": CrossEncoderRerank, "llm": LLMRerank}[kind]()

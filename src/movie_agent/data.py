@@ -51,7 +51,7 @@ def _normalize(text: str) -> str:
     Standalone 'i' and 'x' are left alone ('I, Robot', 'X-Men')."""
     text = text.lower().replace("³", " 3").replace("²", " 2")
     text = re.sub(r"[^a-z0-9 ]+", " ", text)
-    text = re.sub(r"^\s*(the|a|an)\s+", "", text)  # leading articles make every title look alike
+    text = re.sub(r"^\s*(the|a|an)\s+", "", text)
     tokens = [_ROMAN.get(t, _NUMWORDS.get(t, t)) for t in text.split() if t != "part"]
     return " ".join(tokens)
 
@@ -62,13 +62,12 @@ def _numbers(norm: str) -> set[str]:
 
 @dataclass
 class MovieData:
-    movies: pd.DataFrame  # indexed by movieId: title, year, genres(list), plot, display
-    ratings: pd.DataFrame  # userId, movieId, rating, timestamp
-    tags: pd.DataFrame  # userId, movieId, tag (cleaned, lowercased)
+    movies: pd.DataFrame
+    ratings: pd.DataFrame
+    tags: pd.DataFrame
     _title_keys: list[str] = field(default_factory=list, repr=False)
     _title_ids: list[int] = field(default_factory=list, repr=False)
 
-    # ------------------------------------------------------------------ load
     @classmethod
     def load(cls, data_dir=config.DATA_DIR) -> MovieData:
         movies = pd.read_csv(data_dir / "movies_with_plots.csv")
@@ -76,9 +75,6 @@ class MovieData:
             movies["genres"].str.split("|").apply(lambda gs: [g for g in gs if g != "(no genres listed)"])
         )
         movies["display"] = movies["title"].map(display_title)
-        # Data-quality guard: 198 movies in 41 groups share a byte-identical plot (a join error upstream;
-        # e.g. "Twelve Monkeys" carries Mighty Aphrodite's plot). The true owner can't be recovered reliably,
-        # so these plots are excluded from every content signal and never shown as the movie's plot.
         movies["plot_ok"] = ~movies["plot"].duplicated(keep=False)
         movies = movies.set_index("movieId")
 
@@ -92,7 +88,6 @@ class MovieData:
         """Same catalogue, different ratings (used for train/test splits)."""
         return MovieData(movies=self.movies, ratings=ratings.reset_index(drop=True), tags=self.tags)
 
-    # ------------------------------------------------------------ statistics
     @cached_property
     def global_mean(self) -> float:
         return float(self.ratings["rating"].mean())
@@ -126,7 +121,6 @@ class MovieData:
     def has_user(self, user_id: int) -> bool:
         return user_id in self.user_ratings
 
-    # ----------------------------------------------------------- formatting
     def label(self, movie_id: int) -> str:
         row = self.movies.loc[movie_id]
         return f"{row['display']} ({row['year']})"
@@ -153,7 +147,6 @@ class MovieData:
             out["plot"] = plot if len(plot) <= plot_chars else plot[:plot_chars].rsplit(" ", 1)[0] + " ..."
         return out
 
-    # ---------------------------------------------------------- title lookup
     def _build_title_index(self) -> None:
         keys, ids = [], []
         for mid, row in self.movies.iterrows():
@@ -171,7 +164,7 @@ class MovieData:
             self._build_title_index()
         year = None
         years = list(re.finditer(r"\b(18|19|20)\d{2}\b", query))
-        if years and years[-1].start() > 0:  # the last one: "2001: A Space Odyssey 1968" -> 1968
+        if years and years[-1].start() > 0:
             m = years[-1]
             year = int(m.group(0))
             query = query[: m.start()] + query[m.end() :]
@@ -181,22 +174,17 @@ class MovieData:
         best: dict[int, float] = {}
         for _, score, idx in hits:
             mid = self._title_ids[idx]
-            # exact normalized match beats partial-ratio matches ("Alien" vs "Aliens")
             key = self._title_keys[idx]
             score = 100.0 if key == q else min(score, 99.0) * 0.97
-            # a title much shorter than the query is only a fragment of it: "boy" inside "oldboy",
-            # "goon" inside "goonies", "m" inside "matrix" - partial-ratio scores those near 100
             if key != q and len(key) < 0.8 * len(q):
                 score *= (len(key) / len(q)) ** 0.5
-            # a number in the query is a sequel/part marker: "Terminator 2" must not resolve to The Terminator
             if q_nums and not q_nums <= _numbers(key):
                 score *= 0.7
             elif q_nums and set(q.split()) <= set(key.split()):
-                score = max(score, 95.0)  # "terminator 2" is fully contained in "terminator 2 judgment day"
+                score = max(score, 95.0)
             best[mid] = max(best.get(mid, 0), score)
 
         if year is not None:
-            # the user named a year: a title from a different year is at best a guess (Solaris 1972 vs 2002)
             for mid in best:
                 if int(self.movies.loc[mid, "year"]) != year:
                     best[mid] = min(best[mid], 84.0)

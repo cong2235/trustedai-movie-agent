@@ -35,29 +35,19 @@ DATA_DIR = REPO_ROOT / "data" / "ml-latest-small-filtered"
 ARTIFACT_DIR = REPO_ROOT / "artifacts"
 OUTPUT_DIR = REPO_ROOT / "outputs"
 
-# --- Ratings ---------------------------------------------------------------
-LIKE_THRESHOLD = 4.0  # rating >= this counts as "liked" / relevant
-BAYES_PRIOR_COUNT = 10  # pseudo-ratings pulling small-sample means to the global mean
+LIKE_THRESHOLD = 4.0
+BAYES_PRIOR_COUNT = 10
 
-TITLE_MATCH_CONFIDENT = 90  # fuzzy title score above which we accept the top hit
+TITLE_MATCH_CONFIDENT = 90
 
-# --- Quality floor ----------------------------------------------------------
-# Movies with at least QUALITY_FLOOR_MIN_COUNT ratings and a raw mean below QUALITY_FLOOR_MEAN are not recommended
-# unless the caller lowers the floor. The raw mean, not the Bayesian one: shrinkage toward the global mean lifts a
-# 1.83-star film with 3 ratings to 3.1, which is how "Maid to Order" reached a held-out answer.
-# Movies with fewer ratings pass (unknown quality). Impact: scripts/evaluate_quality_floor.py.
 QUALITY_FLOOR_MEAN = 2.75
 QUALITY_FLOOR_MIN_COUNT = 3
 
-# --- Collaborative filtering -----------------------------------------------
-MIN_CO_RATED = 3  # minimum overlap to compute a user-user similarity at all
-USER_SIM_SHRINK = 10  # sim *= n / (n + shrink): damp similarities built on few co-ratings
+MIN_CO_RATED = 3
+USER_SIM_SHRINK = 10
 ITEM_SIM_SHRINK = 10
 NEIGHBORHOOD_K = 30
 
-# --- Content ---------------------------------------------------------------
-# bge-small (local) | openai-3-small | auto ; artifacts live in artifacts/<backend>/
-# auto = OpenAI when a key and its index exist (better search: see outputs/eval/search_eval.md), else local bge-small
 _embed = os.environ.get("MOVIE_AGENT_EMBEDDINGS", "auto")
 if _embed == "auto":
     _embed = (
@@ -66,41 +56,27 @@ if _embed == "auto":
         else "bge-small"
     )
 EMBED_BACKEND = _embed
-CHUNK_WORDS = 180  # plot chunk size (~240 tokens, well under the 512 limit)
-MAX_CHUNKS = 6  # cap per movie; the first chunks carry the premise
+CHUNK_WORDS = 180
+MAX_CHUNKS = 6
 
-# Tags that describe the tagger, not the movie
 NOISE_TAGS = {"in netflix queue", "netflix queue", "seen more than once", "own", "dvd", "watched"}
 
-# --- Re-ranking --------------------------------------------------------------
-# none | cross (local cross-encoder) | llm (an LLM judges plot excerpts; targets tone/structure queries)
 RERANKER = os.environ.get("MOVIE_AGENT_RERANKER", "llm")
 CROSS_ENCODER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 LLM_RERANK_MODEL = os.environ.get("MOVIE_AGENT_RERANK_MODEL", "gpt-4o-mini")
-RERANK_POOL = 30  # candidates sent to the re-ranker
-RERANK_TIMEOUT_S = 8.0  # past this, fall back to the stage-1 order (logged as a re-rank error)
+RERANK_POOL = 30
+RERANK_TIMEOUT_S = 8.0
 
-# --- Offline movie attributes (data/derived/movie_attributes.jsonl) ----------------------------------------
-# Weight of the requested-attribute match (z-scored) in stage-1 search and in the request signal of recommend.
-# Set a priori equal to the weight of query relevance (1.0), not tuned on the tag labels used to evaluate it.
 ATTRIBUTE_WEIGHT = 1.0
 
-# --- HTTP ---------------------------------------------------------------------
-# Idle keep-alive of the shared OpenAI connection pool (movie_agent/http.py). The SDK default is 5 s, so almost every
-# call opened a new connection and paid a DNS lookup; see scripts/probe_connection_phases.py.
 HTTP_KEEPALIVE_S = float(os.environ.get("MOVIE_AGENT_HTTP_KEEPALIVE_S", "300"))
 
-# --- Telemetry ---------------------------------------------------------------
 LOG_DIR = REPO_ROOT / "logs"
 TELEMETRY_DB = LOG_DIR / "telemetry.db"
-MEMORY_DB = REPO_ROOT / "data_store" / "memory.db"  # user memories: product data, not logs
+MEMORY_DB = REPO_ROOT / "data_store" / "memory.db"
 
-# --- Conversation ------------------------------------------------------------
-KEEP_FULL_TURNS = 2  # older turns are compacted to (question, final answer) - tool outputs dropped
+KEEP_FULL_TURNS = 2
 
-# --- LLM -------------------------------------------------------------------
 DEFAULT_MODEL = "claude-opus-5"
 MAX_AGENT_STEPS = 12
-# Tail-latency hedging (duplicate an LLM call with no first chunk after N s). OFF by default: measured on the real
-# API (80 interleaved calls) it did not help - the ~12 s stalls hit the duplicate too. Set e.g. 2.5 to enable.
 HEDGE_AFTER_S = float(os.environ.get("MOVIE_AGENT_HEDGE_AFTER_S", "0"))

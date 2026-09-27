@@ -19,7 +19,6 @@ from contextlib import contextmanager
 
 from . import config
 
-# $ per 1M tokens (input, output) for cost tracking; unknown models count as 0 and are flagged in the dashboard
 PRICES = {
     "gpt-4o-mini": (0.15, 0.60),
     "gpt-4o": (2.50, 10.00),
@@ -58,7 +57,6 @@ class Telemetry:
             config.LOG_DIR.mkdir(parents=True, exist_ok=True)
             with self._conn() as c:
                 c.executescript(SCHEMA)
-                # additive migration: DBs created by an older version get the new columns
                 have = {r[1] for r in c.execute("PRAGMA table_info(turns)")}
                 for col, typ in (("ttft_ms", "INTEGER"), ("context_messages", "INTEGER"), ("llm_call_detail", "TEXT")):
                     if col not in have:

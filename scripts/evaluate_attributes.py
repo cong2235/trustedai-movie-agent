@@ -25,7 +25,6 @@ from movie_agent import config  # noqa: E402
 from movie_agent.attributes import MOODS, MovieAttributes  # noqa: E402
 from movie_agent.data import MovieData  # noqa: E402
 
-# attribute -> tags that express the same concept
 MOOD_TAGS = {
     "funny": {"funny", "hilarious", "very funny"},
     "dark-comedy": {"dark comedy", "black comedy", "dark humor"},

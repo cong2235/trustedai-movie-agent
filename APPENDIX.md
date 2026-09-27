@@ -205,8 +205,10 @@ claim from `ratings.csv` itself, which catches errors that grounding-against-too
 | **Total** | 22/30 | **30/30 scenario runs, 93/93 turns** |
 
 Re-run on the final code (after the `scope` parameter on `remember` and the movie attributes were added): again
-30/30 scenario runs and 93/93 turns, with 0 of 407 decimals and 0 of 184 rating claims wrong
-(`outputs/eval/scenarios_llm_gpt-4o-mini_memory.json`).
+30/30 scenario runs and 93/93 turns, with 0 of 407 decimals and 0 of 184 rating claims wrong. A later regression run
+(after the `already_seen` and quality-floor fixes) is the one committed in
+`outputs/eval/scenarios_llm_gpt-4o-mini_memory.json`: **29/30 · 92/93**. The one failure is a checker false alarm
+(numbers in `lt_recall_liked` attributed to a bold evidence title), read by hand and explained in REPORT §4.
 
 Final run: 0 hallucinated or ungrounded titles, 0 of 381 decimals ungrounded or misattributed, 0 of 201 rating claims
 wrong, 0 constraint violations, 0 guardrail revisions. The independent dataset audit found 0 discrepancies in

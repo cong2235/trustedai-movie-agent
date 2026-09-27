@@ -38,7 +38,7 @@ python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
 python scripts/build_index.py --backend bge-small        # optional local fallback, ~29 min CPU
 pip install -r requirements-dev.txt       # pytest, coverage, ruff, pre-commit
-python -m pytest -q                        # 113 tests, offline (no API calls)
+python -m pytest -q                        # 125 tests, offline (no API calls)
 ruff check . && ruff format --check .      # the same checks CI runs
 ```
 
@@ -100,7 +100,10 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 
 * **OpenAI** (used for all reported runs): `gpt-4o-mini` for the agent, re-ranker and judge, and `text-embedding-3-small`
   for embeddings. Typical cost is about $0.002 per turn, and the full evaluation cost about $0.30 in total.
-* **Anthropic** (optional): Claude as the agent (`claude-opus-5` by default), with prompt caching and a server-side refusal fallback.
+* **Anthropic** (optional, **not run live**): Claude as the agent (`claude-opus-5` by default), with prompt caching and a
+  server-side refusal fallback. No Anthropic key was available, so this path is verified only offline, against a fake
+  client (`tests/test_anthropic_backend.py`: request shape, tool-result pairing, a full agent turn, refusal, fallback
+  switch-off). All reported numbers come from `gpt-4o-mini`.
 * Offline paths (`--no-llm`, `bge-small`, `MOVIE_AGENT_RERANKER=none`) need no key. Everything in `outputs/` except
   `transcripts_llm_*` and the LLM re-rank rows is deterministic.
 
@@ -115,7 +118,7 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 | `eval/memory_scenarios.py` | 10 conversations / 31 turns targeting short- and long-term memory |
 | `eval/heldout_scenarios.py`, `eval/heldout_v2_scenarios.py` | held-out sets (18 / 20 and 16 / 19 conversations / turns), each committed before its first run |
 | `data/derived/` | LLM-extracted movie attributes (committed, so nobody pays for them twice) |
-| `tests/` | 113 tests (incl. 29 memory, 6 attribute and 12 search tests on a synthetic index): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
+| `tests/` | 125 tests (incl. 29 memory, 6 attribute, 12 search tests on a synthetic index, 5 Claude-backend tests on a fake client): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
 | `outputs/eval/` | all metrics |
 | `outputs/transcripts_*` | full conversations with every tool call and output |
 | `outputs/failure_cases/` | saved evidence for failures discussed in the report |

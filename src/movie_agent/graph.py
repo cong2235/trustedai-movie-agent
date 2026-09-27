@@ -33,8 +33,8 @@ class RP3Beta:
     alpha: float = 1.0
     beta: float = 0.5
     topk: int = 200
-    kg_weight: float = 0.0  # 0 = plain rating graph; >0 adds genre/tag knowledge nodes
-    min_rating: float = 0.5  # edges from ratings >= this (implicit feedback)
+    kg_weight: float = 0.0
+    min_rating: float = 0.5
 
     def fit(self) -> RP3Beta:
         R = self.cf.R.copy()
@@ -43,13 +43,13 @@ class RP3Beta:
         blocks = [R]
         if self.kg_weight > 0:
             blocks.append(self._knowledge_rows() * self.kg_weight)
-        G = sp.vstack(blocks).tocsr()  # (users + knowledge nodes) x movies
-        Pui = _row_normalize(G)  # node -> movie
-        Piu = _row_normalize(G.T.tocsr())  # movie -> node
+        G = sp.vstack(blocks).tocsr()
+        Pui = _row_normalize(G)
+        Piu = _row_normalize(G.T.tocsr())
         if self.alpha != 1.0:
             Pui = Pui.power(self.alpha)
             Piu = Piu.power(self.alpha)
-        W = (Piu @ Pui).toarray().astype(np.float32)  # movie -> movie (2 hops through users / knowledge)
+        W = (Piu @ Pui).toarray().astype(np.float32)
         pop = np.asarray(G.sum(0)).ravel()
         pop[pop == 0] = 1
         W /= np.power(pop, self.beta)[None, :]
@@ -74,7 +74,7 @@ class RP3Beta:
                     cols.append(m_index[int(mid)])
             node += 1
         for _tag, mids in data.tags.groupby("tag")["movieId"].apply(set).items():
-            if len(mids) < 2:  # a tag on one movie connects nothing
+            if len(mids) < 2:
                 continue
             for mid in mids:
                 rows.append(node)

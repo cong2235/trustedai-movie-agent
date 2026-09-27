@@ -11,7 +11,7 @@ v1 (eval/heldout_scenarios.py) found two failures that were then fixed (already-
     python scripts/run_scenarios.py --mode llm --suite heldout2
 """
 
-QUALITY_BAR = 2.75  # raw mean of movies with >= 3 ratings, the same bar the tools now apply by default
+QUALITY_BAR = 2.75
 
 HELDOUT_V2_SCENARIOS = [
     {

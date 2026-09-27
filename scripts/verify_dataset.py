@@ -12,7 +12,6 @@ def verify_dataset() -> bool:
     print("Dataset Verification")
     print("=" * 60)
 
-    # Resolve data dir relative to this script's parent (repo root)
     repo_root = Path(__file__).resolve().parent.parent
     data_dir = repo_root / "data" / "ml-latest-small-filtered"
 
@@ -58,7 +57,6 @@ def verify_dataset() -> bool:
         f"Plot length: min={plot_lengths.min():.0f}, avg={plot_lengths.mean():.0f}, max={plot_lengths.max():.0f} chars"
     )
 
-    # Rating coverage
     rated_movies = ratings["movieId"].nunique()
     movies_with_few = (ratings.groupby("movieId").size() < 5).sum()
     tagged_movies = tags["movieId"].nunique()

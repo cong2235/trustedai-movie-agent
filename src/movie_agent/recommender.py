@@ -26,8 +26,8 @@ from .content import ContentIndex
 from .data import MovieData
 
 SPARSE_USER_THRESHOLD = 50
-PERSONAL_WEIGHT_WITH_REQUEST = 0.3  # share of personal taste when re-ranking a request-retrieved pool
-REQUEST_POOL = 40  # candidates retrieved by the explicit request before re-ranking
+PERSONAL_WEIGHT_WITH_REQUEST = 0.3
+REQUEST_POOL = 40
 DEFAULT_WEIGHTS = {"item_knn": 1.0, "user_knn": 0.6, "content": 0.3, "quality": 0.15, "popularity": 0.0}
 
 
@@ -44,7 +44,6 @@ class Recommender:
     cf: CFModel
     content: ContentIndex | None = None
     weights: dict = field(default_factory=lambda: dict(DEFAULT_WEIGHTS))
-    # optional {"sparse": {...}, "rich": {...}}: different blends by history size (tuned offline)
     segment_weights: dict | None = None
 
     def weights_for(self, user_id: int) -> dict:
@@ -53,7 +52,6 @@ class Recommender:
             return self.segment_weights["sparse" if n < SPARSE_USER_THRESHOLD else "rich"]
         return self.weights
 
-    # ------------------------------------------------------------- signals
     def taste_vector_scores(self, user_id: int) -> np.ndarray:
         """Content similarity to what the user liked (preference-weighted centroid of liked plots)."""
         if self.content is None:
@@ -61,7 +59,7 @@ class Recommender:
         ur = self.data.user_ratings[user_id]
         prefs = preference_weight(ur.to_numpy())
         liked = prefs > 0
-        if not liked.any():  # nothing above 3 stars: use their relative favourites
+        if not liked.any():
             liked = ur.to_numpy() >= ur.median()
             prefs = np.ones_like(prefs)
         rows = np.array([self.cf.m_index[m] for m in ur.index[liked]])
@@ -98,7 +96,6 @@ class Recommender:
         total = sum(w[k] * zs[k] for k in zs)
         return total, zs, cand
 
-    # ---------------------------------------------------------------- API
     def recommend(
         self,
         user_id: int,
@@ -136,9 +133,6 @@ class Recommender:
             rows = np.array([self.cf.m_index[m] for m in anchor_movie_ids])
             anchor_cf = self.cf.item_sim[:, rows].mean(1)
             anchor_ct = self.content.similar_to_movies(rows) if self.content else np.zeros_like(anchor_cf)
-            # Plot embeddings capture topic but not tone (Toy Story -> Child's Play, a killer-doll horror);
-            # genre overlap is a coarse tone signal, and co-rating similarity is biased toward popular titles.
-            # The three together are more robust than any one of them.
             anchor_gn = self._genre_jaccard(anchor_movie_ids)
             zs["anchor"] = _z(_z(anchor_cf, cand) + _z(anchor_ct, cand) + _z(anchor_gn, cand), cand)
             request += zs["anchor"]
@@ -150,9 +144,6 @@ class Recommender:
             request += config.ATTRIBUTE_WEIGHT * zs["attributes"]
 
         if anchor_movie_ids or query_relevance is not None or attribute_relevance is not None:
-            # Two-stage: retrieve by the explicit request, then re-rank that pool by request + personal taste
-            # using percentiles. v1 added the request z-score to the personal blend; CF z-scores are heavy-tailed
-            # (top items reach z≈10), so "more like Toy Story" returned The Silence of the Lambs.
             idx = np.where(mask)[0]
             pool = idx[np.argsort(-request[idx])[:REQUEST_POOL]]
             pct = lambda x: np.argsort(np.argsort(x)) / max(len(x) - 1, 1)  # noqa: E731
@@ -163,12 +154,11 @@ class Recommender:
             total = final
             order = list(pool[np.argsort(-total[pool])])
             if rerank_query and reranker is not None:
-                # a described mood ("light and funny") is judged by the re-ranker, which reads the plots
                 ids = [int(self.cf.movie_ids[i]) for i in order[:30]]
                 rr = reranker.rerank(rerank_query, ids, [float(total[self.cf.m_index[m]]) for m in ids], self.data)
                 order = [self.cf.m_index[m] for m in rr.order] + order[30:]
                 total = total.copy()
-                for rank, i in enumerate(order):  # keep MMR consistent with the re-ranked order
+                for rank, i in enumerate(order):
                     total[i] = -rank
                 zs["rerank_fit_0_10"] = np.full_like(total, np.nan)
                 for m, sc in rr.scores.items():
@@ -224,7 +214,7 @@ class Recommender:
         """Maximal Marginal Relevance on plot embeddings: avoid 5 sequels of the same franchise."""
         if self.content is None or len(order) <= n:
             return order
-        vecs = self.content.movie_vecs * self.content.plot_ok[:, None]  # unreliable plots: no redundancy signal
+        vecs = self.content.movie_vecs * self.content.plot_ok[:, None]
         s = score[order]
         s = (s - s.min()) / (s.max() - s.min() + 1e-9)
         chosen: list[int] = []
@@ -241,7 +231,6 @@ class Recommender:
             remaining.remove(best)
         return [order[c] for c in chosen]
 
-    # ---------------------------------------------------------- evidence
     def explain(self, user_id: int, movie_id: int, zs: dict | None = None, row: int | None = None) -> dict:
         """Everything the data says about why `user_id` might (or might not) like `movie_id`."""
         data, cf = self.data, self.cf
@@ -252,12 +241,10 @@ class Recommender:
         if movie_id in ur.index:
             out["already_rated_by_you"] = float(ur[movie_id])
 
-        # 1. co-rating evidence: which of your ratings drive this (item-item CF)
         out["because_you_rated"] = [
             {"title": data.label(m), "your_rating": r, "co_rating_similarity": round(s, 2)}
             for m, s, r in cf.item_contributions(user_id, movie_id, top=2)
         ]
-        # 2. plot evidence: your liked movies with the most similar plots
         plot_ok = data.movies["plot_ok"]
         if self.content is not None and plot_ok[movie_id]:
             liked = [m for m in ur.index if ur[m] >= 4.0 and m != movie_id and plot_ok[m]]
@@ -273,12 +260,10 @@ class Recommender:
                     }
                     for i in top
                 ]
-        # 3. people evidence: what your taste-neighbours gave it
         neigh = cf.neighbors_who_rated(user_id, movie_id, k=20)
         if neigh:
             ratings = np.array([n[2] for n in neigh])
             out["similar_users_who_rated_it"] = {
-                # counts, not fractions: a fraction field was once misread by the LLM (see REPORT, run 2)
                 "n": len(neigh),
                 "avg_rating": round(float(ratings.mean()), 2),
                 "n_rated_4_or_higher": int((ratings >= 4).sum()),
@@ -286,11 +271,9 @@ class Recommender:
         pred = cf.predict_rating(user_id, movie_id) if movie_id not in ur.index else {"prediction": None}
         if pred["prediction"] is not None:
             out["predicted_rating_for_you"] = round(pred["prediction"], 1)
-        # 4. genre fit
         from .profiles import genre_affinity
 
         aff = genre_affinity(data, user_id)
-        # compact: only genres the user has rated; {"Drama": {"your_avg": 3.86, "n": 35}}
         out["genre_fit"] = {
             g: {"your_avg": round(float(aff.loc[g, "avg_rating"]), 2), "n": int(aff.loc[g, "n_rated"])}
             for g in out["genres"]
@@ -298,7 +281,7 @@ class Recommender:
         }
         if zs is not None:
             sig = {k: round(float(v[row]), 1) for k, v in zs.items() if not np.isnan(v[row])}
-            out["signal_breakdown_z"] = dict(sorted(sig.items(), key=lambda kv: -kv[1])[:3])  # top 3 drivers
+            out["signal_breakdown_z"] = dict(sorted(sig.items(), key=lambda kv: -kv[1])[:3])
         out["evidence_strength"] = _evidence_strength(out)
         if (fit := _expected_fit(out.get("predicted_rating_for_you"))) is not None:
             out["expected_fit"] = fit

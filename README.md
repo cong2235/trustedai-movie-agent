@@ -32,7 +32,7 @@ Python 3.10+. The dataset and the LLM-extracted movie attributes are in the repo
 
 ```bash
 pip install -r requirements.txt && pip install -e . --no-deps
-cp .env.example .env                                      # add OPENAI_API_KEY (or ANTHROPIC_API_KEY)
+cp .env.example .env                                      # add OPENAI_API_KEY (all reported runs used OpenAI)
 python scripts/build_index.py --backend openai-3-small    # ~2 min, ~$0.08 (or --backend bge-small: local, ~29 min)
 
 python app/serve.py                                       # web UI: chat + monitor at http://localhost:8501
@@ -40,7 +40,7 @@ python -m movie_agent.cli --user 15                       # terminal chat
 python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
 ```
 
-Development: `pip install -r requirements-dev.txt`, then `pytest` (113 offline tests, no API key) and `ruff check .`.
+Development: `pip install -r requirements-dev.txt`, then `pytest` (offline: no API key, no embeddings) and `ruff check .`.
 CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same checks locally.
 
 ## Documentation
@@ -51,6 +51,7 @@ CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same chec
 | [SOLUTION.md](SOLUTION.md) | Setup, configuration, code tour, how to reproduce every evaluation |
 | [APPENDIX.md](APPENDIX.md) | Engineering history: experiments, bugs found and how they were fixed |
 | [ASSIGNMENT.md](ASSIGNMENT.md) | The original problem statement and dataset description |
+| [outputs/README.md](outputs/README.md) | Which of the committed results and transcripts to open first |
 
 ## Layout
 

@@ -25,7 +25,6 @@ Long-term (per-user store, survives new sessions)
 """
 
 MEMORY_SCENARIOS = [
-    # ------------------------------------------------------------------ short-term
     {
         "id": "st_second_one_after_compaction",
         "user_id": 15,
@@ -159,7 +158,6 @@ MEMORY_SCENARIOS = [
             },
         ],
     },
-    # ------------------------------------------------------------------ long-term
     {
         "id": "lt_forget_preference",
         "user_id": 30,

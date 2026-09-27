@@ -44,7 +44,7 @@ def timed_request(client: httpx.Client, headers: dict, body: dict) -> dict:
             extensions={"trace": trace},
         ) as r:
             t_headers = time.perf_counter() - t0
-            for _ in r.iter_bytes():  # read to the end so the connection goes back to the pool
+            for _ in r.iter_bytes():
                 pass
         connect = [t for n, t in events if n == "connection.connect_tcp.complete"]
         started = [t for n, t in events if n == "connection.connect_tcp.started"]

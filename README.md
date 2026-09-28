@@ -52,6 +52,7 @@ CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same chec
 | [APPENDIX.md](APPENDIX.md) | Engineering history: experiments, bugs found and how they were fixed |
 | [ASSIGNMENT.md](ASSIGNMENT.md) | The original problem statement and dataset description |
 | [outputs/README.md](outputs/README.md) | Which of the committed results and transcripts to open first |
+| [DEMO.md](DEMO.md) | A 10-minute live demo script, one step per requirement, with fallbacks |
 
 ## Layout
 

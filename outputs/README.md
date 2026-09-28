@@ -28,6 +28,7 @@ automatic checks. Files named `_r1`, `_r2` and `_r3` are repeats of the same sce
 | `transcripts_llm_gpt-4o-mini_lang_prompt/`, `…_memory_lang_prompt/` | re-run after "reply in the user's language" was added to the prompt |
 | `transcripts_llm_gpt-4o-mini_http2/` | re-run after the HTTP connection changes, to check for behaviour regressions |
 | `transcripts_llm_gpt-4o-mini_memory_recheck_long/`, `…_recheck_liked/` | targeted re-runs of two memory scenarios after checker and argument-coercion fixes |
+| `transcripts_llm_gpt-4o-mini_finalcheck/`, `…_memory_finalcheck/` | final pre-submission check, 1× per scenario: main 14/14; memory 9/10, the failure being one LLM call at 10,031 input tokens against the 10,000 context budget in `st_long_conversation_budget` (answer correct) |
 
 ## Evidence for specific findings
 

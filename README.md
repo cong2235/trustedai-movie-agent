@@ -57,7 +57,7 @@ CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same chec
 
 ```
 src/movie_agent/   the system: data → CF / content / attributes → tools → agent → guardrails, telemetry
-app/               Streamlit UI (chat + monitoring)
+app/               Streamlit UI (chat + monitoring); chat.html: static chat UI, opens without a backend
 scripts/           index build, attribute extraction, offline / search / graph evaluation, scenario runner, monitor
 eval/              conversation suites: main, memory, held-out
 tests/             offline unit and integration tests

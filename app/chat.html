@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Movie Discovery Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Archivo:wdth,wght@75..100,400..700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<!--
+  Chat front-end for the Movie Discovery Agent.
+
+  Out of the box it replays a scripted demo with evidence taken from the committed transcripts
+  (outputs/transcripts_llm_gpt-4o-mini*), so it opens without a backend. To talk to the real agent, set
+  window.AGENT_ENDPOINT to a URL that accepts POST {user_id, message, session_id} and returns
+  {text, calls:[{tool,input,ms,output,is_error}], latency_s, ttft_s, tokens, cost_usd, revised, memory,
+   cards?, opinion?} — the same fields MovieAgent.ask() already produces for the Streamlit UI.
+-->
+<style>
+/* Dark "midnight screening" is the default; the light "matinee" theme is opt-in via the house-lights switch. */
+:root {
+  --bg: #0a0909;
+  --bg-2: #110f0e;
+  --panel: #151312;
+  --panel-2: #1d1a18;
+  --line: #2b2622;
+  --line-2: #3a332d;
+  --text: #ece3d3;
+  --muted: #968b7d;
+  --faint: #615a51;
+  --gold: #d9a441;
+  --gold-dim: #8c6a2c;
+  --gold-soft: rgba(217, 164, 65, .1);
+  --on-gold: #0a0909;
+  --red: #c4353d;
+  --red-soft: rgba(196, 53, 61, .14);
+  --ok: #8fbf7f;
+  --ok-soft: rgba(143, 191, 127, .12);
+  --beam: rgba(217, 164, 65, .07);
+  --grain: .07;
+  --series-you: #d9a441;
+  --series-sim: #ece3d3;
+  --series-all: #5d564e;
+  --display: "Bebas Neue", "Oswald", Impact, sans-serif;
+  --sans: "Archivo", system-ui, "Segoe UI", sans-serif;
+  --script: "Courier Prime", "Courier New", ui-monospace, monospace;
+}
+:root[data-theme="light"] {
+  --bg: #efe7d6;
+  --bg-2: #e7dcc6;
+  --panel: #f7f1e4;
+  --panel-2: #e9dfcb;
+  --line: #d3c6ab;
+  --line-2: #bfb091;
+  --text: #1c1714;
+  --muted: #6b5f52;
+  --faint: #9c8f7c;
+  --gold: #8f2a22;
+  --gold-dim: #b88a78;
+  --gold-soft: rgba(143, 42, 34, .08);
+  --on-gold: #f7f1e4;
+  --red: #a3241e;
+  --red-soft: rgba(163, 36, 30, .1);
+  --ok: #3f6e35;
+  --ok-soft: rgba(63, 110, 53, .1);
+  --beam: rgba(143, 42, 34, .05);
+  --grain: .09;
+  --series-you: #8f2a22;
+  --series-sim: #1c1714;
+  --series-all: #b3a58b;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+/* film grain */
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+:root[data-theme="light"] body::after { mix-blend-mode: multiply; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 1px solid var(--gold); outline-offset: 3px;
+}
+::selection { background: var(--gold); color: var(--on-gold); }
+
+.eyebrow {
+  font: 700 11px/1 var(--script); letter-spacing: .22em; text-transform: uppercase; color: var(--gold);
+}
+
+/* ---------- layout ---------- */
+.app { display: grid; grid-template-columns: 290px minmax(0, 1fr); height: 100vh; }
+.sidebar {
+  background: var(--bg-2);
+  border-right: 1px solid var(--line);
+  padding: 22px 20px;
+  display: flex; flex-direction: column; gap: 26px;
+  overflow-y: auto;
+}
+.main {
+  display: flex; flex-direction: column; min-width: 0; height: 100vh;
+  background: radial-gradient(ellipse 70% 55% at 50% -8%, var(--beam), transparent 70%), var(--bg);
+}
+
+/* marquee brand */
+.brand { border: 1px solid var(--line-2); padding: 14px 14px 12px; position: relative; }
+.brand::before, .brand::after {
+  content: ""; position: absolute; left: 8px; right: 8px; height: 3px;
+  background: radial-gradient(circle, var(--gold) 1.2px, transparent 1.6px) 0 0 / 9px 3px repeat-x;
+  opacity: .8;
+}
+.brand::before { top: 4px; }
+.brand::after { bottom: 4px; }
+.brand h1 { font: 400 34px/.9 var(--display); letter-spacing: .03em; margin: 6px 0 4px; }
+.brand h1 span { color: var(--gold); }
+.brand small { font: 12px var(--script); color: var(--muted); letter-spacing: .04em; }
+
+.side-label {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 10px;
+  font: 700 10.5px/1 var(--script); letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+}
+.side-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+.seats { display: grid; gap: 2px; }
+.seat {
+  display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center;
+  text-align: left; padding: 8px 8px; background: transparent; border: none; border-left: 2px solid transparent;
+}
+.seat:hover { background: var(--panel); }
+.seat[aria-pressed="true"] { background: var(--panel); border-left-color: var(--gold); }
+.seat-no {
+  width: 40px; height: 34px; display: grid; place-items: center;
+  font: 400 21px/1 var(--display); letter-spacing: .04em;
+  border: 1px solid var(--line-2); color: var(--muted);
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 88% 100%, 12% 100%, 0 70%);
+}
+.seat[aria-pressed="true"] .seat-no { background: var(--gold); color: var(--on-gold); border-color: var(--gold); }
+.seat b { display: block; font-weight: 600; font-size: 14px; line-height: 1.3; }
+.seat .sub { display: block; color: var(--muted); font: 12px var(--script); }
+.custom-user { display: flex; margin-top: 8px; border: 1px solid var(--line); }
+.custom-user input {
+  flex: 1; min-width: 0; padding: 8px 10px; border: none; background: transparent; color: var(--text);
+  font: 13px var(--script);
+}
+.custom-user input::placeholder { color: var(--faint); }
+.custom-user button { border: none; border-left: 1px solid var(--line); background: transparent; padding: 0 12px; font: 700 11px var(--script); letter-spacing: .15em; color: var(--gold); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 14px; border: 1px solid var(--line-2); background: transparent;
+  font: 700 11.5px/1 var(--script); letter-spacing: .16em; text-transform: uppercase;
+}
+.btn:hover { border-color: var(--gold); color: var(--gold); }
+.btn:disabled { opacity: .45; cursor: default; border-color: var(--line); color: var(--muted); }
+.btn-gold { background: var(--gold); color: var(--on-gold); border-color: var(--gold); }
+.btn-gold:hover { background: transparent; color: var(--gold); }
+.btn-block { width: 100%; }
+
+.memory-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.memory-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 6px 8px 10px;
+  background: var(--panel); border-left: 2px solid var(--line-2); font-size: 13px;
+  animation: slate .4s ease;
+}
+.memory-item.avoid_genre { border-left-color: var(--red); }
+.memory-kind { font: 700 10px var(--script); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.memory-item.avoid_genre .memory-kind { color: var(--red); }
+.memory-item .what { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-btn {
+  width: 28px; height: 28px; border: none; background: transparent; color: var(--faint);
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.icon-btn:hover { color: var(--gold); }
+.empty-note { color: var(--muted); font-size: 13px; margin: 0; line-height: 1.55; }
+.empty-note em { color: var(--text); font-style: normal; }
+
+.sys-info { margin-top: auto; font: 12px/1.7 var(--script); color: var(--muted); }
+.sys-info b { color: var(--text); font-weight: 400; }
+.mode {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 6px;
+  font: 700 10.5px var(--script); letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
+}
+.mode::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.mode.live { color: var(--red); }
+.mode.live::before { animation: rec 1.4s ease-in-out infinite; }
+
+/* ---------- top bar (upper letterbox) ---------- */
+.topbar {
+  display: flex; align-items: stretch; gap: 0; padding: 0 24px;
+  border-bottom: 1px solid var(--line); background: var(--bg);
+  min-height: 58px;
+}
+.menu-btn { display: none; align-self: center; margin-right: 8px; }
+.tabs { display: flex; gap: 26px; }
+.tab {
+  border: none; background: transparent; padding: 0; position: relative;
+  font: 400 22px/1 var(--display); letter-spacing: .06em; color: var(--faint);
+  display: inline-flex; align-items: center;
+}
+.tab:hover { color: var(--text); }
+.tab[aria-selected="true"] { color: var(--text); }
+.tab[aria-selected="true"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--gold);
+}
+.topbar .who { margin-left: auto; display: flex; align-items: center; gap: 16px; font: 12.5px var(--script); color: var(--muted); }
+.topbar .who b { color: var(--text); font-weight: 700; letter-spacing: .06em; }
+.lights {
+  display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: transparent;
+  padding: 6px 10px; font: 700 10.5px var(--script); letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
+}
+.lights:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+/* ---------- chat ---------- */
+.view { flex: 1; min-height: 0; display: none; }
+.view.active { display: flex; flex-direction: column; }
+.scroll { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+.thread {
+  max-width: 860px; margin: 0 auto; padding: 34px 28px 20px;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 30px;
+}
+
+/* opening titles */
+.opening { padding: 5vh 0 8px; }
+.opening h2 {
+  font: 400 clamp(52px, 8.5vw, 96px)/.86 var(--display); letter-spacing: .01em; margin: 14px 0 18px;
+}
+.opening h2 em { font-style: normal; color: var(--gold); }
+.opening .lede { color: var(--muted); max-width: 560px; margin: 0 0 34px; font-size: 16px; }
+.credits {
+  display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  margin-bottom: 38px;
+}
+.credits div { padding: 16px 18px 16px 0; }
+.credits div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+.credits span { display: block; font: 700 10.5px var(--script); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.credits b { display: block; font: 400 22px/1.05 var(--display); letter-spacing: .03em; }
+
+.programme { display: grid; }
+.prog-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.prog-head small { font: 12px var(--script); color: var(--faint); }
+.scene {
+  display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: baseline;
+  padding: 13px 4px; border: none; border-bottom: 1px dashed var(--line); background: transparent; text-align: left;
+}
+.scene:first-of-type { border-top: 1px dashed var(--line); }
+.scene .sc { font: 700 11.5px var(--script); letter-spacing: .1em; color: var(--faint); white-space: nowrap; }
+.scene .line { font-size: 15.5px; }
+.scene .who { font: 12px var(--script); color: var(--muted); white-space: nowrap; }
+.scene:hover { background: var(--gold-soft); }
+.scene:hover .sc, .scene:hover .line { color: var(--gold); }
+
+/* transitions & speakers */
+.msg { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; animation: fadein .5s ease; }
+.speaker { font: 700 12px/1 var(--script); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.msg.user { justify-items: end; }
+.msg.user .speaker { color: var(--faint); }
+.line-user {
+  max-width: 76%; padding: 12px 18px; background: var(--panel); border-right: 2px solid var(--gold);
+  font-size: 15.5px;
+}
+.msg.agent .speaker { color: var(--gold); display: flex; align-items: center; gap: 10px; }
+.msg.agent .speaker::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-2), transparent); }
+.answer { font-size: 15.5px; }
+.answer p { margin: 0 0 12px; }
+.answer p:last-child { margin-bottom: 0; }
+.answer ul, .answer ol { margin: 0 0 12px; padding-left: 26px; }
+.answer li { margin-bottom: 6px; padding-left: 4px; }
+.answer ol li::marker { font: 400 18px var(--display); color: var(--gold); }
+.answer ul li::marker { color: var(--gold); }
+.answer strong { font-weight: 650; }
+.answer em { color: var(--text); font-style: italic; }
+.answer code { font: 13px var(--script); background: var(--panel); padding: 1px 5px; }
+.caret { display: inline-block; width: 8px; height: 1.05em; background: var(--gold); vertical-align: -3px; animation: blink .9s steps(2) infinite; }
+
+.cut {
+  font: 700 12.5px var(--script); letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+  text-align: right; padding: 6px 0; border-top: 1px solid var(--line);
+}
+.cut b { color: var(--gold); font-weight: 700; }
+
+/* tool calls as takes */
+.takes { border-left: 1px solid var(--line-2); padding: 2px 0 2px 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; }
+.take { display: flex; align-items: center; gap: 12px; font: 12.5px var(--script); color: var(--muted); }
+.take .n { color: var(--faint); letter-spacing: .1em; white-space: nowrap; }
+.take code { font: 700 13px var(--script); color: var(--text); }
+.take .args { color: var(--faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; flex: 1; }
+.take .ms { color: var(--faint); white-space: nowrap; }
+.take .st { width: 16px; height: 16px; flex-shrink: 0; display: grid; place-items: center; color: var(--ok); }
+.take.err .st { color: var(--red); }
+.reel { width: 16px; height: 16px; color: var(--gold); animation: spin 1.1s linear infinite; }
+
+/* tickets */
+.tickets { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 14px; }
+.ticket {
+  display: grid; grid-template-columns: minmax(0, 1fr) 92px; background: var(--panel);
+  border: 1px solid var(--line); animation: slate .5s ease both;
+}
+.t-main { padding: 16px 16px 14px 18px; display: grid; gap: 12px; align-content: start; }
+.t-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.t-rank { font: 400 40px/.8 var(--display); color: var(--gold); letter-spacing: .02em; }
+.ticket h3 { margin: 0; font: 400 24px/1 var(--display); letter-spacing: .03em; }
+.t-meta { font: 12px var(--script); color: var(--muted); margin-top: 5px; }
+.t-ev { font-size: 12.5px; display: grid; gap: 3px; }
+.t-ev .k { font: 700 10px var(--script); letter-spacing: .18em; text-transform: uppercase; color: var(--faint); margin-top: 6px; }
+.t-ev .k:first-child { margin-top: 0; }
+.t-ev .row { display: flex; justify-content: space-between; gap: 10px; }
+.t-ev .row span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.t-ev .row span:last-child { font: 12px var(--script); color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.t-actions { display: flex; gap: 8px; margin-top: 2px; }
+.t-actions .btn { padding: 8px 10px; font-size: 10.5px; }
+.t-stub {
+  position: relative; border-left: 1px dashed var(--line-2);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  padding: 12px 6px; text-align: center;
+}
+.t-stub::before, .t-stub::after {
+  content: ""; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--line);
+}
+.t-stub::before { top: -9px; }
+.t-stub::after { bottom: -9px; }
+.t-stub .lbl { font: 700 9.5px var(--script); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.t-stub .big { font: 400 40px/1 var(--display); color: var(--gold); }
+.t-stub .small { font: 400 20px/1 var(--display); }
+.t-stub hr { width: 36px; border: none; border-top: 1px solid var(--line); margin: 6px 0; }
+
+/* scorecard */
+.scorecard { border: 1px solid var(--line); background: var(--panel); position: relative; }
+.sc-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.sc-head h3 { margin: 4px 0 0; font: 400 34px/.95 var(--display); letter-spacing: .02em; }
+.sc-head h3 span { color: var(--muted); }
+.stamp {
+  font: 700 11px/1 var(--script); letter-spacing: .18em; text-transform: uppercase;
+  color: var(--ok); border: 2px solid currentColor; padding: 7px 10px 6px; transform: rotate(-4deg);
+  opacity: .9;
+}
+.stamp.medium { color: var(--gold); }
+.stamp.low { color: var(--red); }
+.scores { display: grid; grid-template-columns: repeat(3, 1fr); }
+.score { padding: 16px 20px 18px; }
+.score + .score { border-left: 1px solid var(--line); }
+.score .lbl { font: 700 10.5px var(--script); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.score .num { font: 400 54px/1 var(--display); margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+.score .of { font: 12px var(--script); color: var(--faint); }
+.score .meter { height: 3px; background: var(--line); margin-top: 12px; }
+.score .meter span { display: block; height: 100%; transform-origin: left; animation: grow 1s cubic-bezier(.2, .8, .2, 1) both; }
+.sc-foot { padding: 14px 20px 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.split { display: flex; gap: 2px; height: 6px; }
+.split span { display: block; }
+.split-legend { display: flex; gap: 20px; flex-wrap: wrap; font: 12px var(--script); color: var(--muted); }
+.split-legend b { color: var(--text); }
+.sc-note { font: 12.5px var(--script); color: var(--muted); }
+
+/* meta row + production notes */
+.meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; font: 12px var(--script); color: var(--faint); }
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 700 10.5px var(--script); letter-spacing: .14em; text-transform: uppercase;
+  padding: 4px 8px; border: 1px solid currentColor;
+}
+.tag.ok { color: var(--ok); }
+.tag.rev { color: var(--gold); }
+.tag.mem { color: var(--red); }
+.feedback { margin-left: auto; display: flex; gap: 4px; }
+.feedback button { border: none; background: transparent; padding: 5px; color: var(--faint); display: grid; place-items: center; }
+.feedback button:hover { color: var(--text); }
+.feedback button[aria-pressed="true"] { color: var(--gold); }
+
+details.notes { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+details.notes > summary {
+  list-style: none; cursor: pointer; padding: 10px 0; display: flex; align-items: center; gap: 10px;
+  font: 700 11px var(--script); letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+}
+details.notes > summary::-webkit-details-marker { display: none; }
+details.notes > summary:hover { color: var(--gold); }
+details.notes > summary .chev { transition: transform .2s; }
+details.notes[open] > summary .chev { transform: rotate(90deg); }
+details.notes > summary .hint { margin-left: auto; letter-spacing: .04em; text-transform: none; font-weight: 400; color: var(--faint); }
+.notes-body { padding: 2px 0 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.note-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font: 12.5px var(--script); margin-bottom: 6px; }
+.note-head .t { color: var(--faint); letter-spacing: .1em; }
+.note-head code { font: 700 13px var(--script); color: var(--gold); }
+.note-head .in { color: var(--muted); word-break: break-all; }
+.note-head .ms { margin-left: auto; color: var(--faint); }
+pre.json {
+  margin: 0; padding: 12px 14px; background: var(--bg); border: 1px solid var(--line);
+  font: 12.5px/1.55 var(--script); max-height: 300px; overflow: auto; white-space: pre; color: var(--muted);
+}
+.j-key { color: var(--text); }
+.j-str { color: var(--ok); }
+.j-num { color: var(--gold); }
+.j-lit { color: var(--red); }
+
+/* composer (lower letterbox) */
+.composer-wrap { padding: 14px 28px 16px; border-top: 1px solid var(--line); background: var(--bg); }
+.composer { max-width: 860px; margin: 0 auto; display: flex; align-items: flex-end; gap: 12px; }
+.composer .prompt { font: 700 12px/40px var(--script); letter-spacing: .18em; color: var(--gold); white-space: nowrap; }
+.composer textarea {
+  flex: 1; border: none; border-bottom: 1px solid var(--line-2); outline: none; resize: none; background: transparent; color: var(--text);
+  font: 16px/1.5 var(--sans); padding: 8px 0; max-height: 160px;
+}
+.composer textarea:focus { border-bottom-color: var(--gold); }
+.composer textarea::placeholder { color: var(--faint); }
+.send {
+  width: 44px; height: 40px; border: none; background: var(--gold); color: var(--on-gold);
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.send:disabled { background: var(--panel-2); color: var(--faint); cursor: not-allowed; }
+.composer-note { max-width: 860px; margin: 9px auto 0; font: 11.5px var(--script); color: var(--faint); letter-spacing: .02em; }
+
+/* ---------- monitor ---------- */
+.monitor { max-width: 1060px; margin: 0 auto; padding: 34px 28px 48px; display: grid; gap: 26px; }
+.monitor h2 { font: 400 56px/.9 var(--display); margin: 10px 0 8px; letter-spacing: .01em; }
+.monitor .sub { color: var(--muted); margin: 0; font: 13px var(--script); }
+.monitor .sub code { color: var(--text); font: inherit; }
+.status-line { font: 700 12px var(--script); letter-spacing: .16em; text-transform: uppercase; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.status-line::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status-line.ok { color: var(--ok); }
+.status-line.bad { color: var(--red); }
+.status-line.idle { color: var(--muted); }
+.board { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); background: var(--panel); }
+.kpi { padding: 16px 18px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.kpi:nth-child(4n) { border-right: none; }
+.kpi:nth-last-child(-n+4) { border-bottom: none; }
+.kpi .l { font: 700 10.5px var(--script); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.kpi .v { font: 400 44px/1.05 var(--display); margin-top: 6px; font-variant-numeric: tabular-nums; }
+.kpi .s { font: 11.5px var(--script); color: var(--faint); }
+.kpi .s.ok { color: var(--ok); }
+.kpi .s.bad { color: var(--red); }
+.table-wrap { border: 1px solid var(--line); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 700 10.5px var(--script); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); background: var(--bg-2); }
+tr:last-child td { border-bottom: none; }
+td.num { font: 12.5px var(--script); }
+td.q { max-width: 360px; overflow: hidden; text-overflow: ellipsis; }
+td code { font: 700 12.5px var(--script); color: var(--gold); }
+
+/* ---------- subtitle toast ---------- */
+.toast {
+  position: fixed; bottom: 108px; left: 50%; transform: translateX(-50%); opacity: 0; z-index: 60;
+  font: 500 17px/1.35 var(--sans); color: #fff6c7; text-align: center; max-width: 90vw;
+  text-shadow: 0 0 2px #000, 0 1px 3px #000, 0 0 12px rgba(0, 0, 0, .9);
+  transition: opacity .25s ease; pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slate { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes rec { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- responsive ---------- */
+.scrim { display: none; }
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .sidebar {
+    position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); z-index: 40;
+    transform: translateX(-100%); transition: transform .25s ease;
+  }
+  .app.nav-open .sidebar { transform: none; }
+  .app.nav-open .scrim { display: block; position: fixed; inset: 0; background: rgba(0, 0, 0, .6); z-index: 30; }
+  .menu-btn { display: grid; }
+  .board { grid-template-columns: repeat(2, 1fr); }
+  .kpi:nth-child(4n) { border-right: 1px solid var(--line); }
+  .kpi:nth-child(2n) { border-right: none; }
+  .kpi:nth-last-child(-n+4) { border-bottom: 1px solid var(--line); }
+  .kpi:nth-last-child(-n+2) { border-bottom: none; }
+}
+@media (max-width: 620px) {
+  .topbar { padding: 0 16px; }
+  .tabs { gap: 18px; }
+  .topbar .who .as, .lights .txt { display: none; }
+  .thread, .monitor { padding-left: 16px; padding-right: 16px; }
+  .composer-wrap { padding: 12px 16px 14px; }
+  .composer .prompt { display: none; }
+  .line-user { max-width: 92%; }
+  .credits { grid-template-columns: 1fr; }
+  .credits div + div { padding-left: 0; border-left: none; border-top: 1px solid var(--line); }
+  .scene { grid-template-columns: 58px minmax(0, 1fr); row-gap: 2px; }
+  .scene .who { grid-column: 2; }
+  .scores { grid-template-columns: 1fr; }
+  .score + .score { border-left: none; border-top: 1px solid var(--line); }
+  .score { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 12px; }
+  .score .num { font-size: 42px; grid-row: 1 / 3; grid-column: 2; }
+  .score .meter { grid-column: 1 / -1; }
+  .toast { bottom: 96px; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Session">
+    <div class="brand">
+      <div class="eyebrow">Now showing</div>
+      <h1>Movie <span>Discovery</span></h1>
+      <small>MovieLens · 5,135 films</small>
+    </div>
+
+    <div>
+      <p class="side-label">Tonight's viewer</p>
+      <div class="seats" id="userList"></div>
+      <form class="custom-user" id="customUser">
+        <input type="number" min="1" max="610" placeholder="Other viewer, 1–610" aria-label="Other viewer ID">
+        <button type="submit">Seat</button>
+      </form>
+    </div>
+
+    <button class="btn btn-block" id="newConvo" type="button">New reel</button>
+
+    <div>
+      <p class="side-label">Remembered</p>
+      <ul class="memory-list" id="memoryList"></ul>
+    </div>
+
+    <div class="sys-info" id="sysInfo"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open session panel">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="square"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      </button>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-view="chat">Screening</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="monitor">Monitor</button>
+      </div>
+      <div class="who">
+        <span><span class="as">Viewer</span> <b id="whoLabel"></b></span>
+        <button class="lights" id="themeBtn" type="button" aria-label="Toggle house lights">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>
+          <span class="txt">House lights</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="view active" id="view-chat" role="tabpanel">
+      <div class="scroll" id="scroll">
+        <div class="thread" id="thread"></div>
+      </div>
+      <div class="composer-wrap">
+        <form class="composer" id="composer">
+          <span class="prompt">YOU:</span>
+          <textarea id="input" rows="1" placeholder="What are you in the mood for?" aria-label="Message"></textarea>
+          <button class="send" id="send" type="submit" aria-label="Send" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg>
+          </button>
+        </form>
+        <p class="composer-note">Every title and number comes from a tool call — open the production notes under any answer to check it.</p>
+      </div>
+    </section>
+
+    <section class="view" id="view-monitor" role="tabpanel">
+      <div class="scroll"><div class="monitor" id="monitor"></div></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ============================================================
+   Config
+   ============================================================ */
+const AGENT_ENDPOINT = window.AGENT_ENDPOINT || null;   // e.g. "http://localhost:8000/chat"
+const SLOS = {                                           // mirrors src/movie_agent/monitor.py
+  latency_p95_s: ["<=", 20.0],
+  tool_error_rate: ["<=", 0.10],
+  guardrail_trigger_rate: ["<=", 0.10],
+  cost_per_turn_usd: ["<=", 0.05],
+  thumbs_up_rate: [">=", 0.70],
+};
+
+const USER_ORDER = [15, 1, 30, 7];
+const USERS = {
+  15: { tag: "Sci-fi fan", desc: "85 ratings" },
+  1: { tag: "Action & comedy", desc: "190 ratings" },
+  30: { tag: "Sparse profile", desc: "18 ratings" },
+  7: { tag: "Mixed taste", desc: "Vietnamese demo" },
+};
+
+/* ============================================================
+   Demo replay — evidence copied from the committed transcripts
+   ============================================================ */
+const T = (title, your_rating, key, sim) => ({ title, your_rating, [key]: sim });
+
+const SCENARIOS = [
+  {
+    id: "tonight15", user: 15, chip: "What should I watch tonight?",
+    match: /(watch|see).*(tonight)|recommend|suggest/i,
+    reply: () => ({
+      text: "Here are four picks for tonight, ranked by how well they fit **your own ratings**:\n\n" +
+        "1. **The Silence of the Lambs (1991)** — you rated *The Shawshank Redemption* and *Schindler's List* 5★, and people who co-rated those rated this highly; 17 of your 20 closest neighbours gave it 4★ or more.\n" +
+        "2. **Braveheart (1995)** — driven by your 5★ for *Forrest Gump* and *Terminator 2*; 19 of 20 similar users rated it 4★+.\n" +
+        "3. **The Godfather: Part II (1974)** — a darker crime drama, average 4.26 across all users.\n" +
+        "4. **The Usual Suspects (1995)** — a crime mystery with a twist, average 4.24.\n\n" +
+        "Ask me *why* about any of them and I'll show the evidence.",
+      cards: [
+        { title: "The Silence of the Lambs", year: 1991, genres: ["Crime", "Horror", "Thriller"], avg: 4.16, n: 279, pred: 4.2,
+          because: [T("The Shawshank Redemption", 5, "co", .29), T("Schindler's List", 5, "co", .27)],
+          plots: [T("Minority Report", 4, "plot", .52), T("Pulp Fiction", 4, "plot", .51)], sim: { n: 20, avg: 4.4, hi: 17 } },
+        { title: "Braveheart", year: 1995, genres: ["Action", "Drama", "War"], avg: 4.03, pred: 4.2,
+          because: [T("Forrest Gump", 5, "co", .32), T("Terminator 2: Judgment Day", 5, "co", .32)],
+          plots: [T("Gladiator", 5, "plot", .42), T("Return of the Jedi", 5, "plot", .35)], sim: { n: 20, avg: 4.42, hi: 19 } },
+        { title: "The Godfather: Part II", year: 1974, genres: ["Crime", "Drama"], avg: 4.26 },
+        { title: "The Usual Suspects", year: 1995, genres: ["Crime", "Mystery", "Thriller"], avg: 4.24 },
+      ],
+      calls: [{ tool: "recommend_movies", input: { n: 4, min_avg_rating: 3.5 }, ms: 71,
+        output: { user_id: 15, applied_constraints: { min_avg_rating: 3.5, min_ratings: 3 }, excluded_already_suggested: 0,
+          recommendations: [
+            { movie_id: 593, title: "The Silence of the Lambs (1991)", genres: ["Crime", "Horror", "Thriller"], n_ratings: 279, avg_rating: 4.16,
+              because_you_rated: [{ title: "The Shawshank Redemption (1994)", your_rating: 5.0, co_rating_similarity: 0.29 }, { title: "Schindler's List (1993)", your_rating: 5.0, co_rating_similarity: 0.27 }],
+              similar_plots_you_liked: [{ title: "Minority Report (2002)", your_rating: 4.0, plot_similarity: 0.52 }, { title: "Pulp Fiction (1994)", your_rating: 4.0, plot_similarity: 0.51 }],
+              similar_users_who_rated_it: { n: 20, avg_rating: 4.4, n_rated_4_or_higher: 17 }, predicted_rating_for_you: 4.2 },
+            { title: "Braveheart (1995)", avg_rating: 4.03, similar_users_who_rated_it: { n: 20, avg_rating: 4.42, n_rated_4_or_higher: 19 }, predicted_rating_for_you: 4.2 },
+            { title: "The Godfather: Part II (1974)", avg_rating: 4.26 },
+            { title: "The Usual Suspects (1995)", avg_rating: 4.24 },
+          ] } }],
+      latency: 4.8, ttft: 2.1, tokens: 3180, cost: 0.0011,
+    }),
+  },
+  {
+    id: "why15", user: 15, chip: "Why do you think I'd like the second one?",
+    match: /why.*(like|enjoy)|explain|second|braveheart/i,
+    reply: () => ({
+      text: "You might enjoy **Braveheart (1995)** for three reasons, all from your own history:\n\n" +
+        "- **Co-rating signal:** you rated *Forrest Gump* and *Terminator 2: Judgment Day* 5★. People who rated those the way you did also rated Braveheart highly — **4.42** on average across **20** similar users.\n" +
+        "- **Plot similarity:** it sits close to *Gladiator* (similarity 0.42) and *Return of the Jedi* (0.35), both of which you gave 5★ — epic stories of struggle and heroism.\n" +
+        "- **Genre fit:** your average is **4.38** for War (only 4 ratings), **3.86** for Drama and **3.44** for Action.\n\n" +
+        "Put together, the predicted rating for you is **4.2**.",
+      calls: [{ tool: "explain_match", input: { movie: "Braveheart (1995)" }, ms: 38,
+        output: { title: "Braveheart (1995)", avg_rating: 4.03,
+          because_you_rated: [{ title: "Forrest Gump (1994)", your_rating: 5.0, co_rating_similarity: 0.32 }, { title: "Terminator 2: Judgment Day (1991)", your_rating: 5.0, co_rating_similarity: 0.32 }],
+          similar_plots_you_liked: [{ title: "Gladiator (2000)", your_rating: 5.0, plot_similarity: 0.42 }, { title: "Star Wars: Episode VI - Return of the Jedi (1983)", your_rating: 5.0, plot_similarity: 0.35 }],
+          similar_users_who_rated_it: { n: 20, avg_rating: 4.42, n_rated_4_or_higher: 19 }, predicted_rating_for_you: 4.2,
+          genre_fit: { Action: { your_avg: 3.44, n: 35 }, Drama: { your_avg: 3.86, n: 35 }, War: { your_avg: 4.38, n: 4 } } } }],
+      latency: 5.6, ttft: 2.3, tokens: 2870, cost: 0.0009,
+    }),
+  },
+  {
+    id: "pulp1", user: 1, chip: "What do people with similar taste to mine think about Pulp Fiction?",
+    match: /pulp fiction/i,
+    reply: () => ({
+      text: "People with taste like yours are **a bit cooler** on *Pulp Fiction (1994)* than everyone else: their weighted average is **3.89**, against **4.2** across all 307 raters.\n\n" +
+        "- **13 of 20** similar users rated it 4★ or higher; only **2** gave 2.5★ or less.\n" +
+        "- Your own rating is **3★**, so you sit at the low end of your neighbours, not far from them.\n\n" +
+        "Reliability is **high**: all 20 neighbours rated it, though their similarity to you is modest (0.31–0.38).",
+      opinion: { movie: "Pulp Fiction", year: 1994, you: 3.0, sim: 3.89, all: 4.2, nAll: 307, nSim: 20, hi: 13, lo: 2, range: [0.31, 0.38], reliability: "high",
+        note: "You already rated this movie, so no prediction is made; compare your rating with theirs." },
+      calls: [{ tool: "similar_users_opinion", input: { movie: "Pulp Fiction" }, ms: 19,
+        output: { movie: "Pulp Fiction (1994)", movie_id: 296, your_rating: 3.0, everyone: { n: 307, avg_rating: 4.2 },
+          similar_users: { n: 20, weighted_avg_rating: 3.89, plain_avg_rating: 3.88, n_rated_4_or_higher: 13, n_rated_2_5_or_lower: 2, similarity_range: [0.31, 0.38] },
+          note: "You already rated this movie, so no prediction is made; compare your rating with theirs.", reliability: "high" } }],
+      latency: 4.1, ttft: 1.9, tokens: 2410, cost: 0.0008,
+    }),
+  },
+  {
+    id: "toy15", user: 15, chip: "I liked Toy Story but I'm tired of animated movies — what else?",
+    match: /toy story|animat/i,
+    reply: () => ({
+      text: "Anchored on *Toy Story*, with **Animation excluded** (I've remembered that for next time):\n\n" +
+        "1. **The Princess Bride (1987)** — adventure-comedy, average 4.23; people who liked *The Empire Strikes Back* as much as you did rate it highly.\n" +
+        "2. **Willy Wonka & the Chocolate Factory (1971)** — whimsical family classic, average 3.87.\n" +
+        "3. **E.T. the Extra-Terrestrial (1982)** — family sci-fi, average 3.77.\n" +
+        "4. **Big (1988)** — light comedy-drama about growing up, average 3.72.\n" +
+        "5. **Mary Poppins (1964)** — musical classic, average 3.89.",
+      cards: [
+        { title: "The Princess Bride", year: 1987, genres: ["Action", "Adventure", "Comedy", "Fantasy", "Romance"], avg: 4.23 },
+        { title: "Willy Wonka & the Chocolate Factory", year: 1971, genres: ["Children", "Comedy", "Fantasy", "Musical"], avg: 3.87 },
+        { title: "E.T. the Extra-Terrestrial", year: 1982, genres: ["Children", "Drama", "Sci-Fi"], avg: 3.77 },
+        { title: "Big", year: 1988, genres: ["Comedy", "Drama", "Fantasy", "Romance"], avg: 3.72 },
+        { title: "Mary Poppins", year: 1964, genres: ["Children", "Comedy", "Fantasy", "Musical"], avg: 3.89 },
+      ],
+      memory: [{ kind: "avoid_genre", what: "Animation" }],
+      calls: [
+        { tool: "recommend_movies", input: { exclude_genres: ["Animation"], more_like: ["Toy Story"] }, ms: 84,
+          output: { user_id: 15, applied_constraints: { exclude_genres: ["Animation"], more_like: ["Toy Story (1995)"] },
+            recommendations: ["The Princess Bride (1987)", "Willy Wonka & the Chocolate Factory (1971)", "E.T. the Extra-Terrestrial (1982)", "Big (1988)", "Mary Poppins (1964)"] } },
+        { tool: "remember", input: { kind: "avoid_genre", note: "Animation", scope: "lasting" }, ms: 1,
+          output: { ok: true, memory_id: 1, kind: "avoid_genre", movie: null, note: "Animation", effect: "Animation movies are excluded from future recommendations" } },
+      ],
+      latency: 6.2, ttft: 2.4, tokens: 3620, cost: 0.0012,
+    }),
+  },
+  {
+    id: "mem30", user: 30, chip: "I've already seen Forrest Gump, and please remember I don't like war movies.",
+    match: /(already )?seen|don'?t like|remember/i,
+    reply: () => ({
+      text: "Noted. I've remembered that you've seen **Forrest Gump (1994)** and that you don't like **war movies**. Both are now excluded from your recommendations, in this conversation and the next ones. You can remove either from *Long-term memory* in the sidebar.",
+      memory: [{ kind: "seen", what: "Forrest Gump (1994)" }, { kind: "avoid_genre", what: "War" }],
+      calls: [
+        { tool: "remember", input: { kind: "seen", movie: "Forrest Gump", scope: "lasting" }, ms: 5,
+          output: { ok: true, kind: "seen", movie: "Forrest Gump (1994)", effect: "excluded from future recommendations" } },
+        { tool: "remember", input: { kind: "avoid_genre", note: "War", scope: "lasting" }, ms: 4,
+          output: { ok: true, kind: "avoid_genre", note: "War", effect: "War movies are excluded from future recommendations" } },
+      ],
+      latency: 3.2, ttft: 1.6, tokens: 1980, cost: 0.0006,
+    }),
+  },
+  {
+    id: "tonight30", user: 30, chip: "What should I watch tonight?",
+    match: /(watch|see).*(tonight)|recommend|suggest/i,
+    reply: () => ({
+      text: "With your saved preferences applied (**no War**, **Forrest Gump** already seen), here's what fits tonight:\n\n" +
+        "1. **Fight Club (1999)** — you rated *The Shawshank Redemption* 5★, and people who agree with you there average **4.55** on this one. Predicted **4.9** for you.\n" +
+        "2. **Pulp Fiction (1994)** — non-linear crime classic, average 4.2.\n" +
+        "3. **The Princess Bride (1987)** — lighter: adventure-comedy, if you want something fun.",
+      cards: [
+        { title: "Fight Club", year: 1999, genres: ["Action", "Crime", "Drama", "Thriller"], avg: 4.27, pred: 4.9,
+          because: [T("The Shawshank Redemption", 5, "co", null), T("The Empire Strikes Back", 5, "co", null)],
+          plots: [T("Inception", null, "plot", null), T("21 Jump Street", null, "plot", null)], sim: { avg: 4.55 } },
+        { title: "Pulp Fiction", year: 1994, genres: ["Comedy", "Crime", "Drama", "Thriller"], avg: 4.2 },
+        { title: "The Princess Bride", year: 1987, genres: ["Adventure", "Comedy", "Fantasy", "Romance"], avg: 4.23 },
+      ],
+      calls: [{ tool: "recommend_movies", input: { n: 5, min_avg_rating: 4.0 }, ms: 58,
+        output: { user_id: 30, applied_constraints: { exclude_genres: ["War"], exclude_movies_from_memory: ["Forrest Gump (1994)"], min_avg_rating: 4.0 },
+          recommendations: [{ title: "Fight Club (1999)", avg_rating: 4.27, similar_users_who_rated_it: { avg_rating: 4.55 }, predicted_rating_for_you: 4.9 },
+            { title: "Pulp Fiction (1994)", avg_rating: 4.2 }, { title: "The Princess Bride (1987)" }] } }],
+      latency: 5.1, ttft: 2.2, tokens: 2990, cost: 0.0010,
+    }),
+  },
+  {
+    id: "matrix15", user: 15, chip: "What do similar users think of The Matrix?",
+    match: /matrix/i,
+    reply: () => ({
+      text: "*The Matrix* is **not in this dataset**, so I can't tell you what similar users think of it — and I won't guess.\n\nIf you'd like, I can look for movies with a similar premise (simulated reality, a chosen-one hacker) among the ones that *are* here.",
+      calls: [{ tool: "similar_users_opinion", input: { movie: "The Matrix" }, ms: 18,
+        output: { error: "'The Matrix' is ambiguous or not in this dataset (5,135 movies, 1903-2014; some famous titles are missing). Closest titles below - pick one by movie_id, or tell the user it is absent.",
+          closest_titles: [{ movie_id: 47516, title: "Material Girls (2006)", score: 72.8 }, { movie_id: 90863, title: "George Harrison: Living in the Material World (2011)", score: 72.8 }, { movie_id: 45880, title: "Marie Antoinette (2006)", score: 69.8 }] } }],
+      latency: 2.7, ttft: 1.4, tokens: 1520, cost: 0.0005,
+    }),
+  },
+  {
+    id: "vi7", user: 7, chip: "Gợi ý cho tôi vài phim hài nhẹ nhàng để xem tối nay nhé.",
+    match: /phim|gợi ý|hài/i,
+    reply: () => ({
+      text: "Dưới đây là vài phim hài nhẹ nhàng cho tối nay:\n\n" +
+        "1. **The Santa Clause (1994)** — hài hước, gia đình. Bạn đã chấm *Hot Shots! Part Deux* 5★, và cốt truyện gần với *Monsters, Inc.* (0.50) và *Toy Story* (0.49) — hai phim bạn thích.\n" +
+        "2. **The Mask (1994)** — hài hành động với Jim Carrey, cùng tín hiệu từ *Hot Shots! Part Deux*.\n" +
+        "3. **While You Were Sleeping (1995)** — hài lãng mạn nhẹ nhàng, gần với *Notting Hill* mà bạn đã thích.\n\n" +
+        "“Tối nay” là yêu cầu một lần, nên mình **không lưu** vào bộ nhớ dài hạn.",
+      cards: [
+        { title: "The Santa Clause", year: 1994, genres: ["Comedy", "Drama", "Fantasy"], avg: 3.2, n: 81, pred: 3.2,
+          because: [T("Hot Shots! Part Deux", 5, "co", .12)],
+          plots: [T("Monsters, Inc.", 4, "plot", .5), T("Toy Story", 4.5, "plot", .49)], sim: { n: 20, avg: 3.4, hi: 8 } },
+        { title: "The Mask", year: 1994, genres: ["Action", "Comedy", "Crime", "Fantasy"] },
+        { title: "While You Were Sleeping", year: 1995, genres: ["Comedy", "Romance"] },
+      ],
+      calls: [{ tool: "recommend_movies", input: { n: 5, include_genres: ["Comedy"], moods: ["light-hearted"], max_violence: 1 }, ms: 62,
+        output: { user_id: 7, applied_constraints: { include_genres: ["Comedy"], min_ratings: 3, moods: ["light-hearted"], max_violence: 1, min_avg_rating: 2.75 },
+          recommendations: [{ movie_id: 317, title: "The Santa Clause (1994)", n_ratings: 81, avg_rating: 3.2,
+            because_you_rated: [{ title: "Hot Shots! Part Deux (1993)", your_rating: 5.0, co_rating_similarity: 0.12 }],
+            similar_plots_you_liked: [{ title: "Monsters, Inc. (2001)", your_rating: 4.0, plot_similarity: 0.5 }, { title: "Toy Story (1995)", your_rating: 4.5, plot_similarity: 0.49 }],
+            similar_users_who_rated_it: { n: 20, avg_rating: 3.4, n_rated_4_or_higher: 8 }, predicted_rating_for_you: 3.2 },
+            { title: "The Mask (1994)" }, { title: "While You Were Sleeping (1995)" }] } }],
+      latency: 6.8, ttft: 2.6, tokens: 3410, cost: 0.0012,
+    }),
+  },
+];
+
+const FALLBACK = (prompt) => ({
+  text: "This page is running in **demo replay** mode, so it can only answer the scripted questions (the programme on the opening screen).\n\n" +
+    "To ask anything, point it at the real agent: set `window.AGENT_ENDPOINT` before this script, or run `python app/serve.py` for the Streamlit UI.",
+  calls: [], latency: 0.1, ttft: 0.1, tokens: 0, cost: 0, demoMiss: true,
+});
+
+/* ============================================================
+   State
+   ============================================================ */
+const state = {
+  user: 15,
+  memory: { 15: [], 1: [], 30: [], 7: [] },
+  turns: [],          // telemetry for the Monitor tab
+  busy: false,
+  used: new Set(),    // scenarios already played this conversation
+  sessionId: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+};
+
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const pad = (n) => String(n).padStart(2, "0");
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ============================================================
+   Tiny markdown (bold, italic, code, lists, paragraphs)
+   ============================================================ */
+function inline(s) {
+  return esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+}
+function md(src) {
+  const out = [];
+  let list = null;
+  for (const line of src.split("\n")) {
+    const ol = line.match(/^\d+\.\s+(.*)/), ul = line.match(/^[-•]\s+(.*)/);
+    if (ol || ul) {
+      const tag = ol ? "ol" : "ul";
+      if (list !== tag) { if (list) out.push(`</${list}>`); out.push(`<${tag}>`); list = tag; }
+      out.push(`<li>${inline((ol || ul)[1])}</li>`);
+      continue;
+    }
+    if (list) { out.push(`</${list}>`); list = null; }
+    if (line.trim()) out.push(`<p>${inline(line)}</p>`);
+  }
+  if (list) out.push(`</${list}>`);
+  return out.join("");
+}
+function jsonHtml(obj) {
+  return esc(JSON.stringify(obj, null, 2))
+    .replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="j-key">$1</span>$2')
+    .replace(/:\s(&quot;.*?&quot;)/g, ': <span class="j-str">$1</span>')
+    .replace(/([\[,\s])(-?\d+\.?\d*)(?=[,\s\]]|$)/gm, '$1<span class="j-num">$2</span>')
+    .replace(/\b(true|false|null)\b/g, '<span class="j-lit">$1</span>');
+}
+
+/* ============================================================
+   Icons
+   ============================================================ */
+const ICON = {
+  tick: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="M20 6 9 17l-5-5"/></svg>',
+  x: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  reel: '<svg class="reel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="6.5" r="2.2"/><circle cx="16.8" cy="14.8" r="2.2"/><circle cx="7.2" cy="14.8" r="2.2"/></svg>',
+  up: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 8A2 2 0 0 1 18.4 22H7V10l4-8a3 3 0 0 1 4 3.9z"/></svg>',
+  down: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2M9 18.1 10 14H4.2a2 2 0 0 1-2-2.3l1.4-8A2 2 0 0 1 5.6 2H17v12l-4 8a3 3 0 0 1-4-3.9z"/></svg>',
+  chev: '<svg class="chev" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"><path d="m9 6 6 6-6 6"/></svg>',
+};
+
+/* ============================================================
+   Sidebar
+   ============================================================ */
+function renderUsers() {
+  const ids = [...USER_ORDER];
+  if (!ids.includes(state.user)) ids.push(state.user);
+  $("#userList").innerHTML = ids.map((id) => {
+    const u = USERS[id] || { tag: "Custom viewer", desc: "live mode only" };
+    return `<button class="seat" type="button" data-user="${id}" aria-pressed="${id === state.user}">
+      <span class="seat-no">${id}</span><span><b>${esc(u.tag)}</b><span class="sub">No. ${id} · ${esc(u.desc)}</span></span></button>`;
+  }).join("");
+  $("#whoLabel").textContent = `No. ${state.user}`;
+}
+function renderMemory() {
+  const items = state.memory[state.user] || [];
+  const ul = $("#memoryList");
+  if (!items.length) {
+    ul.innerHTML = `<li><p class="empty-note">Nothing yet. Try <em>“I've already seen Forrest Gump”</em> or <em>“I'm tired of animated movies”</em>.</p></li>`;
+    return;
+  }
+  ul.innerHTML = items.map((m, i) => `<li class="memory-item ${m.kind}">
+      <span class="memory-kind">${m.kind === "avoid_genre" ? "Avoid" : esc(m.kind)}</span>
+      <span class="what" title="${esc(m.what)}">${esc(m.what)}</span>
+      <button class="icon-btn" type="button" data-forget="${i}" aria-label="Forget ${esc(m.what)}">${ICON.x}</button>
+    </li>`).join("");
+}
+function renderSysInfo() {
+  $("#sysInfo").innerHTML = `
+    <div class="mode ${AGENT_ENDPOINT ? "live" : ""}">${AGENT_ENDPOINT ? "Live agent" : "Demo replay"}</div>
+    <div>LLM ........ <b>gpt-4o-mini</b></div>
+    <div>Tools ...... <b>12</b></div>
+    <div>Embeddings . <b>openai-3-small</b></div>
+    <div>Every answer grounding-checked</div>`;
+}
+
+/* ============================================================
+   Chat rendering
+   ============================================================ */
+function scrollDown() { const s = $("#scroll"); s.scrollTop = s.scrollHeight; }
+
+function renderOpening() {
+  const scenes = SCENARIOS.map((s, i) =>
+    `<button class="scene" type="button" data-scenario="${s.id}"><span class="sc">SC. ${pad(i + 1)}</span>
+      <span class="line">${esc(s.chip)}</span><span class="who">viewer ${s.user}</span></button>`).join("");
+  $("#thread").innerHTML = `<div class="opening" id="opening">
+      <div class="eyebrow">Tonight · a film chosen from your own ratings</div>
+      <h2>What are we<br><em>watching</em> tonight?</h2>
+      <p class="lede">Ask for a pick, ask why it suits you, or ask what people with your taste make of a film. The agent runs the numbers on your MovieLens history and shows its working.</p>
+      <div class="credits">
+        <div><span>Chosen by</span><b>Your own ratings</b></div>
+        <div><span>Backed by</span><b>Evidence you can open</b></div>
+        <div><span>Cast from</span><b>Only films in the dataset</b></div>
+      </div>
+      <div class="programme">
+        <div class="prog-head"><span class="eyebrow">The programme</span><small>in order</small></div>
+        ${scenes}
+      </div>
+    </div>`;
+}
+
+function addUserMsg(text) {
+  $("#opening")?.remove();
+  const el = document.createElement("div");
+  el.className = "msg user";
+  el.innerHTML = `<div class="speaker">You</div><div class="line-user">${esc(text)}</div>`;
+  $("#thread").append(el);
+  scrollDown();
+}
+function addCut(text) {
+  $("#opening")?.remove();
+  const el = document.createElement("div");
+  el.className = "cut";
+  el.innerHTML = `Cut to: <b>${esc(text)}</b>`;
+  $("#thread").append(el);
+}
+
+function ticketHtml(c, i) {
+  const rows = (arr, key, label) => !arr?.length ? "" :
+    `<div class="k">${label}</div>` + arr.map((r) => `<div class="row"><span>${esc(r.title)}</span><span>${
+      [r.your_rating != null ? `you ${r.your_rating}★` : "", r[key] != null ? `sim ${r[key].toFixed(2)}` : ""].filter(Boolean).join(" · ")
+    }</span></div>`).join("");
+  const sim = c.sim ? `<div class="k">People like you</div><div class="row"><span>${c.sim.n ? `${c.sim.n} neighbours` : "Neighbours"}</span><span>avg ${c.sim.avg}${c.sim.hi != null ? ` · ${c.sim.hi} gave 4★+` : ""}</span></div>` : "";
+  const ev = rows(c.because, "co", "Because you rated") + rows(c.plots, "plot", "Plots you liked") + sim;
+  const stub = c.pred != null
+    ? `<span class="lbl">For you</span><span class="big">${c.pred.toFixed(1)}</span>${c.avg != null ? `<hr><span class="lbl">Avg</span><span class="small">${c.avg.toFixed(2)}</span>` : ""}`
+    : c.avg != null ? `<span class="lbl">Avg</span><span class="big">${c.avg.toFixed(2)}</span>` : `<span class="lbl">Admit</span><span class="big">1</span>`;
+  return `<article class="ticket" style="animation-delay:${i * 80}ms">
+      <div class="t-main">
+        <div class="t-head"><span class="t-rank">${pad(i + 1)}</span>
+          <div><h3>${esc(c.title)}</h3>
+          <div class="t-meta">${c.year}${c.genres?.length ? " · " + c.genres.map(esc).join(" / ") : ""}${c.n ? ` · ${c.n} ratings` : ""}</div></div></div>
+        ${ev ? `<div class="t-ev">${ev}</div>` : ""}
+        <div class="t-actions">
+          <button class="btn" type="button" data-ask="Why would I like ${esc(c.title)}?">Why this</button>
+          <button class="btn" type="button" data-seen="${esc(c.title)} (${c.year})">Seen it</button>
+        </div>
+      </div>
+      <div class="t-stub">${stub}</div>
+    </article>`;
+}
+
+function scorecardHtml(o) {
+  const score = (label, of, v, color) => `<div class="score">
+      <div><div class="lbl">${label}</div><div class="of">${of}</div></div>
+      <div class="num" style="color:${color}">${v.toFixed(2)}</div>
+      <div class="meter"><span style="width:${(v / 5) * 100}%;background:${color}"></span></div></div>`;
+  const hi = o.hi, lo = o.lo, mid = o.nSim - hi - lo;
+  return `<div class="scorecard">
+      <div class="sc-head"><div><div class="eyebrow">Scorecard</div><h3>${esc(o.movie)} <span>(${o.year})</span></h3></div>
+        <span class="stamp ${o.reliability}">Reliability · ${esc(o.reliability)}</span></div>
+      <div class="scores">
+        ${score("You", "your rating", o.you, "var(--series-you)")}
+        ${score("People like you", `${o.nSim} neighbours, weighted`, o.sim, "var(--series-sim)")}
+        ${score("Everyone", `${o.nAll} ratings`, o.all, "var(--series-all)")}
+      </div>
+      <div class="sc-foot">
+        <div class="split" role="img" aria-label="${hi} rated 4 or more, ${mid} in between, ${lo} rated 2.5 or less">
+          <span style="flex:${hi};background:var(--series-sim)"></span>
+          <span style="flex:${mid};background:var(--series-all)"></span>
+          <span style="flex:${lo};background:var(--red)"></span>
+        </div>
+        <div class="split-legend"><span><b>${hi}</b>/${o.nSim} gave 4★+</span><span><b>${lo}</b> gave ≤ 2.5★</span><span>similarity ${o.range[0]}–${o.range[1]}</span></div>
+        ${o.note ? `<div class="sc-note">${esc(o.note)}</div>` : ""}
+      </div>
+    </div>`;
+}
+
+function notesHtml(calls) {
+  if (!calls.length) return "";
+  return `<details class="notes"><summary>${ICON.chev} Production notes <span class="hint">${calls.length} tool call${calls.length > 1 ? "s" : ""}, raw output</span></summary>
+    <div class="notes-body">${calls.map((c, i) => `<div>
+      <div class="note-head"><span class="t">TAKE ${pad(i + 1)}</span><code>${esc(c.tool)}</code><span class="in">${esc(JSON.stringify(c.input))}</span>
+        <span class="ms">${c.ms} ms${c.is_error ? " · error" : ""}</span></div>
+      <pre class="json">${jsonHtml(c.output)}</pre></div>`).join("")}</div></details>`;
+}
+
+async function playAssistant(res, turnIdx) {
+  const el = document.createElement("div");
+  el.className = "msg agent";
+  el.innerHTML = `<div class="speaker">The agent</div><div class="takes" aria-live="polite"></div>
+    <div class="answer"></div><div class="extra"></div><div class="tail"></div>`;
+  $("#thread").append(el);
+  const takes = $(".takes", el), answer = $(".answer", el), extra = $(".extra", el), tail = $(".tail", el);
+
+  // 1. tool calls, one take each
+  if (res.calls.length) {
+    for (const [i, c] of res.calls.entries()) {
+      const row = document.createElement("div");
+      row.className = "take" + (c.is_error ? " err" : "");
+      row.innerHTML = `<span class="st">${ICON.reel}</span><span class="n">TAKE ${pad(i + 1)}</span><code>${esc(c.tool)}</code>
+        <span class="args">${esc(JSON.stringify(c.input))}</span><span class="ms"></span>`;
+      takes.append(row);
+      scrollDown();
+      if (!reduceMotion) await sleep(420 + Math.min(c.ms, 400));
+      $(".st", row).innerHTML = c.is_error ? ICON.x : ICON.tick;
+      $(".ms", row).textContent = `${c.ms} ms`;
+    }
+  } else {
+    takes.remove();
+  }
+
+  // 2. streamed answer
+  const words = res.text.split(/(\s+)/);
+  let acc = "";
+  for (let i = 0; i < words.length; i++) {
+    acc += words[i];
+    if (reduceMotion || i % 3 !== 0) continue;
+    answer.innerHTML = md(acc) + '<span class="caret"></span>';
+    scrollDown();
+    await sleep(14);
+  }
+  answer.innerHTML = md(res.text);
+
+  // 3. structured results
+  if (res.cards?.length) extra.innerHTML = `<div class="tickets">${res.cards.map(ticketHtml).join("")}</div>`;
+  if (res.opinion) extra.innerHTML = scorecardHtml(res.opinion);
+  if (!extra.innerHTML) extra.remove();
+
+  // 4. meta row + production notes
+  const check = res.demoMiss ? "" : res.revised
+    ? `<span class="tag rev">Revised by grounding check</span>`
+    : `<span class="tag ok">${ICON.tick} Grounding check passed</span>`;
+  const mem = res.memory?.length ? `<span class="tag mem">+${res.memory.length} remembered</span>` : "";
+  tail.innerHTML = `<div class="meta">
+      ${res.demoMiss ? "" : `<span>${res.latency} s · first token ${res.ttft} s · ${res.tokens.toLocaleString()} tokens</span>`}
+      ${check}${mem}
+      <span class="feedback">
+        <button type="button" data-fb="1" data-turn="${turnIdx}" aria-label="Good answer" aria-pressed="false">${ICON.up}</button>
+        <button type="button" data-fb="-1" data-turn="${turnIdx}" aria-label="Bad answer" aria-pressed="false">${ICON.down}</button>
+      </span></div>${notesHtml(res.calls)}`;
+  tail.style.display = "grid";
+  tail.style.gap = "10px";
+  scrollDown();
+}
+
+/* ============================================================
+   Agent call: live endpoint or demo replay
+   ============================================================ */
+async function askAgent(prompt, scenarioId) {
+  if (AGENT_ENDPOINT) {
+    const r = await fetch(AGENT_ENDPOINT, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id: state.user, message: prompt, session_id: state.sessionId }),
+    });
+    if (!r.ok) throw new Error(`Agent returned ${r.status}`);
+    const d = await r.json();
+    return { calls: [], tokens: 0, ...d };
+  }
+  let sc = scenarioId ? SCENARIOS.find((s) => s.id === scenarioId) : null;
+  if (!sc) {
+    const candidates = SCENARIOS.filter((s) => s.match.test(prompt));
+    sc = candidates.find((s) => s.user === state.user && !state.used.has(s.id))
+      || candidates.find((s) => s.user === state.user) || null;
+  }
+  if (!reduceMotion) await sleep(350);
+  if (!sc) return FALLBACK(prompt);
+  state.used.add(sc.id);
+  return sc.reply();
+}
+
+async function send(prompt, scenarioId) {
+  prompt = prompt.trim();
+  if (!prompt || state.busy) return;
+  const sc = scenarioId && SCENARIOS.find((s) => s.id === scenarioId);
+  if (sc && sc.user !== state.user && !AGENT_ENDPOINT) switchUser(sc.user, true);
+
+  state.busy = true;
+  updateSend();
+  addUserMsg(prompt);
+  try {
+    const res = await askAgent(prompt, scenarioId);
+    const turnIdx = state.turns.length;
+    if (!res.demoMiss) {
+      state.turns.push({ time: new Date(), user: state.user, question: prompt, latency: res.latency, ttft: res.ttft,
+        calls: res.calls, cost: res.cost ?? 0, revised: !!res.revised, feedback: 0 });
+    }
+    await playAssistant(res, turnIdx);
+    if (res.memory?.length) {
+      const list = state.memory[state.user] ||= [];
+      for (const m of res.memory) if (!list.some((x) => x.kind === m.kind && x.what === m.what)) list.push(m);
+      renderMemory();
+    }
+  } catch (err) {
+    const el = document.createElement("div");
+    el.className = "msg agent";
+    el.innerHTML = `<div class="speaker">The agent</div><div class="answer" style="color:var(--red)">Projector's down: ${esc(err.message)}</div>`;
+    $("#thread").append(el);
+  } finally {
+    state.busy = false;
+    updateSend();
+    renderMonitor();
+  }
+}
+
+/* ============================================================
+   Session controls
+   ============================================================ */
+function newConversation(silent) {
+  state.used.clear();
+  state.sessionId = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+  if (!silent) renderOpening();
+}
+function switchUser(id, inline) {
+  if (id === state.user) return;
+  state.user = id;
+  state.memory[id] ||= [];
+  renderUsers();
+  renderMemory();
+  newConversation(inline);
+  if (inline) addCut(`new conversation, viewer ${id}`);
+  closeNav();
+}
+
+/* ============================================================
+   Monitor
+   ============================================================ */
+function pct(arr, p) {
+  if (!arr.length) return null;
+  const s = [...arr].sort((a, b) => a - b);
+  return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)];
+}
+function renderMonitor() {
+  const t = state.turns;
+  const calls = t.flatMap((x) => x.calls);
+  const rated = t.filter((x) => x.feedback);
+  const k = {
+    turns: t.length,
+    latency_p50_s: pct(t.map((x) => x.latency), 50),
+    latency_p95_s: pct(t.map((x) => x.latency), 95),
+    ttft_p50_s: pct(t.map((x) => x.ttft), 50),
+    tool_error_rate: calls.length ? calls.filter((c) => c.is_error).length / calls.length : null,
+    cost_per_turn_usd: t.length ? t.reduce((a, x) => a + x.cost, 0) / t.length : null,
+    guardrail_trigger_rate: t.length ? t.filter((x) => x.revised).length / t.length : null,
+    thumbs_up_rate: rated.length ? rated.filter((x) => x.feedback > 0).length / rated.length : null,
+  };
+  const check = (key) => {
+    const slo = SLOS[key], v = k[key];
+    if (!slo || v == null) return null;
+    return slo[0] === "<=" ? v <= slo[1] : v >= slo[1];
+  };
+  const breaches = Object.keys(SLOS).filter((key) => check(key) === false);
+  const tile = (label, key, fmt) => {
+    const v = k[key], ok = check(key), slo = SLOS[key];
+    const s = slo ? `<div class="s ${ok == null ? "" : ok ? "ok" : "bad"}">SLO ${slo[0]} ${slo[1]}${ok == null ? "" : ok ? " · met" : " · breached"}</div>` : `<div class="s">&nbsp;</div>`;
+    return `<div class="kpi"><div class="l">${label}</div><div class="v">${v == null ? "—" : fmt(v)}</div>${s}</div>`;
+  };
+  const byTool = {};
+  for (const c of calls) {
+    const b = byTool[c.tool] ||= { n: 0, err: 0, ms: [] };
+    b.n++; b.err += c.is_error ? 1 : 0; b.ms.push(c.ms);
+  }
+  const status = !t.length
+    ? `<div class="status-line idle">No screenings yet · ask something in the Screening tab</div>`
+    : breaches.length
+      ? `<div class="status-line bad">SLO breach · ${breaches.map((b) => b.replace(/_/g, " ")).join(", ")}</div>`
+      : `<div class="status-line ok">All SLOs met</div>`;
+
+  $("#monitor").innerHTML = `
+    <div><div class="eyebrow">Projection booth</div><h2>Monitor</h2>
+      <p class="sub">This browser session's turns. The Streamlit monitor reads the same KPIs from <code>logs/telemetry.db</code>.</p></div>
+    ${status}
+    <div class="board">
+      ${tile("Turns", "turns", (v) => v)}
+      ${tile("Latency p50", "latency_p50_s", (v) => v.toFixed(1) + " s")}
+      ${tile("Latency p95", "latency_p95_s", (v) => v.toFixed(1) + " s")}
+      ${tile("First token p50", "ttft_p50_s", (v) => v.toFixed(1) + " s")}
+      ${tile("Tool error rate", "tool_error_rate", (v) => (v * 100).toFixed(1) + "%")}
+      ${tile("Cost / turn", "cost_per_turn_usd", (v) => "$" + v.toFixed(4))}
+      ${tile("Guardrail triggers", "guardrail_trigger_rate", (v) => (v * 100).toFixed(1) + "%")}
+      ${tile("Thumbs-up rate", "thumbs_up_rate", (v) => Math.round(v * 100) + "%")}
+    </div>
+    <div><p class="side-label">Per tool</p>
+      <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Calls</th><th>Errors</th><th>p50 ms</th><th>p95 ms</th></tr></thead><tbody>
+      ${Object.entries(byTool).map(([name, b]) => `<tr><td><code>${esc(name)}</code></td>
+        <td class="num">${b.n}</td><td class="num">${b.err}</td><td class="num">${pct(b.ms, 50)}</td><td class="num">${pct(b.ms, 95)}</td></tr>`).join("")
+        || `<tr><td colspan="5" style="color:var(--muted)">none</td></tr>`}
+      </tbody></table></div></div>
+    <div><p class="side-label">Recent turns</p>
+      <div class="table-wrap"><table><thead><tr><th>Time</th><th>Viewer</th><th>Question</th><th>Latency</th><th>Tools</th><th>Revised</th><th>Cost</th><th>Feedback</th></tr></thead><tbody>
+      ${[...t].reverse().map((x) => `<tr><td class="num">${x.time.toLocaleTimeString()}</td><td class="num">${x.user}</td>
+        <td class="q" title="${esc(x.question)}">${esc(x.question)}</td><td class="num">${x.latency} s</td><td class="num">${x.calls.length}</td>
+        <td>${x.revised ? "yes" : "no"}</td><td class="num">$${x.cost.toFixed(4)}</td><td>${x.feedback > 0 ? "up" : x.feedback < 0 ? "down" : ""}</td></tr>`).join("")
+        || `<tr><td colspan="8" style="color:var(--muted)">none</td></tr>`}
+      </tbody></table></div></div>`;
+}
+
+/* ============================================================
+   Events
+   ============================================================ */
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove("show"), 2000);
+}
+function updateSend() { $("#send").disabled = state.busy || !$("#input").value.trim(); }
+function closeNav() { $("#app").classList.remove("nav-open"); }
+
+$("#composer").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const v = $("#input").value;
+  $("#input").value = "";
+  $("#input").style.height = "auto";
+  send(v);
+});
+$("#input").addEventListener("input", (e) => {
+  e.target.style.height = "auto";
+  e.target.style.height = Math.min(e.target.scrollHeight, 160) + "px";
+  updateSend();
+});
+$("#input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("#composer").requestSubmit(); }
+});
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.scenario) {
+    const sc = SCENARIOS.find((s) => s.id === t.dataset.scenario);
+    send(sc.chip, sc.id);
+  } else if (t.dataset.user) {
+    switchUser(Number(t.dataset.user), false);
+    renderOpening();
+  } else if (t.dataset.forget != null) {
+    const [m] = state.memory[state.user].splice(Number(t.dataset.forget), 1);
+    renderMemory();
+    toast(`Forgotten: ${m.what}`);
+  } else if (t.dataset.fb) {
+    const turn = state.turns[Number(t.dataset.turn)];
+    t.parentElement.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === t)));
+    if (turn) { turn.feedback = Number(t.dataset.fb); renderMonitor(); }
+    toast("Thanks. Feedback logged.");
+  } else if (t.dataset.ask) {
+    send(t.dataset.ask);
+  } else if (t.dataset.seen) {
+    const list = state.memory[state.user] ||= [];
+    if (!list.some((x) => x.what === t.dataset.seen)) list.push({ kind: "seen", what: t.dataset.seen });
+    renderMemory();
+    t.disabled = true;
+    t.textContent = "Marked seen";
+    toast("Won't be recommended again.");
+  } else if (t.classList.contains("tab")) {
+    document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === t)));
+    document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === "view-" + t.dataset.view));
+  }
+});
+
+$("#newConvo").addEventListener("click", () => { newConversation(false); closeNav(); });
+$("#customUser").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const v = Number(e.target.elements[0].value);
+  if (!(v >= 1 && v <= 610)) return toast("Viewer number must be 1–610.");
+  e.target.reset();
+  switchUser(v, false);
+  renderOpening();
+});
+$("#menuBtn").addEventListener("click", () => $("#app").classList.add("nav-open"));
+$("#scrim").addEventListener("click", closeNav);
+$("#themeBtn").addEventListener("click", () => {
+  const root = document.documentElement;
+  root.dataset.theme = root.dataset.theme === "light" ? "dark" : "light";
+  try { localStorage.setItem("movie-agent-theme", root.dataset.theme); } catch {}
+});
+try { const th = localStorage.getItem("movie-agent-theme"); if (th) document.documentElement.dataset.theme = th; } catch {}
+
+renderUsers();
+renderMemory();
+renderSysInfo();
+renderOpening();
+renderMonitor();
+</script>
+</body>
+</html>

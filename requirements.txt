@@ -11,4 +11,5 @@ openai>=1.50,<4
 httpx[http2]>=0.27,<1  # HTTP/2 lets streamed LLM calls reuse one connection (movie_agent/http.py)
 rich>=13,<16
 tabulate>=0.9,<1
-streamlit>=1.40,<2
+fastapi>=0.110,<1
+uvicorn>=0.29,<1

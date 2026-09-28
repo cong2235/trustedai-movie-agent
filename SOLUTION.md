@@ -7,7 +7,7 @@ and titles. Every answer is re-checked against the evidence, every turn is logge
 latency and cost. The full write-up is in [REPORT.md](REPORT.md), with supporting detail in [APPENDIX.md](APPENDIX.md).
 
 ```
- user ──► Chat (Streamlit web UI or CLI)
+ user ──► Chat (web UI or CLI)
              ▼
    agent.py        LLM tool-use loop (OpenAI gpt-4o-mini, streamed | Claude); short-term memory =
      │  │              conversation, compacted to (question, answer) after 2 turns; profile + memories in context
@@ -38,14 +38,14 @@ python scripts/verify_dataset.py           # sanity-check the data
 python scripts/build_index.py --backend openai-3-small   # ~2 min, ~$0.08  -> artifacts/openai-3-small/
 python scripts/build_index.py --backend bge-small        # optional local fallback, ~29 min CPU
 pip install -r requirements-dev.txt       # pytest, coverage, ruff, pre-commit
-python -m pytest -q                        # 125 tests, offline (no API calls)
+python -m pytest -q                        # 130 tests, offline (no API calls)
 ruff check . && ruff format --check .      # the same checks CI runs
 ```
 
 ## Run it
 
 ```bash
-python app/serve.py                         # web UI (warms models at start): Chat + Monitor  → http://localhost:8501
+python app/server.py                        # web UI (warms models at start): Chat + Monitor  → http://localhost:8501
 docker compose up -d --build                # same, in a container (see Dockerfile / docker-compose.yml)
 python -m movie_agent.cli --user 15                       # terminal chat; /trace /good /bad /stats
 python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
@@ -112,13 +112,13 @@ All results land in `outputs/eval/` (markdown + JSON + CSV) and `outputs/transcr
 | Path | What |
 |---|---|
 | `src/movie_agent/` | the system (data → signals → tools → agent → guardrails/telemetry → UI) |
-| `app/streamlit_app.py` | web UI: chat + monitoring dashboard |
+| `app/server.py`, `app/chat.html` | web UI: FastAPI server and the chat + monitor page |
 | `scripts/` | index build, offline / search / graph eval, scenario runner, monitor CLI |
 | `eval/scenarios.py` | 14 conversations / 19 turns with automatic checks and reference tool plans |
 | `eval/memory_scenarios.py` | 10 conversations / 31 turns targeting short- and long-term memory |
 | `eval/heldout_scenarios.py`, `eval/heldout_v2_scenarios.py` | held-out sets (18 / 20 and 16 / 19 conversations / turns), each committed before its first run |
 | `data/derived/` | LLM-extracted movie attributes (committed, so nobody pays for them twice) |
-| `tests/` | 125 tests (incl. 29 memory, 6 attribute, 12 search tests on a synthetic index, 5 Claude-backend tests on a fake client): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
+| `tests/` | 130 tests (incl. 29 memory, 6 attribute, 12 search tests on a synthetic index, 5 Claude-backend tests on a fake client, 5 web-server tests): title resolution (sequels, numeric titles, fragments), similarity, constraints, split, metrics, guardrails (attribution, rating claims, revision loop), telemetry, memory, compaction, streaming, re-rank fallback, graph |
 | `outputs/eval/` | all metrics |
 | `outputs/transcripts_*` | full conversations with every tool call and output |
 | `outputs/failure_cases/` | saved evidence for failures discussed in the report |

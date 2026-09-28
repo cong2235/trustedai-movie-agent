@@ -8,7 +8,7 @@ filtering, plot search, taste profiles, neighbour opinions, long-term memory). B
 ([ASSIGNMENT.md](ASSIGNMENT.md)).
 
 ```
-user ─► chat (Streamlit / CLI) ─► LLM agent ──► 12 tools, JSON evidence out ─► grounding check on every answer
+user ─► chat (web UI / CLI) ─► LLM agent ──► 12 tools, JSON evidence out ─► grounding check on every answer
                                      │            ├─ hybrid recommender: item/user kNN + plot taste + PureSVD, tuned
                                      │            ├─ search: plot embeddings + TF-IDF + tone attributes → LLM re-rank
                                      │            ├─ "people like me": residual kNN prediction with reliability labels
@@ -35,7 +35,7 @@ pip install -r requirements.txt && pip install -e . --no-deps
 cp .env.example .env                                      # add OPENAI_API_KEY (all reported runs used OpenAI)
 python scripts/build_index.py --backend openai-3-small    # ~2 min, ~$0.08 (or --backend bge-small: local, ~29 min)
 
-python app/serve.py                                       # web UI: chat + monitor at http://localhost:8501
+python app/server.py                                      # web UI: chat + monitor at http://localhost:8501
 python -m movie_agent.cli --user 15                       # terminal chat
 python -m movie_agent.cli --user 15 --no-llm              # tools only, no API key
 ```
@@ -57,7 +57,7 @@ CI runs both on Python 3.10 and 3.12. `pre-commit install` enables the same chec
 
 ```
 src/movie_agent/   the system: data → CF / content / attributes → tools → agent → guardrails, telemetry
-app/               Streamlit UI (chat + monitoring); chat.html: static chat UI, opens without a backend
+app/               web UI: server.py (FastAPI) serves chat.html (chat + monitor)
 scripts/           index build, attribute extraction, offline / search / graph evaluation, scenario runner, monitor
 eval/              conversation suites: main, memory, held-out
 tests/             offline unit and integration tests

@@ -1,9 +1,9 @@
 """Process-wide shared components for the web app.
 
-Streamlit re-executes the page script per session, but imported modules persist for the life of the process,
-so one lock-protected singleton here is shared by every session. `warm_in_background()` is called by
-app/serve.py at process start, so the ~40 s of matrix building happens before the first visitor, not during
-their first request (measured: first recommend 17 s cold vs 0.1 s warm).
+The web server handles every conversation in one process, so one lock-protected singleton here is shared by
+every session. `warm_in_background()` is called by app/server.py at process start, so the ~40 s of matrix
+building happens before the first visitor, not during their first request (measured: first recommend 17 s cold
+vs 0.1 s warm).
 """
 
 from __future__ import annotations

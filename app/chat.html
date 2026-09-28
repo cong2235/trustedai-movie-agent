@@ -10,11 +10,8 @@
 <!--
   Chat front-end for the Movie Discovery Agent.
 
-  Out of the box it replays a scripted demo with evidence taken from the committed transcripts
-  (outputs/transcripts_llm_gpt-4o-mini*), so it opens without a backend. To talk to the real agent, set
-  window.AGENT_ENDPOINT to a URL that accepts POST {user_id, message, session_id} and returns
-  {text, calls:[{tool,input,ms,output,is_error}], latency_s, ttft_s, tokens, cost_usd, revised, memory,
-   cards?, opinion?} — the same fields MovieAgent.ask() already produces for the Streamlit UI.
+  Served by app/server.py (python app/server.py -> http://localhost:8501) it talks to the live agent through
+  /api. Opened directly as a file it replays a scripted demo with evidence taken from the committed transcripts.
 -->
 <style>
 /* Dark "midnight screening" is the default; the light "matinee" theme is opt-in via the house-lights switch. */
@@ -575,7 +572,18 @@ td code { font: 700 12.5px var(--script); color: var(--gold); }
 /* ============================================================
    Config
    ============================================================ */
-const AGENT_ENDPOINT = window.AGENT_ENDPOINT || null;   // e.g. "http://localhost:8000/chat"
+const API = window.AGENT_API || null;                    // set by app/server.py when it serves this page
+const AGENT_ENDPOINT = window.AGENT_ENDPOINT || (API ? API + "/chat" : null);
+const LIVE = !!AGENT_ENDPOINT;
+async function api(path, opts = {}) {
+  const r = await fetch(API + path, { headers: { "Content-Type": "application/json" }, ...opts });
+  if (!r.ok) {
+    let msg = `${r.status}`;
+    try { const d = await r.json(); msg = typeof d.detail === "string" ? d.detail : msg; } catch {}
+    throw new Error(msg);
+  }
+  return r.json();
+}
 const SLOS = {                                           // mirrors src/movie_agent/monitor.py
   latency_p95_s: ["<=", 20.0],
   tool_error_rate: ["<=", 0.10],
@@ -773,7 +781,7 @@ const SCENARIOS = [
 
 const FALLBACK = (prompt) => ({
   text: "This page is running in **demo replay** mode, so it can only answer the scripted questions (the programme on the opening screen).\n\n" +
-    "To ask anything, point it at the real agent: set `window.AGENT_ENDPOINT` before this script, or run `python app/serve.py` for the Streamlit UI.",
+    "To ask anything, run `python app/server.py` and open http://localhost:8501.",
   calls: [], latency: 0.1, ttft: 0.1, tokens: 0, cost: 0, demoMiss: true,
 });
 
@@ -867,12 +875,24 @@ function renderMemory() {
       <button class="icon-btn" type="button" data-forget="${i}" aria-label="Forget ${esc(m.what)}">${ICON.x}</button>
     </li>`).join("");
 }
-function renderSysInfo() {
+async function loadMemory(user = state.user) {
+  if (!API) return;
+  try {
+    state.memory[user] = await api(`/memory/${user}`);
+    if (user === state.user) renderMemory();
+  } catch (err) { toast(`Memory unavailable: ${err.message}`); }
+}
+async function renderSysInfo() {
+  const info = { model: "gpt-4o-mini", embeddings: "openai", reranker: "llm" };
+  if (API) {
+    try { Object.assign(info, await api("/info")); } catch {}
+  }
   $("#sysInfo").innerHTML = `
-    <div class="mode ${AGENT_ENDPOINT ? "live" : ""}">${AGENT_ENDPOINT ? "Live agent" : "Demo replay"}</div>
-    <div>LLM ........ <b>gpt-4o-mini</b></div>
+    <div class="mode ${LIVE ? "live" : ""}">${LIVE ? "Live agent" : "Demo replay"}</div>
+    <div>LLM ........ <b>${esc(info.model || "no API key")}</b></div>
     <div>Tools ...... <b>12</b></div>
-    <div>Embeddings . <b>openai-3-small</b></div>
+    <div>Embeddings . <b>${esc(info.embeddings)}</b></div>
+    <div>Re-ranker .. <b>${esc(info.reranker)}</b></div>
     <div>Every answer grounding-checked</div>`;
 }
 
@@ -922,7 +942,7 @@ function ticketHtml(c, i) {
     `<div class="k">${label}</div>` + arr.map((r) => `<div class="row"><span>${esc(r.title)}</span><span>${
       [r.your_rating != null ? `you ${r.your_rating}★` : "", r[key] != null ? `sim ${r[key].toFixed(2)}` : ""].filter(Boolean).join(" · ")
     }</span></div>`).join("");
-  const sim = c.sim ? `<div class="k">People like you</div><div class="row"><span>${c.sim.n ? `${c.sim.n} neighbours` : "Neighbours"}</span><span>avg ${c.sim.avg}${c.sim.hi != null ? ` · ${c.sim.hi} gave 4★+` : ""}</span></div>` : "";
+  const sim = c.sim?.avg != null ? `<div class="k">People like you</div><div class="row"><span>${c.sim.n ? `${c.sim.n} neighbours` : "Neighbours"}</span><span>avg ${c.sim.avg}${c.sim.hi != null ? ` · ${c.sim.hi} gave 4★+` : ""}</span></div>` : "";
   const ev = rows(c.because, "co", "Because you rated") + rows(c.plots, "plot", "Plots you liked") + sim;
   const stub = c.pred != null
     ? `<span class="lbl">For you</span><span class="big">${c.pred.toFixed(1)}</span>${c.avg != null ? `<hr><span class="lbl">Avg</span><span class="small">${c.avg.toFixed(2)}</span>` : ""}`
@@ -931,11 +951,11 @@ function ticketHtml(c, i) {
       <div class="t-main">
         <div class="t-head"><span class="t-rank">${pad(i + 1)}</span>
           <div><h3>${esc(c.title)}</h3>
-          <div class="t-meta">${c.year}${c.genres?.length ? " · " + c.genres.map(esc).join(" / ") : ""}${c.n ? ` · ${c.n} ratings` : ""}</div></div></div>
+          <div class="t-meta">${[c.year, c.genres?.length ? c.genres.map(esc).join(" / ") : "", c.n ? `${c.n} ratings` : ""].filter(Boolean).join(" · ")}</div></div></div>
         ${ev ? `<div class="t-ev">${ev}</div>` : ""}
         <div class="t-actions">
           <button class="btn" type="button" data-ask="Why would I like ${esc(c.title)}?">Why this</button>
-          <button class="btn" type="button" data-seen="${esc(c.title)} (${c.year})">Seen it</button>
+          <button class="btn" type="button" data-seen="${esc(c.title)}${c.year ? ` (${c.year})` : ""}">Seen it</button>
         </div>
       </div>
       <div class="t-stub">${stub}</div>
@@ -948,13 +968,16 @@ function scorecardHtml(o) {
       <div class="num" style="color:${color}">${v.toFixed(2)}</div>
       <div class="meter"><span style="width:${(v / 5) * 100}%;background:${color}"></span></div></div>`;
   const hi = o.hi, lo = o.lo, mid = o.nSim - hi - lo;
+  const you = o.you != null ? score("You", "your rating", o.you, "var(--series-you)")
+    : o.pred != null ? score("You", "predicted", o.pred, "var(--series-you)") : "";
+  const range = o.range?.[0] != null ? `<span>similarity ${o.range[0]}–${o.range[1]}</span>` : "";
   return `<div class="scorecard">
-      <div class="sc-head"><div><div class="eyebrow">Scorecard</div><h3>${esc(o.movie)} <span>(${o.year})</span></h3></div>
-        <span class="stamp ${o.reliability}">Reliability · ${esc(o.reliability)}</span></div>
+      <div class="sc-head"><div><div class="eyebrow">Scorecard</div><h3>${esc(o.movie)}${o.year ? ` <span>(${o.year})</span>` : ""}</h3></div>
+        <span class="stamp ${esc(o.reliability)}">Reliability · ${esc(o.reliability)}</span></div>
       <div class="scores">
-        ${score("You", "your rating", o.you, "var(--series-you)")}
-        ${score("People like you", `${o.nSim} neighbours, weighted`, o.sim, "var(--series-sim)")}
-        ${score("Everyone", `${o.nAll} ratings`, o.all, "var(--series-all)")}
+        ${you}
+        ${o.sim != null ? score("People like you", `${o.nSim} neighbours, weighted`, o.sim, "var(--series-sim)") : ""}
+        ${o.all != null ? score("Everyone", `${o.nAll} ratings`, o.all, "var(--series-all)") : ""}
       </div>
       <div class="sc-foot">
         <div class="split" role="img" aria-label="${hi} rated 4 or more, ${mid} in between, ${lo} rated 2.5 or less">
@@ -962,7 +985,7 @@ function scorecardHtml(o) {
           <span style="flex:${mid};background:var(--series-all)"></span>
           <span style="flex:${lo};background:var(--red)"></span>
         </div>
-        <div class="split-legend"><span><b>${hi}</b>/${o.nSim} gave 4★+</span><span><b>${lo}</b> gave ≤ 2.5★</span><span>similarity ${o.range[0]}–${o.range[1]}</span></div>
+        <div class="split-legend"><span><b>${hi}</b>/${o.nSim} gave 4★+</span><span><b>${lo}</b> gave ≤ 2.5★</span>${range}</div>
         ${o.note ? `<div class="sc-note">${esc(o.note)}</div>` : ""}
       </div>
     </div>`;
@@ -994,7 +1017,7 @@ async function playAssistant(res, turnIdx) {
         <span class="args">${esc(JSON.stringify(c.input))}</span><span class="ms"></span>`;
       takes.append(row);
       scrollDown();
-      if (!reduceMotion) await sleep(420 + Math.min(c.ms, 400));
+      if (!reduceMotion) await sleep(LIVE ? 90 : 420 + Math.min(c.ms, 400));
       $(".st", row).innerHTML = c.is_error ? ICON.x : ICON.tick;
       $(".ms", row).textContent = `${c.ms} ms`;
     }
@@ -1007,7 +1030,7 @@ async function playAssistant(res, turnIdx) {
   let acc = "";
   for (let i = 0; i < words.length; i++) {
     acc += words[i];
-    if (reduceMotion || i % 3 !== 0) continue;
+    if (reduceMotion || i % (LIVE ? 8 : 3) !== 0) continue;
     answer.innerHTML = md(acc) + '<span class="caret"></span>';
     scrollDown();
     await sleep(14);
@@ -1040,12 +1063,16 @@ async function playAssistant(res, turnIdx) {
    Agent call: live endpoint or demo replay
    ============================================================ */
 async function askAgent(prompt, scenarioId) {
-  if (AGENT_ENDPOINT) {
+  if (LIVE) {
     const r = await fetch(AGENT_ENDPOINT, {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ user_id: state.user, message: prompt, session_id: state.sessionId }),
     });
-    if (!r.ok) throw new Error(`Agent returned ${r.status}`);
+    if (!r.ok) {
+      let msg = `Agent returned ${r.status}`;
+      try { const d = await r.json(); if (typeof d.detail === "string") msg = d.detail; } catch {}
+      throw new Error(msg);
+    }
     const d = await r.json();
     return { calls: [], tokens: 0, ...d };
   }
@@ -1065,25 +1092,41 @@ async function send(prompt, scenarioId) {
   prompt = prompt.trim();
   if (!prompt || state.busy) return;
   const sc = scenarioId && SCENARIOS.find((s) => s.id === scenarioId);
-  if (sc && sc.user !== state.user && !AGENT_ENDPOINT) switchUser(sc.user, true);
+  if (sc && sc.user !== state.user) switchUser(sc.user, true);
 
   state.busy = true;
   updateSend();
   addUserMsg(prompt);
+  let pending = null;
+  if (LIVE) {
+    pending = document.createElement("div");
+    pending.className = "msg agent";
+    pending.innerHTML = `<div class="speaker">The agent</div><div class="takes"><div class="take">
+      <span class="st">${ICON.reel}</span><span class="n">ROLLING</span><span class="args">Investigating the data… <b class="secs">0</b> s</span></div></div>`;
+    $("#thread").append(pending);
+    scrollDown();
+    const t0 = Date.now();
+    pending._timer = setInterval(() => { $(".secs", pending).textContent = Math.round((Date.now() - t0) / 1000); }, 500);
+  }
   try {
     const res = await askAgent(prompt, scenarioId);
+    if (pending) { clearInterval(pending._timer); pending.remove(); pending = null; }
     const turnIdx = state.turns.length;
     if (!res.demoMiss) {
       state.turns.push({ time: new Date(), user: state.user, question: prompt, latency: res.latency, ttft: res.ttft,
-        calls: res.calls, cost: res.cost ?? 0, revised: !!res.revised, feedback: 0 });
+        calls: res.calls, cost: res.cost ?? 0, revised: !!res.revised, feedback: 0, turnId: res.turn_id });
     }
     await playAssistant(res, turnIdx);
-    if (res.memory?.length) {
+    if (res.memory_all) {
+      state.memory[state.user] = res.memory_all;
+      renderMemory();
+    } else if (res.memory?.length) {
       const list = state.memory[state.user] ||= [];
       for (const m of res.memory) if (!list.some((x) => x.kind === m.kind && x.what === m.what)) list.push(m);
       renderMemory();
     }
   } catch (err) {
+    if (pending) { clearInterval(pending._timer); pending.remove(); }
     const el = document.createElement("div");
     el.className = "msg agent";
     el.innerHTML = `<div class="speaker">The agent</div><div class="answer" style="color:var(--red)">Projector's down: ${esc(err.message)}</div>`;
@@ -1109,6 +1152,7 @@ function switchUser(id, inline) {
   state.memory[id] ||= [];
   renderUsers();
   renderMemory();
+  loadMemory(id);
   newConversation(inline);
   if (inline) addCut(`new conversation, viewer ${id}`);
   closeNav();
@@ -1122,7 +1166,7 @@ function pct(arr, p) {
   const s = [...arr].sort((a, b) => a - b);
   return s[Math.min(s.length - 1, Math.ceil((p / 100) * s.length) - 1)];
 }
-function renderMonitor() {
+function localMonitor() {
   const t = state.turns;
   const calls = t.flatMap((x) => x.calls);
   const rated = t.filter((x) => x.feedback);
@@ -1130,29 +1174,49 @@ function renderMonitor() {
     turns: t.length,
     latency_p50_s: pct(t.map((x) => x.latency), 50),
     latency_p95_s: pct(t.map((x) => x.latency), 95),
-    ttft_p50_s: pct(t.map((x) => x.ttft), 50),
+    ttft_p50_s: pct(t.map((x) => x.ttft).filter((v) => v != null), 50),
     tool_error_rate: calls.length ? calls.filter((c) => c.is_error).length / calls.length : null,
     cost_per_turn_usd: t.length ? t.reduce((a, x) => a + x.cost, 0) / t.length : null,
     guardrail_trigger_rate: t.length ? t.filter((x) => x.revised).length / t.length : null,
     thumbs_up_rate: rated.length ? rated.filter((x) => x.feedback > 0).length / rated.length : null,
-  };
-  const check = (key) => {
-    const slo = SLOS[key], v = k[key];
-    if (!slo || v == null) return null;
-    return slo[0] === "<=" ? v <= slo[1] : v >= slo[1];
-  };
-  const breaches = Object.keys(SLOS).filter((key) => check(key) === false);
-  const tile = (label, key, fmt) => {
-    const v = k[key], ok = check(key), slo = SLOS[key];
-    const s = slo ? `<div class="s ${ok == null ? "" : ok ? "ok" : "bad"}">SLO ${slo[0]} ${slo[1]}${ok == null ? "" : ok ? " · met" : " · breached"}</div>` : `<div class="s">&nbsp;</div>`;
-    return `<div class="kpi"><div class="l">${label}</div><div class="v">${v == null ? "—" : fmt(v)}</div>${s}</div>`;
   };
   const byTool = {};
   for (const c of calls) {
     const b = byTool[c.tool] ||= { n: 0, err: 0, ms: [] };
     b.n++; b.err += c.is_error ? 1 : 0; b.ms.push(c.ms);
   }
-  const status = !t.length
+  return {
+    scope: "This browser session's turns (demo replay).",
+    k, slos: SLOS,
+    perTool: Object.entries(byTool).map(([tool, b]) => ({ tool, calls: b.n, error_rate: b.err / b.n, p50_ms: pct(b.ms, 50), p95_ms: pct(b.ms, 95) })),
+    recent: [...t].reverse().map((x) => ({ time: x.time, user: x.user, question: x.question, latency: x.latency,
+      tools: x.calls.length, revised: x.revised, cost: x.cost, feedback: x.feedback })),
+  };
+}
+async function renderMonitor() {
+  let d = localMonitor();
+  if (API) {
+    try {
+      const r = await api("/monitor");
+      d = { scope: "All conversations on this server, from <code>logs/telemetry.db</code>.", k: r.kpis, slos: r.slos,
+        perTool: r.per_tool, recent: r.recent.map((x) => ({ ...x, time: new Date(x.ts * 1000) })) };
+    } catch (err) {
+      d.scope = `Server monitor unavailable (${esc(err.message)}); showing this browser's turns.`;
+    }
+  }
+  const { k, slos } = d;
+  const check = (key) => {
+    const slo = slos[key], v = k[key];
+    if (!slo || v == null) return null;
+    return slo[0] === "<=" ? v <= slo[1] : v >= slo[1];
+  };
+  const breaches = Object.keys(slos).filter((key) => check(key) === false);
+  const tile = (label, key, fmt) => {
+    const v = k[key], ok = check(key), slo = slos[key];
+    const s = slo ? `<div class="s ${ok == null ? "" : ok ? "ok" : "bad"}">SLO ${slo[0]} ${slo[1]}${ok == null ? "" : ok ? " · met" : " · breached"}</div>` : `<div class="s">&nbsp;</div>`;
+    return `<div class="kpi"><div class="l">${label}</div><div class="v">${v == null ? "—" : fmt(v)}</div>${s}</div>`;
+  };
+  const status = !k.turns
     ? `<div class="status-line idle">No screenings yet · ask something in the Screening tab</div>`
     : breaches.length
       ? `<div class="status-line bad">SLO breach · ${breaches.map((b) => b.replace(/_/g, " ")).join(", ")}</div>`
@@ -1160,7 +1224,7 @@ function renderMonitor() {
 
   $("#monitor").innerHTML = `
     <div><div class="eyebrow">Projection booth</div><h2>Monitor</h2>
-      <p class="sub">This browser session's turns. The Streamlit monitor reads the same KPIs from <code>logs/telemetry.db</code>.</p></div>
+      <p class="sub">${d.scope}</p></div>
     ${status}
     <div class="board">
       ${tile("Turns", "turns", (v) => v)}
@@ -1173,15 +1237,15 @@ function renderMonitor() {
       ${tile("Thumbs-up rate", "thumbs_up_rate", (v) => Math.round(v * 100) + "%")}
     </div>
     <div><p class="side-label">Per tool</p>
-      <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Calls</th><th>Errors</th><th>p50 ms</th><th>p95 ms</th></tr></thead><tbody>
-      ${Object.entries(byTool).map(([name, b]) => `<tr><td><code>${esc(name)}</code></td>
-        <td class="num">${b.n}</td><td class="num">${b.err}</td><td class="num">${pct(b.ms, 50)}</td><td class="num">${pct(b.ms, 95)}</td></tr>`).join("")
+      <div class="table-wrap"><table><thead><tr><th>Tool</th><th>Calls</th><th>Error rate</th><th>p50 ms</th><th>p95 ms</th></tr></thead><tbody>
+      ${d.perTool.map((b) => `<tr><td><code>${esc(b.tool)}</code></td>
+        <td class="num">${b.calls}</td><td class="num">${(b.error_rate * 100).toFixed(1)}%</td><td class="num">${Math.round(b.p50_ms)}</td><td class="num">${Math.round(b.p95_ms)}</td></tr>`).join("")
         || `<tr><td colspan="5" style="color:var(--muted)">none</td></tr>`}
       </tbody></table></div></div>
     <div><p class="side-label">Recent turns</p>
       <div class="table-wrap"><table><thead><tr><th>Time</th><th>Viewer</th><th>Question</th><th>Latency</th><th>Tools</th><th>Revised</th><th>Cost</th><th>Feedback</th></tr></thead><tbody>
-      ${[...t].reverse().map((x) => `<tr><td class="num">${x.time.toLocaleTimeString()}</td><td class="num">${x.user}</td>
-        <td class="q" title="${esc(x.question)}">${esc(x.question)}</td><td class="num">${x.latency} s</td><td class="num">${x.calls.length}</td>
+      ${d.recent.map((x) => `<tr><td class="num">${x.time.toLocaleTimeString()}</td><td class="num">${x.user}</td>
+        <td class="q" title="${esc(x.question)}">${esc(x.question)}</td><td class="num">${x.latency} s</td><td class="num">${x.tools}</td>
         <td>${x.revised ? "yes" : "no"}</td><td class="num">$${x.cost.toFixed(4)}</td><td>${x.feedback > 0 ? "up" : x.feedback < 0 ? "down" : ""}</td></tr>`).join("")
         || `<tr><td colspan="8" style="color:var(--muted)">none</td></tr>`}
       </tbody></table></div></div>`;
@@ -1226,26 +1290,49 @@ document.addEventListener("click", (e) => {
     switchUser(Number(t.dataset.user), false);
     renderOpening();
   } else if (t.dataset.forget != null) {
-    const [m] = state.memory[state.user].splice(Number(t.dataset.forget), 1);
-    renderMemory();
-    toast(`Forgotten: ${m.what}`);
+    const user = state.user;
+    const m = state.memory[user][Number(t.dataset.forget)];
+    if (API && m.id != null) {
+      api(`/memory/${user}/${m.id}`, { method: "DELETE" })
+        .then((list) => { state.memory[user] = list; renderMemory(); toast(`Forgotten: ${m.what}`); })
+        .catch((err) => toast(`Could not forget: ${err.message}`));
+    } else {
+      state.memory[user].splice(Number(t.dataset.forget), 1);
+      renderMemory();
+      toast(`Forgotten: ${m.what}`);
+    }
   } else if (t.dataset.fb) {
     const turn = state.turns[Number(t.dataset.turn)];
     t.parentElement.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === t)));
-    if (turn) { turn.feedback = Number(t.dataset.fb); renderMonitor(); }
+    if (turn) {
+      turn.feedback = Number(t.dataset.fb);
+      if (API && turn.turnId) {
+        api("/feedback", { method: "POST", body: JSON.stringify({ turn_id: turn.turnId, score: turn.feedback }) })
+          .then(renderMonitor).catch(() => {});
+      } else {
+        renderMonitor();
+      }
+    }
     toast("Thanks. Feedback logged.");
   } else if (t.dataset.ask) {
     send(t.dataset.ask);
   } else if (t.dataset.seen) {
-    const list = state.memory[state.user] ||= [];
-    if (!list.some((x) => x.what === t.dataset.seen)) list.push({ kind: "seen", what: t.dataset.seen });
-    renderMemory();
-    t.disabled = true;
-    t.textContent = "Marked seen";
-    toast("Won't be recommended again.");
+    const user = state.user, title = t.dataset.seen;
+    const done = () => { t.disabled = true; t.textContent = "Marked seen"; toast("Won't be recommended again."); };
+    if (API) {
+      api("/memory/seen", { method: "POST", body: JSON.stringify({ user_id: user, title }) })
+        .then((list) => { state.memory[user] = list; renderMemory(); done(); })
+        .catch((err) => toast(`Could not mark as seen: ${err.message}`));
+    } else {
+      const list = state.memory[user] ||= [];
+      if (!list.some((x) => x.what === title)) list.push({ kind: "seen", what: title });
+      renderMemory();
+      done();
+    }
   } else if (t.classList.contains("tab")) {
     document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === t)));
     document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === "view-" + t.dataset.view));
+    if (t.dataset.view === "monitor") renderMonitor();
   }
 });
 
@@ -1269,6 +1356,7 @@ try { const th = localStorage.getItem("movie-agent-theme"); if (th) document.doc
 
 renderUsers();
 renderMemory();
+loadMemory();
 renderSysInfo();
 renderOpening();
 renderMonitor();

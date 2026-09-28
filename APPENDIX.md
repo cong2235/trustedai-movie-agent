@@ -64,7 +64,7 @@ you need to notice when it doesn't. Three additions:
    dashboard) and to a JSONL event log (for log shipping). A record holds latency, LLM calls, tokens, cost, tool
    errors, re-ranker kind/latency/errors, guardrail result, and user 👍/👎. The schema maps 1:1 onto OpenTelemetry
    spans (turn = root span, tool call = child) if this were deployed.
-3. **Monitoring with SLOs** (`monitor.py`, the Streamlit "Monitor" tab, `scripts/monitor.py`). KPI tiles, one
+3. **Monitoring with SLOs** (`monitor.py`, the web UI "Monitor" tab, `scripts/monitor.py`). KPI tiles, one
    single-measure chart per metric over time (no dual axes), a per-tool latency/error table, recent guardrail
    triggers and the latest turns. Seven SLOs produce alerts: p95 latency ≤ 20 s, tool errors ≤ 10%, guardrail
    triggers ≤ 10%, unfixed guardrail ≤ 2%, re-rank errors ≤ 5%, cost ≤ $0.05 per turn, thumbs-up ≥ 70%.
@@ -169,7 +169,7 @@ request path: embeddings and re-ranking are API calls, and CF is numpy/scipy. Wh
 
 | Where | Finding | Action | Effect |
 |---|---|---|---|
-| First request after start-up | CF matrices, SVD and genre stats were built lazily: first `recommend` **17 s** in the container | warm-up at process start (`app/serve.py`, a background thread before the first visitor) | first call 0.1 s |
+| First request after start-up | CF matrices, SVD and genre stats were built lazily: first `recommend` **17 s** in the container | warm-up at process start (`app/server.py`, a background thread before the first visitor) | first call 0.1 s |
 | Guardrail revisions | checker false positives → 23 extra rounds | fixed checker | 1 revision in 57 turns |
 | LLM re-ranker | verbose JSON per candidate, 600-char excerpts | `[id, score]` pairs (a bare array was faster but lost 30% quality, see above), 400-char excerpts, shared client, 8 s timeout with fallback | 3.8 s → 2.3 s median, quality kept |
 | Context size | old tool outputs re-sent every turn | compaction + trimmed `recommend` output (−20%: 6.5k → 5.2k chars) + profile in context | 2.0 LLM calls/turn (was 2.2) |

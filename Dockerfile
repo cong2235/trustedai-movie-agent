@@ -28,7 +28,7 @@ USER appuser
 
 EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')" || exit 1
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8501/api/health')" || exit 1
 
-# serve.py starts warming the models in a background thread before the first visitor arrives
-CMD ["python", "app/serve.py"]
+# server.py starts warming the models in a background thread before the first visitor arrives
+CMD ["python", "app/server.py"]

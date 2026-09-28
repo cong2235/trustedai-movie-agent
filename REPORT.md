@@ -83,7 +83,7 @@ The central separation is between **reasoning** and **computation**:
 ```
 
 - **Deterministic tools** perform all numerical work: similarity, prediction, ranking and filtering. They are covered
-  by unit tests (125 tests, executed in continuous integration) and evaluated offline without a language model. Each
+  by unit tests (130 tests, executed in continuous integration) and evaluated offline without a language model. Each
   tool returns *evidence* (which of the user's ratings, which users, which plot excerpt, and with what confidence)
   rather than prose.
 - **The language model** selects and sequences the tools. The question "What do people like me think of Inception?"
@@ -134,7 +134,7 @@ The central separation is between **reasoning** and **computation**:
 
 | Decision | Alternative considered | Why I chose this |
 |---|---|---|
-| **The language model plans and explains; all figures come from deterministic, tested tools that return evidence as JSON** | The model reasons over retrieved data (RAG) or recommends from its own knowledge | Correctness can be tested without the language model (125 tests and the offline metrics). The model cannot state a rating it was not given, and every title and figure it writes is verified against the tool outputs. |
+| **The language model plans and explains; all figures come from deterministic, tested tools that return evidence as JSON** | The model reasons over retrieved data (RAG) or recommends from its own knowledge | Correctness can be tested without the language model (130 tests and the offline metrics). The model cannot state a rating it was not given, and every title and figure it writes is verified against the tool outputs. |
 | **Neighbourhood collaborative filtering as the backbone, with a small latent-factor term** | Pure matrix factorisation, or pure kNN | kNN evidence translates directly into explanations ("because you rated Aliens five stars"). In isolation PureSVD matches item-kNN (0.109 against 0.108 NDCG@10); in the blend the latent term adds +0.015, which is significant and consistent across all segments. |
 | **Per-user temporal split, validation-only tuning, segment analysis and bootstrap confidence intervals** | A random split and a single headline figure | A random split leaks future preferences into training. A single average conceals precisely where the system fails (users with short histories, the long tail). Confidence intervals prevent a difference within noise from being reported as an improvement. |
 | **Tone handled by offline attributes *and* an LLM re-ranker rather than by either alone** | Re-ranker only (the earlier design) or attributes only | Attributes alone recover part of the tone improvement at no latency cost; combined with the re-ranker they give the best tone NDCG (0.147 against 0.116). The improvement is not yet significant on 12 queries, so both are retained; the attributes also provide a violence filter that the re-ranker cannot. |
@@ -422,7 +422,7 @@ quality floor, rather than fabrication.
   a faulty join upstream. These films are excluded from every content signal and flagged to the model.
   [Details](APPENDIX.md#data-quality-198-movies-carry-the-wrong-plot).
 - **Production layer.** The grounding check used in the evaluation also runs on every live answer (with one automatic
-  revision round). Every turn and tool call is logged to SQLite and JSONL, and a Streamlit dashboard and a command-line
+  revision round). Every turn and tool call is logged to SQLite and JSONL, and a web dashboard and a command-line
   report present latency, cost, guardrail rate and user feedback against seven service-level objectives.
   [Details](APPENDIX.md#production-layer-guardrails-logs-and-monitoring).
 - **Evaluation of the evaluation tooling.** The checks themselves contained defects: false alarms from an overly
@@ -431,8 +431,8 @@ quality floor, rather than fabrication.
   evidence titles as the subject. Every flag was reviewed manually before it was counted, and each defect in the
   tooling has a regression test built from the sentence that exposed it.
   [Details](APPENDIX.md#bugs-in-the-evaluation-tooling-and-why-the-llm-judge-is-not-trusted).
-- **Engineering practice.** Linting and formatting with ruff, a pre-commit hook, and GitHub Actions running the 125
-  offline tests on Python 3.10 and 3.12 (79% line coverage; the search path is covered through a synthetic
+- **Engineering practice.** Linting and formatting with ruff, a pre-commit hook, and GitHub Actions running the 130
+  offline tests on Python 3.10 and 3.12 (80% line coverage; the search path is covered through a synthetic
   genre-vector index). The LLM suites are run manually and their outputs committed; the held-out sets are committed
   before they are run.
 - **Latency.** The tail latency (p95 of about 15 s) was traced to DNS resolution on new connections rather than to the
